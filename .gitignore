@@ -7,7 +7,7 @@ create_weapons
 motd.txt
 my
 runtime/
-server
+server35
 start
 update_server
 v3.*

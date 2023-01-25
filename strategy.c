@@ -163,15 +163,15 @@ struct ai_preset preset[64]={
 
 	{"Saphira",	{8,	60,	1,	 0,	 0,	15,	 5,	1,	65}},	// 4  - area 4
 	{"Cleran",	{4,	60,	1,	 0,	 0,	 5,	 5,	1,	55}},	// 5  - area 4
-	
+
 	{"Dagdar",	{4,	65,	1,	 0,	 5,	15,	 5,	1,	65}},	// 6  - area 3
         {"Karkarath",	{4,	65,	1,	 0,	 5,	15,	 5,	1,	65}},	// 7  - area 3
 
 	{"Vashini",	{8,	65,	2,	 0,	10,	25,	 5,	1,	65}},	// 8  - area 5
-	
+
         {"Kurbatz",	{12,	70,	2,	 0,	25,	40,	15,	1,	70}},	// 9  - area 4
 	{"Kalim",	{6,	70,	2,	 0,	10,	25,	 5,	1,	65}},	// 10  - area 4
-	
+
 	{"Sumpfbatz",	{6,	70,	2,	 0,	25,	25,	15,	1,	70}},	// 11 - area 3
         {"Umfrag",	{6,	70,	2,	 0,	25,	40,	15,	1,	70}},	// 12 - area 3
 
@@ -239,9 +239,9 @@ void init_areas(void)
 
 	for (n=1; n<MAXITEM; n++) {
 		if (!it[n].flags) continue;
-		
+
 		slot=it[n].drdata[8];
-		
+
 		switch(it[n].driver) {
 			case IDR_STR_SPAWNER:	it[n].drdata[10]=area[slot].max_spawn;		// set slot number for npc sprite calculation
 						area[slot].spawn[area[slot].max_spawn++]=n;
@@ -278,15 +278,15 @@ int remove_party(int code,char *msg)
 			if (!teleport_char_driver(m,15,15) &&
 			    !teleport_char_driver(m,20,15) &&
 			    !teleport_char_driver(m,15,20)) teleport_char_driver(m,20,20);
-			if (msg) log_char(m,LOG_SYSTEM,0,msg);
+			if (msg) log_char(m,LOG_SYSTEM,0,"%s",msg);
 		}
 	}
 
 	for (n=0; n<MAX_STR_AREA; n++) {
 		for (m=0; m<area[n].max_spawn; m++) {
-			if (*(unsigned int*)(it[area[n].spawn[m]].drdata+0)==code) break;			
+			if (*(unsigned int*)(it[area[n].spawn[m]].drdata+0)==code) break;
 		}
-		if (m<area[n].max_spawn) break;		
+		if (m<area[n].max_spawn) break;
 	}
 	if (n==MAX_STR_AREA) return 0;
 
@@ -342,19 +342,19 @@ int init_mission(int n)
 		}
 		if (it[in].driver==IDR_STR_SPAWNER) {
 			// set AI ID for AI slots, or set to 0 for player slots
-			if (*(unsigned int*)(it[in].drdata+0)>=0xfffff000) {			
+			if (*(unsigned int*)(it[in].drdata+0)>=0xfffff000) {
 				*(unsigned int*)(it[in].drdata+0)=0xfffff001+mission[n].enemy[ai++];
 				it[in].drdata[9]=0;					// ai init not done
 			} else {
 				*(unsigned int*)(it[in].drdata+0)=0;
 			}
-			
+
 			sprintf(it[in].name,"Spawner (%d)",it[in].drdata[8]);		// set name
 		}
 	}
-	
+
 	area[ar].busy=1;
-	
+
 	return 1;
 }
 
@@ -374,12 +374,12 @@ int did_party_lose(int spawn)
 	if (code>=0xfffff000) noplr=0;
 
 	if (*(unsigned int*)(it[storage].drdata+4)>=NPCPRICE) lost=0;
-	
+
 	for (m=getfirst_char(); m; m=getnext_char(m)) {
 		if (!(dat=set_data(m,DRD_STRATEGYDRIVER,sizeof(struct strategy_data))) || dat->order==OR_ETERNALGUARD) continue;
-		
+
 		if (ch[m].group==code) lost=0;
-		if (ch[m].ID==code) noplr=0;			
+		if (ch[m].ID==code) noplr=0;
 	}
 
 	if (noplr) lost=1;
@@ -391,7 +391,7 @@ void close_area(int n)
 {
 	int in,m;
 
-	for (m=0; m<area[n].max_spawn; m++) {				
+	for (m=0; m<area[n].max_spawn; m++) {
 		in=area[n].spawn[m];
 		if (*(unsigned int*)(it[in].drdata+0) && *(unsigned int*)(it[in].drdata+0)!=0xfffff000)
 			remove_party(*(unsigned int*)(it[in].drdata+0),NULL);
@@ -405,9 +405,9 @@ void reward_winner(int code)
 
 	for (m=getfirst_char(); m; m=getnext_char(m)) {
                 if (ch[m].ID==code) {
-			if ((ppd=set_data(m,DRD_STRATEGY_PPD,sizeof(struct strategy_ppd)))) {			
+			if ((ppd=set_data(m,DRD_STRATEGY_PPD,sizeof(struct strategy_ppd)))) {
 				log_char(m,LOG_SYSTEM,0,"Congratulations, you won!");
-				
+
 				n=ppd->current_mission;
 				if (n<0 || n>=ARRAYSIZE(mission)) {
 					log_char(m,LOG_SYSTEM,0,"Please report bug #443f");
@@ -432,9 +432,9 @@ void reward_winner(int code)
 void str_ticker(int in,int cn)
 {
 	int n,m,ai,pl,winner=0;
-	
+
 	if (cn) return;
-	
+
 	call_item(it[in].driver,in,0,ticker+TICKS);
 
 	if (!area_init) {
@@ -449,14 +449,14 @@ void str_ticker(int in,int cn)
 			in=area[n].spawn[m];
 			if (*(unsigned int*)(it[in].drdata+0) && *(unsigned int*)(it[in].drdata+0)!=0xfffff000) {
 				if (did_party_lose(in)) remove_party(*(unsigned int*)(it[in].drdata+0),"You lose. Better luck next time!");
-				
+
 				if (*(unsigned int*)(it[in].drdata+0)<0xfffff000) { pl++; winner=*(unsigned int*)(it[in].drdata+0); }
 				else ai++;
 			}
 		}
 		if (pl==1 && ai==0) {
 			xlog("area %d: player won",n);
-			if (winner) reward_winner(winner);			
+			if (winner) reward_winner(winner);
 			close_area(n);
 		} else if (ai && !pl) {
 			 xlog("area %d: ai won",n);
@@ -500,7 +500,7 @@ int finditem(int cn,int drv)
 			if ((in=map[x+y*MAXMAP].it) && it[in].driver==drv) return in;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -558,7 +558,7 @@ void setname(int cn,struct strategy_data *dat)
                                         break;
 		case OR_ETERNALGUARD:	sprintf(buf,"%s's E-Guard %d",dat->name,cn);
                                         break;
-		case OR_FIGHTER:	
+		case OR_FIGHTER:
 		case OR_TAKE:		sprintf(buf,"%s's Fighter %d",dat->name,cn);
                                         break;
 
@@ -653,7 +653,6 @@ int restplace(int cn,int m,struct strategy_data *dat)
 void strategy_driver(int cn,int ret,int lastact)
 {
 	struct strategy_data *dat;
-	struct strategy_ppd *ppd;
         int co,in,in2,me;
 	struct msg *msg,*next;
 	char *text;
@@ -673,7 +672,7 @@ void strategy_driver(int cn,int ret,int lastact)
 				dat->order=OR_GUARD;
 				dat->or1=ch[cn].x;
 				dat->or2=ch[cn].y;
-				ch[cn].group=0xfffff000;				
+				ch[cn].group=0xfffff000;
 			}
 			ch[cn].level=ch[cn].value[1][V_WIS];
 		}
@@ -685,10 +684,9 @@ void strategy_driver(int cn,int ret,int lastact)
 			tabunga(cn,co,(char*)(msg->dat2));
 
 			if ((ch[co].flags&CF_PLAYER) && ch[co].ID==ch[cn].group && char_see_char(cn,co) && dat->order!=OR_ETERNALGUARD) {
-				ppd=set_data(co,DRD_STRATEGY_PPD,sizeof(struct strategy_ppd));
-				
+
 				text=(char*)(msg->dat2);
-				
+
 				while (isalpha(*text)) text++;
 				while (isspace(*text)) text++;
 				while (isalpha(*text)) text++;
@@ -780,14 +778,14 @@ void strategy_driver(int cn,int ret,int lastact)
 					dat->or1=in;
 					dat->or2=0;
 					say(cn,"%s, sir, yes, sir, train, sir!",get_army_rank_string(co));
-				}				
+				}
 			}
 		}
 
 		// got an item?
 		if (msg->type==NT_GIVE) {
                         destroy_item(ch[cn].citem);
-			ch[cn].citem=0;			
+			ch[cn].citem=0;
 		}
 
 		if (msg->type==NT_GOTHIT) dat->lasthit=ticker;
@@ -826,32 +824,32 @@ void strategy_driver(int cn,int ret,int lastact)
 	switch(dat->order) {
 		case OR_MINE:		if (!dat->platin) {
 						if (!*(unsigned int*)(it[dat->or1].drdata+4)) {
-							if (abs(ch[cn].x-it[dat->or1].x)!=3 || abs(ch[cn].y-it[dat->or1].y)!=3) {					
+							if (abs(ch[cn].x-it[dat->or1].x)!=3 || abs(ch[cn].y-it[dat->or1].y)!=3) {
 								if (move_driver(cn,it[dat->or1].x,it[dat->or1].y,3)) return;
 							}
 							do_idle(cn,TICKS);
-							return;								
+							return;
 						}
 						if (use_driver(cn,dat->or1,0)) return;
 					} else {
 						if (use_driver(cn,dat->or2,0)) return;
 					}
 					break;
-		
+
 		case OR_TRANSFER:	if (!dat->platin) {
 						if (!*(unsigned int*)(it[dat->or1].drdata+4)) {
-							if (abs(ch[cn].x-it[dat->or1].x)!=3 || abs(ch[cn].y-it[dat->or1].y)!=3) {					
+							if (abs(ch[cn].x-it[dat->or1].x)!=3 || abs(ch[cn].y-it[dat->or1].y)!=3) {
 								if (move_driver(cn,it[dat->or1].x,it[dat->or1].y,3)) return;
 							}
 							do_idle(cn,TICKS);
-							return;	
+							return;
 						}
 						if (use_driver(cn,dat->or1,0)) return;
 					} else {
 						if (use_driver(cn,dat->or2,0)) return;
 					}
 					break;
-		
+
 		case OR_TAKE:		if (*(unsigned int*)(it[dat->or1].drdata+0)==ch[cn].group) {
 						if (dat->or2) {
 							dat->order=OR_FIGHTER;
@@ -868,7 +866,7 @@ void strategy_driver(int cn,int ret,int lastact)
                                         if (use_driver(cn,dat->or1,0)) return;
                                         break;
 
-		case OR_FOLLOW:		
+		case OR_FOLLOW:
 		case OR_FIGHTER:        if (!ch[dat->or1].flags || ch[dat->or1].ID!=ch[cn].group) {
 						dat->order=dat->or1=dat->or2=0; break;
 					}
@@ -877,7 +875,7 @@ void strategy_driver(int cn,int ret,int lastact)
 						if (move_driver(cn,ch[dat->or1].x,ch[dat->or1].y,2)) return;
 					} else { do_idle(cn,TICKS); return; }
 					break;
-		
+
 		case OR_GUARD:
 		case OR_ETERNALGUARD:	fight_driver_set_home(cn,dat->or1,dat->or2);
 					if (abs(ch[cn].x-dat->or1)+abs(ch[cn].y-dat->or2)>0) {
@@ -887,7 +885,7 @@ void strategy_driver(int cn,int ret,int lastact)
 							if (abs(ch[cn].x-dat->or1)+abs(ch[cn].y-dat->or2)>4) {
 								if (move_driver(cn,dat->or1,dat->or2,4)) return;
 							} else { do_idle(cn,TICKS); return; }
-						} else { do_idle(cn,TICKS); return; }						
+						} else { do_idle(cn,TICKS); return; }
 					} else { do_idle(cn,TICKS); return; }
 					break;
 
@@ -917,7 +915,7 @@ void strategy_driver(int cn,int ret,int lastact)
 						}
 						xx=restplace(cn,it[dat->or1].x+it[dat->or1].y*MAXMAP,dat)%MAXMAP;
 						yy=restplace(cn,it[dat->or1].x+it[dat->or1].y*MAXMAP,dat)/MAXMAP;
-							
+
 						if (abs(ch[cn].x-xx)+abs(ch[cn].y-yy)>0) {
 							if (move_driver(cn,xx,yy,0)) return;
 							if (move_driver(cn,xx,yy,2)) return;
@@ -936,19 +934,19 @@ void strategy_driver(int cn,int ret,int lastact)
 							if (move_driver(cn,xx,yy,2)) return;
 						}
 						do_idle(cn,TICKS);
-						return;	
+						return;
 					}
 					if (use_driver(cn,dat->or1,0)) return;
 					break;
 
 		default:                if (!dat->or1) dat->or1=findstorage(cn);
-					if (abs(ch[cn].x-it[dat->or1].x)>3 || abs(ch[cn].y-it[dat->or1].y)>3) {					
+					if (abs(ch[cn].x-it[dat->or1].x)>3 || abs(ch[cn].y-it[dat->or1].y)>3) {
 						if (move_driver(cn,it[dat->or1].x,it[dat->or1].y,3)) return;
 					}
                                         do_idle(cn,TICKS);
 					return;
 	}
-	
+
         do_idle(cn,TICKS);
 }
 
@@ -970,7 +968,7 @@ void mine(int in,int cn)
 
 	am=min(ch[cn].value[0][V_STR],*(unsigned int*)(it[in].drdata+4));
 	if (am==0) return;
-	
+
 	*(unsigned int*)(it[in].drdata+4)-=am;
 	dat->platin+=am;
 
@@ -994,12 +992,12 @@ void storage(int in,int cn)
 			if (it[in2].drdata[0]==1) am=(*(unsigned int*)(it[in2].drdata+1))/50;
 			else if (it[in2].drdata[0]==2) am=(*(unsigned int*)(it[in2].drdata+1))/5;
 			else am=0;
-			
+
 			if (am) {
 				*(unsigned int*)(it[in].drdata+4)+=am;
 
 				log_char(cn,LOG_SYSTEM,0,"Converted to %d units of Platinum and added to storage.",am);
-				
+
 				dlog(cn,in2,"dropped into ice army depot");
 				destroy_item(in2);
 				ch[cn].citem=0;
@@ -1016,7 +1014,7 @@ void storage(int in,int cn)
 
 	if (dat->platin) {
 		*(unsigned int*)(it[in].drdata+4)+=(am=dat->platin);
-		dat->platin=0;		
+		dat->platin=0;
 	} else {
 		am=min(ch[cn].value[0][V_STR],*(unsigned int*)(it[in].drdata+4));
 		*(unsigned int*)(it[in].drdata+4)-=am;
@@ -1088,7 +1086,7 @@ int spawner_sub(int in,int in2,int group,char *name,struct strategy_ppd *ppd)
 		ch[co].value[1][V_SPEED]+=ppd->speed;
 
 		update_char(co);
-	
+
                 ch[co].hp=ch[co].value[0][V_HP]*POWERSCALE;
 		ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
 		ch[co].mana=ch[co].value[0][V_MANA]*POWERSCALE;
@@ -1116,7 +1114,7 @@ void take_spawner(int in,int cn,struct strategy_ppd *ppd)
 	int in2;
 
 	if (!(ch[cn].flags&CF_PLAYER)) return;
-	
+
         if (!*(unsigned int*)(it[in].drdata+0)) {
                 in2=spawner2storage(in);
                 if (!in2) {
@@ -1173,7 +1171,7 @@ void spawner(int in,int cn)
 		return;
 	}
 	if (!(ch[cn].flags&CF_PLAYER)) return;
-	
+
 	ppd=set_data(cn,DRD_STRATEGY_PPD,sizeof(struct strategy_ppd));
 	if (!ppd) return;
 
@@ -1200,7 +1198,7 @@ void spawner(int in,int cn)
 void nosnow(int in,int m)
 {
         if (m<1 || m>=(MAXMAP-1)*(MAXMAP-1)) return;
-	
+
 	// original snow
 	if (map[m].gsprite>=21390 && map[m].gsprite<=21398) return;
 
@@ -1211,8 +1209,8 @@ void nosnow(int in,int m)
 		set_sector(m%MAXMAP,m/MAXMAP);
 		return;
 	}
-	
-	if (map[m].gsprite>=21380 && map[m].gsprite<=21398) {	
+
+	if (map[m].gsprite>=21380 && map[m].gsprite<=21398) {
                 map[m].gsprite|=(map[m].gsprite-21380+21400)<<16;
 		set_sector(m%MAXMAP,m/MAXMAP);
 		//call_item(it[in].driver,in,m,ticker+TICKS*120);
@@ -1247,7 +1245,7 @@ void strategy_boss(int cn,int ret,int lastact)
 					ppd->max_worker=4;
 					ppd->trainspeed=1;
 					ppd->eguardlvl=50;
-					ppd->init_done=1;					
+					ppd->init_done=1;
 				}
 				//say(cn,"stage=%d",ppd->boss_stage);
 				switch(ppd->boss_stage) {
@@ -1297,7 +1295,7 @@ void strategy_boss(int cn,int ret,int lastact)
 							break;
 					case 10:	if (ppd->boss_exp>0) {
 								say(cn,"Ah, %s. You made some progress defeating Islena's Lieutenants, and I have orders to reward you. Do you prefer °c4military rank°c0 or °c4levels and experience°c0?",ch[co].name);
-								ppd->boss_stage++;								
+								ppd->boss_stage++;
 								ppd->boss_msg_exp=ppd->boss_exp;
 							}
 							ppd->boss_timer=realtime;
@@ -1322,15 +1320,15 @@ void strategy_boss(int cn,int ret,int lastact)
 						case 1:
 						case 2:
 						case 3:
-						case 4:		
+						case 4:
 						case 5:
 						case 6:
 						case 7:
 						case 8:
 						case 9:
-						case 10:	
+						case 10:
 						case 11:	ppd->boss_stage=0; ppd->boss_timer=0; break;
-					}					
+					}
 				}
 				if (strcasestr((char*)msg->dat2,"military rank")) {
 					if (ppd->boss_exp>0) {
@@ -1343,20 +1341,20 @@ void strategy_boss(int cn,int ret,int lastact)
 				if (strcasestr((char*)msg->dat2,"levels and experience")) {
 					if (ppd->boss_exp>0) {
 						int val,cap;
-						
+
 						say(cn,"So be it.");
 						val=ppd->boss_exp*pow(get_army_rank_int(co)+5,4)/24;
 						cap=level_value(ch[co].level)*ppd->exp_cnt/5;
-						
+
 						dlog(co,0,"strategy: %d exp for %d missions, cap at %d exp",val,ppd->exp_cnt,cap);
-						
+
 						give_military_pts(cn,co,ppd->boss_exp/5+1,min(val,cap));
 						ppd->boss_exp=ppd->boss_msg_exp=0;
 						ppd->boss_stage=10;
 						ppd->exp_cnt=0;
 					}
 				}
-                        }			
+                        }
 		}
 
                 remove_message(cn,msg);
@@ -1521,7 +1519,7 @@ struct ai_data
 
 	int max_an;
 	struct ai_npc an[MAXNPC];
-	
+
 	int max_ap;
 	struct ai_place ap[MAXPLACE];
 
@@ -1733,7 +1731,7 @@ int assign_npc(int n)
 
 	for (m=0; m<ad->max_an; m++) {
 		if (ad->an[m].used!=-1) continue;
-		
+
 		if (ad->ap[n].type==PT_MINE) ad->an[m].task=T_MINE;
 		else ad->an[m].task=T_TRANSFER;
 
@@ -1849,7 +1847,7 @@ int assign_guards(int place,double count,int level,int ragnarok)
 	int n,m,attarget=1;
 	double have;
 	char use[MAXGUARD];
-	
+
 	bzero(use,sizeof(use));
 
 	have=0.0;
@@ -1922,7 +1920,7 @@ int assign_guards(int place,double count,int level,int ragnarok)
 void remove_free_guards(void)
 {
 	int n,m;
-	
+
 	for (n=0; n<MAXGUARD; n++) {
 		if ((m=ad->guard[n])!=-1 && m!=ad->nagguard && ad->an[m].used==0) {
 			ad->an[m].target=0;
@@ -1950,9 +1948,9 @@ int tcomp(const void *a,const void *b)
 void nag_attack(void)
 {
 	int n,m,minlevel=115,cnt=0,guard=0,mindist=99,place=0;
-	
+
         if (ticker-ad->lastnag<TICKS*60*5) return;
-	
+
 	// find lowest guard, remember count of free guards
 	for (n=0; n<MAXGUARD; n++) {
 		if ((m=ad->guard[n])!=-1 && !ad->an[m].target) {
@@ -1963,7 +1961,7 @@ void nag_attack(void)
 			cnt++;
 		}
 	}
-	
+
 	// find closest place with a threat
 	for (n=0; n<ad->max_ap; n++) {
 		if (ad->ap[n].threatcount && ad->ap[n].dist<mindist) {
@@ -1978,7 +1976,7 @@ void nag_attack(void)
 		ad->lastnag=ticker;
 		ad->nagplace=place;
 		ad->nagguard=guard;
-		
+
 		ad->an[guard].target=place;
 		ad->an[guard].used=place;
 	}
@@ -2021,7 +2019,7 @@ void ai_init(int in,unsigned int code)
 	for (n=1; n<MAXITEM; n++) {
 		if (!it[n].flags) continue;
 		if (it[n].drdata[8]!=it[in].drdata[8]) continue;
-		
+
 		if (it[n].driver==IDR_STR_DEPOT) {
 			//xlog("%d: found depot %d %s at %d,%d",ad->max_ap,n,it[n].name,it[n].x,it[n].y);
 			ad->ap[ad->max_ap].type=PT_DEPOT;
@@ -2061,7 +2059,7 @@ void ai_init(int in,unsigned int code)
 			}
 			ad->max_ap++;
 		}
-	}		
+	}
 
         // find depth & path to all places
 	for (cdepth=0; cdepth<MAXDISTANCE; cdepth++) {
@@ -2154,7 +2152,7 @@ void ai_main(int in,unsigned int code)
 
 	ad=ai_data+(code-0xfffff001);
 
-	if (!ad->ai_init) ai_init(in,code);		
+	if (!ad->ai_init) ai_init(in,code);
 
         // update npc list
 	for (ad->max_an=n=0; n<MAXNPC; n++) {
@@ -2171,7 +2169,7 @@ void ai_main(int in,unsigned int code)
 					ad->an[n].platin=dat->platin;
 				}
 				if (ad->an[n].task==T_EGUARD && ad->an[n].level<ad->ppd.max_level) cantrain=1;
-				
+
 				ad->max_an=n+1;
 			}
 		}
@@ -2228,19 +2226,19 @@ void ai_main(int in,unsigned int code)
 		xe=min(MAXMAP-1,ad->ap[n].x+12);
 		ys=max(0,ad->ap[n].y-12);
 		ye=min(MAXMAP-1,ad->ap[n].y+12);
-	
+
 		ad->ap[n].threat/=2;
 		ad->ap[n].threatcount=0.0;
 		ad->ap[n].threatncount=0.0;
 		ad->ap[n].threatnlevel=0;
 		if (!ad->ap[n].threat) ad->ap[n].threatlevel=0;
-		
+
                 for (y=ys; y<=ye; y+=8) {
 			for (x=xs; x<=xe; x+=8) {
 				for (cn=getfirst_char_sector(x,y); cn; cn=ch[cn].sec_next) {
 					if (ch[cn].driver==CDR_STRATEGY && ch[cn].group!=code &&
                                             abs(ad->ap[n].x-ch[cn].x)<10 && abs(ad->ap[n].y-ch[cn].y)<10) {
-						
+
 						if (seen[cn]) { /* xlog("ignoring %s ad dist %d",ch[cn].name,ad->ap[n].dist); */ continue; }
 						//else xlog("found %s at dist %d",ch[cn].name,ad->ap[n].dist);
 						seen[cn]=1;
@@ -2262,7 +2260,7 @@ void ai_main(int in,unsigned int code)
 
 		// move threat one down the parent list
 		if (ad->ap[n].threatcount && ad->ap[n].parent!=-1) ad->ap[ad->ap[n].parent].threat=ad->ap[n].threat/2;
-		
+
                 /*if (ad->ap[n].threatcount) {
 			xlog("place %d at %d,%d, threat=%d, level=%d, count=%.0fM",n,ad->ap[n].x,ad->ap[n].y,ad->ap[n].threat,ad->ap[n].threatlevel,ad->ap[n].threatcount/1000);
 		}*/
@@ -2313,7 +2311,7 @@ void ai_main(int in,unsigned int code)
                 if (*(unsigned int*)(it[ad->storage_in].drdata+4)>=NPCPRICE) {	// spawn new worker
                         m=spawner_sub(in,ad->storage_in,code,preset[code-0xfffff001].name,&ad->ppd);
 			if (m==0) break;
-	
+
 			ad->free_workers++;
 			// add new npc to list
 			for (n=0; n<MAXNPC; n++) {
@@ -2329,7 +2327,7 @@ void ai_main(int in,unsigned int code)
 					ad->an[n].used=-1;
 					break;
 				}
-			}			
+			}
 		} else break;
 	}
 
@@ -2350,7 +2348,7 @@ void ai_main(int in,unsigned int code)
 			if (ad->an[n].task==T_EGUARD && wantguardcnt()<ad->gcnt && !ad->nogoldleft && !ad->ragnarok) {
 				remove_guard(n);
 			}
-	
+
 			// never touch elite guards
 			if (ad->an[n].task==T_EGUARD) continue;
 			// we may not touch eternal guards
@@ -2363,10 +2361,10 @@ void ai_main(int in,unsigned int code)
 				add_guard(n);
 				continue;
 			}
-	
+
 			m=ad->an[n].target;
 			i=ad->ap[m].parent;
-	
+
 			if (ad->an[n].used!=-1 &&
 			    ad->an[n].platin &&
 			    (ad->an[n].task==T_TRANSFER || ad->an[n].task==T_MINE) &&
@@ -2404,7 +2402,7 @@ void ai_main(int in,unsigned int code)
 				continue;
 			}
 
-	
+
 			bm=0; bd=99; bdiff=0;
 			for (m=1; m<ad->max_ap; m++) {
 				if (!ad->ap[m].threat && ad->ap[m].platin>(ad->ap[m].wcnt*WORKERPLATIN) && ad->ap[m].wcnt<ad->worklevel &&
@@ -2420,13 +2418,13 @@ void ai_main(int in,unsigned int code)
 				else add_worker(T_TRANSFER,n,bm);
 				continue;
 			}
-	
+
 			if (ad->an[n].used!=-1) remove_worker(n);
 
 			ad->an[n].task=T_IDLE;
 			ad->an[n].target=0;
 		}
-	
+
 		// find places with too little workers
 		for (n=0; n<ad->max_ap; n++) {
 			if (n!=0 && ad->ap[n].dist<=mindist && ad->ap[n].platin && !ad->ap[n].threat) {
@@ -2437,7 +2435,7 @@ void ai_main(int in,unsigned int code)
 				}
 			}
 		}
-	
+
                 //....... threathandling ................
 
 		// expire old entries
@@ -2584,7 +2582,7 @@ int create_eguard(int x,int y,int group,int level,char *name,struct strategy_ppd
 	if (drop_char(co,x,y,0)) {
 		ch[co].tmpx=x;
 		ch[co].tmpy=y;
-		
+
 		ch[co].level=level;
 		ch[co].value[1][V_WIS]=ch[co].level;
 		ch[co].value[1][V_INT]=ch[co].level;
@@ -2594,9 +2592,9 @@ int create_eguard(int x,int y,int group,int level,char *name,struct strategy_ppd
 		ch[co].value[1][V_WARCRY]+=ppd->warcry;
 		ch[co].value[1][V_ENDURANCE]+=ppd->endurance;
 		ch[co].value[1][V_SPEED]+=ppd->speed;
-	
+
 		update_char(co);
-	
+
                 ch[co].hp=ch[co].value[0][V_HP]*POWERSCALE;
 		ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
 		ch[co].mana=ch[co].value[0][V_MANA]*POWERSCALE;
@@ -2630,7 +2628,7 @@ int str_exp_cost(struct strategy_ppd *ppd,int nr)
 		case 6:		if (ppd->endurance<115) return 4; else return 0;
 		case 7:		if (ppd->speed<115) return 6; else return 0;
 		case 8:		if (ppd->eguardlvl<115) return 3; else return 0;
-		
+
 		default:	return 0;
 	}
 }
@@ -2658,7 +2656,7 @@ int str_raise(int cn,struct strategy_ppd *ppd,int nr)
 		log_char(cn,LOG_SYSTEM,0,"You cannot raise this value any higher.");
 		return 0;
 	}
-	
+
 	cost=str_exp_cost(ppd,nr);
 	if (cost>ppd->exp) {
 		log_char(cn,LOG_SYSTEM,0,"You cannot afford to raise this value.");
@@ -2672,7 +2670,7 @@ int str_raise(int cn,struct strategy_ppd *ppd,int nr)
 		case 4:		ppd->trainspeed=min(ppd->trainspeed+str_increment(ppd,nr),8); break;
 		case 5:		ppd->warcry=min(ppd->warcry+str_increment(ppd,nr),115); break;
 		case 6:		ppd->endurance=min(ppd->endurance+str_increment(ppd,nr),115); break;
-                case 7:		ppd->speed=min(ppd->speed+str_increment(ppd,nr),115); break;		
+                case 7:		ppd->speed=min(ppd->speed+str_increment(ppd,nr),115); break;
 		case 8:		ppd->eguardlvl=min(ppd->eguardlvl+str_increment(ppd,nr),115); break;
 		default:	log_char(cn,LOG_SYSTEM,0,"Please report bug #4371g");
 				return 0;
@@ -2694,7 +2692,7 @@ void queue_validate(int ar)
 	for (n=m=0; n<MAXQUEUE; n++) {
 		area[ar].q_playercn[m]=area[ar].q_playercn[n];
 		area[ar].q_playerID[m]=area[ar].q_playerID[n];
-		if (area[ar].q_playercn[m]) m++;		
+		if (area[ar].q_playercn[m]) m++;
 	}
 	for (; m<MAXQUEUE; m++) {
 		area[ar].q_playercn[m]=area[ar].q_playerID[m]=0;
@@ -2722,16 +2720,16 @@ void queue_mission(int cn,int ar)
 
 	// already in queue?
 	for (n=0; n<MAXQUEUE; n++) {
-		if (area[ar].q_playerID[n]==ch[cn].ID) return;		
+		if (area[ar].q_playerID[n]==ch[cn].ID) return;
 	}
-	
+
 	queue_remove(cn);
-	
+
 	for (n=0; n<MAXQUEUE; n++) {
 		if (!area[ar].q_playercn[n]) {
 			area[ar].q_playercn[n]=cn;
 			area[ar].q_playerID[n]=ch[cn].ID;
-			return;	
+			return;
 		}
 	}
 }
@@ -2741,7 +2739,7 @@ int queue_check(int cn,int ar)
 	queue_validate(ar);
 
 	if (area[ar].q_playerID[0] && area[ar].q_playerID[0]!=ch[cn].ID) return 0;
-	
+
 	return 1;
 }
 
@@ -2790,12 +2788,12 @@ int special_driver(int nr,int cn,char *ptr)
         if (*ptr=='#' || *ptr=='/') {
 		ptr++;
                 if ((len=cmdcmp(ptr,"jp",2))) {
-			
+
 			if (ppd->boss_stage<9) {
 				log_char(cn,LOG_SYSTEM,0,"You have to talk to Cinciac first.");
 				return 2;
 			}
-			
+
 			ptr+=len;
 
 			val=atoi(ptr);
@@ -2844,14 +2842,14 @@ int special_driver(int nr,int cn,char *ptr)
 				log_char(cn,LOG_SYSTEM,0,"Jump point out of bounds.");
 				return 2;
 			}
-			
+
 			in=jp[val].in;
-			
+
 			if (*(unsigned int*)(it[in].drdata+0)!=ch[cn].ID) {
 				log_char(cn,LOG_SYSTEM,0,"You can only create guards for points you control.");
 				return 2;
 			}
-			
+
 			if (map_dist(ch[cn].x,ch[cn].y,it[in].x,it[in].y)>10) {
 				log_char(cn,LOG_SYSTEM,0,"You must be closer to the jump point you wish to create a guard for.");
 				return 2;
@@ -2861,7 +2859,7 @@ int special_driver(int nr,int cn,char *ptr)
 				log_char(cn,LOG_SYSTEM,0,"No extra guards left.");
 				return 2;
 			}
-			
+
 			create_eguard(ch[cn].x,ch[cn].y,ch[cn].ID,ppd->eguardlvl,ch[cn].name,ppd);
 			ppd->eguards--;
 
@@ -2888,7 +2886,7 @@ int special_driver(int nr,int cn,char *ptr)
 			log_char(cn,LOG_SYSTEM,0,"- \001Missions: \011%d \016-\022-",ppd->mis_cnt);
 			log_char(cn,LOG_SYSTEM,0,"- \001Victories: \011%d \016-\022-",ppd->won_cnt);
 			log_char(cn,LOG_SYSTEM,0,"- \001Experience: \011%d \016-\022-",ppd->exp);
-			
+
                         return 2;
 		}
 
@@ -2911,7 +2909,7 @@ int special_driver(int nr,int cn,char *ptr)
 
 		if ((ch[cn].flags&CF_GOD) && (len=cmdcmp(ptr,"reset",4))) {
 			ppd->init_done=0;
-			
+
 			return 2;
 		}
 
@@ -2983,16 +2981,16 @@ int special_driver(int nr,int cn,char *ptr)
 			for (spawn=0,in=1; in<MAXITEM; in++) {
 				if (!it[in].flags) continue;
 				if (it[in].driver!=IDR_STR_SPAWNER) continue;
-				
+
                                 if (it[in].drdata[8]==mission[n].area) {
 					if (*(unsigned int*)(it[in].drdata+0)==0) spawn=in;
 					else if (*(unsigned int*)(it[in].drdata+0)<0xfffff000) twoparty++;
 				}
-				
+
 				if (*(unsigned int*)(it[in].drdata+0)==ch[cn].ID) {
 					queue_remove(cn);
                                         teleport_char_driver(cn,it[in].x,it[in].y);
-					log_char(cn,LOG_SYSTEM,0,"Re-entering mission.");					
+					log_char(cn,LOG_SYSTEM,0,"Re-entering mission.");
 					return 2;
 				}
 			}

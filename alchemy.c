@@ -123,12 +123,12 @@ int driver(int type,int nr,int obj,int ret,int lastact)
 // PW9		36
 
 // PW1 PW2	10...16
-// PW2 PW3	
-// PW3 PW4	
-// PW4 PW5	
-// PW5 PW6	
-// PW6 PW7	
-// PW7 PW8	
+// PW2 PW3
+// PW3 PW4
+// PW4 PW5
+// PW5 PW6
+// PW6 PW7
+// PW7 PW8
 // PW8 PW9	40...72
 
 // +4 per fiery stone
@@ -267,7 +267,7 @@ int mixer_power(int in,int cn)
 	if (cnt==2 && pw2==1 && pw3==1) {
 		if (solstice || (fullmoon && get_support_prof(cn,P_ALCHEMIST)>=25)) return 24;
 		if (equinox || (fullmoon && get_support_prof(cn,P_ALCHEMIST)>=15)) return 20;
-		if (fullmoon || stone || get_support_prof(cn,P_ALCHEMIST)>=10) return 16;		
+		if (fullmoon || stone || get_support_prof(cn,P_ALCHEMIST)>=10) return 16;
 	}
 	if (cnt==2 && pw3==1 && pw4==1) {
 		if (solstice || (fullmoon && get_support_prof(cn,P_ALCHEMIST)>=25)) return 32;
@@ -317,20 +317,18 @@ int mixer_power(int in,int cn)
 	if (pw3) return 12+good-bad;
 	if (pw2) return max(2,8+good-bad);
 	if (pw1) return max(2,6+good-bad);
-	
+
 	return -1;
 }
 
 int mixer_duration(int in,double *divi)
 {
-	int cnt,d60,d10,d20,d30;
+	int d60,d10,d20,d30;
 
 	d60=it[in].drdata[27];
 	d10=it[in].drdata[28];
 	d20=it[in].drdata[29];
 	d30=it[in].drdata[30];
-
-	cnt=d60+d10+d20+d30;
 
 	if (d60) { *divi=1.75; return 60; }
         if (d30) { *divi=1.5; return 30; }
@@ -367,7 +365,7 @@ int mixer_mix(int cn,int in,int power,int duration,double divi)
 	power+=fire*4;
 	power+=ice*8;
 	power+=hell*12;
-	
+
 	if (get_support_prof(cn,P_ALCHEMIST)>=5) power+=2;
 	if (get_support_prof(cn,P_ALCHEMIST)>=10) power+=2;
 	if (get_support_prof(cn,P_ALCHEMIST)>=15) power+=4;
@@ -578,7 +576,7 @@ int mixer_mix(int cn,int in,int power,int duration,double divi)
 	}
 
         if (!flag) return 0;
-	
+
         it[in].mod_index[0]=skl[0];
         it[in].mod_value[0]=val[0];
 	it[in].mod_index[1]=skl[1];
@@ -612,7 +610,7 @@ int mixer(int cn,int in)
 	duration=mixer_duration(in,&divi);
 
 	log_char(cn,LOG_SYSTEM,0,"Power=%d, Duration=%d, Divisor=%f",power,duration,divi);
-	
+
 	return mixer_mix(cn,in,power,duration,divi);
 }
 
@@ -638,7 +636,7 @@ int mixer_use(int cn,int in)
 	it[in2].mod_index[1]=it[in].mod_index[1];
 	it[in2].mod_value[1]=it[in].mod_value[1];
 	it[in2].mod_index[2]=it[in].mod_index[2];
-	it[in2].mod_value[2]=it[in].mod_value[2];	
+	it[in2].mod_value[2]=it[in].mod_value[2];
 	it[in2].driver=IDR_POTION_SP;
 
 	duration=it[in].drdata[3]*60*TICKS;
@@ -711,7 +709,7 @@ void flask_driver(int in,int cn)
 				case 1:		it[in].sprite=50213; strcpy(it[in].description,"A small flask containing a magical liquid."); break;
 				case 2:		it[in].sprite=50214; strcpy(it[in].description,"A flask containing a magical liquid."); break;
 				case 3:		it[in].sprite=50253; strcpy(it[in].description,"A big flask containing a magical liquid."); break;
-	
+
 				default:	elog("humba dumba (%s)",it[in].name); break;
 			}
 			strcpy(it[in].name,"Magical Potion");
@@ -771,7 +769,7 @@ void flask_driver(int in,int cn)
 	log_char(cn,LOG_SYSTEM,0,"You put %s into the flask.",it[in2].name);
 
 	if (ch[cn].flags&CF_PLAYER) dlog(cn,in2,"alchemy: put into flask");
-	
+
 	ch[cn].citem=0;
 	ch[cn].flags|=CF_ITEMS;
 
@@ -806,7 +804,7 @@ void flower_driver(int in,int cn)
 		log_char(cn,LOG_SYSTEM,0,"This mushroom has a minimum level of %d. Sorry.",minlevel);
 		return;
 	}
-	
+
 	if (ch[cn].citem) {
 		log_char(cn,LOG_SYSTEM,0,"Please empty your hand (mouse cursor) first.");
 		return;

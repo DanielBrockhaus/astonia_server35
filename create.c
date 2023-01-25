@@ -1599,7 +1599,6 @@ void update_char(int cn)
 {
 	int mod[V_MAX],base[V_MAX],n,in,m,v1,v2,v3,oldlight,fn,bless[V_MAX],infrared=0,newlight,nonomagic=0,oxygen=0;
 	int spellspeed=0,cnt;
-	unsigned int mmf;
 	double effectivity;
 
 	if (!(ch[cn].flags)) kill(getpid(),11);
@@ -1609,9 +1608,6 @@ void update_char(int cn)
 	bzero(mod,sizeof(mod));
 	bzero(base,sizeof(base));
 	bzero(bless,sizeof(bless));
-
-	if (ch[cn].x>0 && ch[cn].y>0 && ch[cn].x<MAXMAP && ch[cn].y<MAXMAP) mmf=map[ch[cn].x+ch[cn].y*MAXMAP].flags;
-	else mmf=0;
 
 	// Add modifiers from items
 	for (n=0; n<30; n++) {

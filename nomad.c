@@ -108,7 +108,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -128,7 +128,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -142,21 +142,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -166,7 +165,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -193,7 +192,7 @@ void set_salt_data(int in)
 	else if (*(unsigned int*)(it[in].drdata+0)>=100) it[in].sprite=13210;
 	else if (*(unsigned int*)(it[in].drdata+0)>=10) it[in].sprite=13209;
 	else it[in].sprite=13208;
-	
+
 	sprintf(it[in].description,"%d ounces of %s.",*(unsigned int*)(it[in].drdata),it[in].name);
 }
 
@@ -217,7 +216,7 @@ void remove_salt(int cn,int val)
 				val=0;
 			}
 		}
-		if (val<=0) break;		
+		if (val<=0) break;
 	}
 }
 
@@ -252,7 +251,7 @@ int nomad_1(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		say(cn,"Sul vana ley, %s. I am %s.",ch[co].name,ch[cn].name);
 				questlog_open(co,32);
@@ -294,7 +293,7 @@ int nomad_2(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		if (!(ppd->tribe_member&TM_TRIBE1)) break;
 				say(cn,"Sul vana ley, %s. I am %s.",ch[co].name,ch[cn].name);
@@ -314,7 +313,7 @@ int nomad_3(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		if (!(ppd->tribe_member&TM_TRIBE1)) break;
 				say(cn,"Sul vana ley, %s. I am %s.",ch[co].name,ch[cn].name);
@@ -334,7 +333,7 @@ int nomad_4(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		say(cn,"Welcome to the monastery of Kir Laka, %s. I am %s.",ch[co].name,ch[cn].name);
 				questlog_open(co,33);
@@ -361,7 +360,7 @@ int nomad_5(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		say(cn,"Welcome to the monastery of Kir Laka, %s. I am %s, the teacher.",ch[co].name,ch[cn].name);
 				questlog_open(co,34);
@@ -388,7 +387,7 @@ int nomad_6(int cn,int co,struct nomad_ppd *ppd,int nr)
 		elog("nomad_sub: illegal nr %d",nr);
 		return 0;
 	}
-	
+
 	switch(ppd->nomad_state[nr]) {
 		case 0:		if (!(ppd->tribe_member&TM_TRIBE1)) break;
 				say(cn,"Sul vana ley, %s. I am %s.",ch[co].name,ch[cn].name);
@@ -477,13 +476,13 @@ void nomad_2_text(int cn,int co,struct nomad_ppd *ppd,int nr,int res)
 	}
 
 	if (!(ppd->tribe_member&TM_TRIBE1)) return;
-	
+
 	if (res==3) { cost=200; name="dice0"; }
 	if (res==4) { cost=500; name="dice1"; }
 	if (res==5) { cost=1200; name="dice2"; }
 
 	if (!cost) return;
-	
+
 	if (count_salt(co)<cost) {
 		say(cn,"But thou dost not have enough salt to pay.");
 		return;
@@ -513,7 +512,7 @@ void nomad_6_text(int cn,int co,struct nomad_ppd *ppd,int nr,int res)
 	if (res!=6) return;
 
 	cost=10000; name="kir_statue";
-	
+
 	if (count_salt(co)<cost) {
 		say(cn,"But thou dost not have enough salt to pay.");
 		return;
@@ -558,12 +557,12 @@ int nomad_1_give(int cn,int co,int in,struct nomad_ppd *ppd,int nr)
 		destroy_item(in);
 		return 1;
 	}
-	
+
 	if (it[in].ID==IID_AREA19_WOLFSSKIN || it[in].ID==IID_AREA19_WOLFSSKIN2) {
 		cnt=*(unsigned int*)(it[in].drdata);
 		if (it[in].ID==IID_AREA19_WOLFSSKIN) val=cnt*5;
 		else val=cnt*20;
-		
+
 		in2=create_item("salt");
 		if (!in2) {
 			say(cn,"Oopsy");
@@ -640,7 +639,7 @@ int lucky_die(int sides,int luck)
 
 	for (n=val=0; n<=luck; n++) {
 		tmp=die(1,sides);
-		if (tmp>val) val=tmp;		
+		if (tmp>val) val=tmp;
 	}
 	return val;
 }
@@ -656,7 +655,7 @@ void nomad_bet(int cn,struct nomad_data *dat,int co,int val,struct nomad_ppd *pp
 
 	if (ticker-dat->play_timer>TICKS*60) dat->play_with=0;
         if (dat->play_with && !char_see_char(cn,dat->play_with)) dat->play_with=0;
-	
+
 	if (dat->play_with) {
 		say(cn,"Sorry, I'm playing with %s right now.",ch[dat->play_with].name);
 		return;
@@ -665,7 +664,7 @@ void nomad_bet(int cn,struct nomad_data *dat,int co,int val,struct nomad_ppd *pp
 		say(cn,"I won't play with thee anymore, %s. Thou art too lucky for my taste.",ch[co].name);
 		return;
 	}
-	
+
 	if (val<dat->min_bet) {
 		say(cn,"%d ounces? That's too cheap.",val);
 		return;
@@ -690,7 +689,7 @@ void nomad_bet(int cn,struct nomad_data *dat,int co,int val,struct nomad_ppd *pp
 		d1=lucky_die(6,dat->dice_skill); d2=lucky_die(6,dat->dice_skill); d3=lucky_die(6,dat->dice_skill);
 	}
 	log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,8,"%s rolled %d, %d and %d for a total of %d.",ch[cn].name,d1,d2,d3,d1+d2+d3);
-	
+
 	dat->my_throw=d1+d2+d3;
 	if (dat->my_throw<11) {
 		say(cn,"Ack. Well, roll your dice now, %s. (USE the dice)",ch[co].name);
@@ -719,7 +718,7 @@ void nomad_roll(int cn,struct nomad_data *dat,int co,int val,struct nomad_ppd *p
 	}
 
 	dat->play_with=0;
-	
+
 	if (dat->bet>=ppd->open_bet) ppd->open_bet=0;
 	else ppd->open_bet-=dat->bet;
 
@@ -746,7 +745,7 @@ void nomad_roll(int cn,struct nomad_data *dat,int co,int val,struct nomad_ppd *p
 		it[in2].value*=dat->bet;
 		*(unsigned int*)(it[in2].drdata)=dat->bet;
 		set_salt_data(in2);
-		
+
 		if (give_char_item(co,in2)) {
 			say(cn,"Here, %d ounces of salt.",dat->bet);
 			ppd->nomad_win[nr]-=dat->bet;
@@ -764,7 +763,7 @@ void nomad(int cn,int ret,int lastact)
 	struct nomad_data *dat;
 	struct nomad_ppd *ppd;
 	struct msg *msg,*next;
-	int co,cc,val,in,res,talkdir=0,didsay=0;
+	int co,val,in,res,talkdir=0,didsay=0;
 	char *ptr;
 
         dat=set_data(cn,DRD_NOMADDRIVER,sizeof(struct nomad_data));
@@ -794,7 +793,7 @@ void nomad(int cn,int ret,int lastact)
 					default:	break;
 				}
 				dat->lasttalk=ticker;
-				if (didsay) talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);				
+				if (didsay) talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 			}
 		}
 
@@ -803,7 +802,7 @@ void nomad(int cn,int ret,int lastact)
 
 			if ((ppd=set_data(co,DRD_NOMAD_PPD,sizeof(struct nomad_ppd)))) {
 				switch((res=analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co))) {
-					case 2:	
+					case 2:
 						switch(dat->nr) {
 							case 1:		nomad_1_repeat(cn,co,ppd,dat->nr); dat->lasttalk=0; break;
 							case 2:		nomad_2_repeat(cn,co,ppd,dat->nr); dat->lasttalk=0; break;
@@ -817,7 +816,7 @@ void nomad(int cn,int ret,int lastact)
 						break;
 					case 3:
 					case 4:
-					case 5:	
+					case 5:
 					case 6:
 						switch(dat->nr) {
 							case 2:		nomad_2_text(cn,co,ppd,dat->nr,res); dat->lasttalk=0; break;
@@ -848,7 +847,7 @@ void nomad(int cn,int ret,int lastact)
 					}
 				}
 			}
-			
+
 			tabunga(cn,co,(char*)msg->dat2);
 		}
 		if (msg->type==NT_GIVE) {
@@ -872,7 +871,7 @@ void nomad(int cn,int ret,int lastact)
 								}
 								ch[cn].citem=0;
 								break;
-						
+
 						default:	if (!give_char_item(co,in)) {
 									destroy_item(in);
 								}
@@ -890,8 +889,7 @@ void nomad(int cn,int ret,int lastact)
                         co=msg->dat1;
 		}
 		if (msg->type==NT_SEEHIT) {
-			cc=msg->dat1;
-			co=msg->dat2;			
+			co=msg->dat2;
 		}
 
 		if (msg->type==NT_NPC) {
@@ -944,12 +942,12 @@ void madhermit_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,30,0,60);			
+                        fight_driver_set_dist(cn,30,0,60);
                 }
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			if (ch[co].action==AC_USE && (in=ch[co].act1) && in>0 && in<MAXITEM && it[in].driver==IDR_FLOWER) {
@@ -974,7 +972,7 @@ void madhermit_driver(int cn,int ret,int lastact)
         if (fight_driver_attack_visible(cn,0)) return;
         if (fight_driver_follow_invisible(cn)) return;
 
-	
+
         if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 
 	if (regenerate_driver(cn)) return;
@@ -995,7 +993,7 @@ int ch_driver(int nr,int cn,int ret,int lastact)
 
 int it_driver(int nr,int in,int cn)
 {
-	switch(nr) {		
+	switch(nr) {
 		case IDR_NOMADDICE:	nomad_dice(in,cn); return 1;
                 default:		return 0;
 	}

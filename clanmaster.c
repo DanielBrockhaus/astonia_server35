@@ -177,7 +177,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -197,7 +197,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -211,21 +211,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -237,7 +236,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -302,7 +301,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -313,24 +312,24 @@ void clanmaster_driver(int cn,int ret,int lastact)
 
 			// dont talk to the same person twice
 			if (mem_check_driver(cn,co,7)) { remove_message(cn,msg); continue; }
-						
+
 			if (!get_char_club(co) && !get_char_clan(co) && clanslot_free(cnr)) quiet_say(cn,"Hello %s! Would you like to found a °c4clan°c0?",ch[co].name);
 			else if (get_char_clan(co)==cnr) quiet_say(cn,"Welcome to your clan hall, %s.",ch[co].name);
 			else if (!clanslot_free(cnr)) quiet_say(cn,"Welcome to the %s clan hall, %s.",get_clan_name(cnr),ch[co].name);
-			
+
 			mem_add_driver(cn,co,7);
 		}
 
                 // talk back
 		if (msg->type==NT_TEXT) {
-			
+
 			co=msg->dat3;
-			
+
 			analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,msg->dat3);
 
 			if (char_dist(cn,co)>12) { remove_message(cn,msg); continue; }
 
-                        if ((msg->dat1==1 || msg->dat1==2) && (co=msg->dat3)!=cn) {	// talk, and not our talk				
+                        if ((msg->dat1==1 || msg->dat1==2) && (co=msg->dat3)!=cn) {	// talk, and not our talk
                                 if ((ptr=strcasestr((char*)msg->dat2,"name:")) && (fnd=set_data(co,DRD_CLANFOUND,sizeof(struct clan_found_data)))) {
 					if (!clanslot_free(cnr)) {
 						quiet_say(cn,"I'm sorry, %s, but this clan hall is already taken.",ch[co].name);
@@ -392,7 +391,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 							dat->accept_clan=0;
 							dat->join[0]=0;
 						}
-						
+
 					}
 				}
 				if ((ptr=strcasestr((char*)msg->dat2,"leave!"))) {
@@ -414,7 +413,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 							tmp[n]=*ptr++;
 						}
 						tmp[n]=0;
-						
+
 						rank=atoi(ptr);
 
 						if (rank<0 || rank>4) {
@@ -457,7 +456,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 							tmp[n]=*ptr++;
 						}
 						tmp[n]=0;
-						
+
                                                 for (cc=getfirst_char(); cc; cc=getnext_char(cc)) {
 							if (!strcasecmp(tmp,ch[cc].name) && (ch[cc].flags&CF_PLAYER)) break;
 						}
@@ -480,7 +479,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 						}
 					}
 				}
-			}			
+			}
 		}
 
 		// got an item?
@@ -504,7 +503,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 							remove_message(cn,msg);
 							continue;
 						} else {
-							quiet_say(cn,"There was an error creating your clan. Please try again.");							
+							quiet_say(cn,"There was an error creating your clan. Please try again.");
 						}
 					} else {
 						quiet_say(cn,"You must name your clan first. Say: 'name: <clan-name>'.");
@@ -535,7 +534,7 @@ void clanmaster_driver(int cn,int ret,int lastact)
 			case 7:		murmur(cn,"Gold and Silver, Silver and Gold."); break;
 			default:	break;
 		}
-		
+
 		dat->last_talk=ticker;
 	}
 
@@ -563,8 +562,8 @@ void clanclerk_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
-                        ; //co=msg->dat1;			
+
+                        ; //co=msg->dat1;
 		}
 
                 // talk back
@@ -574,10 +573,10 @@ void clanclerk_driver(int cn,int ret,int lastact)
 			switch(res) {
 				case 2:	say(cn,"Our clan has %d jewels.",cnt_jewels(cnr)); break;
 			}
-			
+
 			if ((msg->dat1==1 || msg->dat1==2) && (co=msg->dat3)!=cn && char_see_char(cn,co)) {	// talk, and not our talk
 				if ((ptr=strcasestr((char*)msg->dat2,"deposit"))) {
-					
+
 					ptr+=7;
 
 					nr=atoi(ptr);
@@ -588,7 +587,7 @@ void clanclerk_driver(int cn,int ret,int lastact)
 						remove_message(cn,msg);
 						continue;
 					}
-					
+
 					if (ch[co].gold<nr*100) {
 						say(cn,"You do not have that much money, %s.",ch[co].name);
 						remove_message(cn,msg);
@@ -611,7 +610,7 @@ void clanclerk_driver(int cn,int ret,int lastact)
 					continue;
 				}
 				if ((ptr=strcasestr((char*)msg->dat2,"withdraw"))) {
-					
+
 					ptr+=8;
 
 					nr=atoi(ptr);
@@ -622,7 +621,7 @@ void clanclerk_driver(int cn,int ret,int lastact)
 						remove_message(cn,msg);
 						continue;
 					}
-					
+
 					if (get_clan_money(cnr)<nr) {
 						say(cn,"Your clan does not have that much money, %s.",ch[co].name);
 						remove_message(cn,msg);
@@ -644,11 +643,11 @@ void clanclerk_driver(int cn,int ret,int lastact)
 
                                         ptr+=9;
 					nr=atoi(ptr);
-					
+
 					while (isspace(*ptr)) ptr++;
 					while (isdigit(*ptr)) ptr++;
 					while (isspace(*ptr)) ptr++;
-			
+
 					level=atoi(ptr);
 
 					if (nr<0 || nr>4) {
@@ -668,7 +667,7 @@ void clanclerk_driver(int cn,int ret,int lastact)
                                         res=set_clan_bonus(cnr,nr,level,co);
                                         if (!res) {
 						say(cn,"Set bonus %d to %d.",nr,level);
-						
+
                                                 remove_message(cn,msg);
 						continue;
 					} else  {
@@ -682,11 +681,11 @@ void clanclerk_driver(int cn,int ret,int lastact)
 
                                         ptr+=8;
 					nr=atoi(ptr);
-					
+
 					while (isspace(*ptr)) ptr++;
 					while (isdigit(*ptr)) ptr++;
 					while (isspace(*ptr)) ptr++;
-			
+
 					level=atoi(ptr);
 
 					if (nr<1 || nr>63) {
@@ -706,15 +705,15 @@ void clanclerk_driver(int cn,int ret,int lastact)
                                         res=set_clan_relation(cnr,nr,level,co);
                                         if (!res) {
 						say(cn,"Changed relation.");
-						
+
                                                 remove_message(cn,msg);
 						continue;
 					} else  {
-						say(cn,"Failed to change relation.");						
+						say(cn,"Failed to change relation.");
 					}
 				}
 				if ((ptr=strcasestr((char*)msg->dat2,"rank name"))) {
-					
+
 					ptr+=9;
 
 					nr=atoi(ptr);
@@ -725,11 +724,11 @@ void clanclerk_driver(int cn,int ret,int lastact)
 						remove_message(cn,msg);
 						continue;
 					}
-					
+
 					while (isspace(*ptr)) ptr++;
 					while (isdigit(*ptr)) ptr++;
 					while (isspace(*ptr)) ptr++;
-			
+
                                         for (n=0; n<39; n++) {
 						if (!*ptr || *ptr=='"') break;
 						name[n]=*ptr++;
@@ -740,41 +739,41 @@ void clanclerk_driver(int cn,int ret,int lastact)
 
 					if (!res) {
 						say(cn,"Changed rank name.");
-						
+
                                                 remove_message(cn,msg);
 						continue;
 					} else {
-						say(cn,"Failed to change rank name.");						
+						say(cn,"Failed to change rank name.");
 					}
 				}
                                 if ((ptr=strcasestr((char*)msg->dat2,"website"))) {
 
                                         ptr+=7;
                                         while (isspace(*ptr)) ptr++;
-			
+
                                         res=set_clan_website(cnr,ptr,co);
                                         if (!res) {
 						say(cn,"Done.");
-						
+
                                                 remove_message(cn,msg);
 						continue;
 					} else {
-						say(cn,"Failed.");						
+						say(cn,"Failed.");
 					}
 				}
 				if ((ptr=strcasestr((char*)msg->dat2,"message"))) {
 
                                         ptr+=7;
                                         while (isspace(*ptr)) ptr++;
-			
+
                                         res=set_clan_message(cnr,ptr,co);
                                         if (!res) {
 						say(cn,"Done.");
-						
+
                                                 remove_message(cn,msg);
 						continue;
 					} else {
-						say(cn,"Failed.");						
+						say(cn,"Failed.");
 					}
 				}
 			}
@@ -787,18 +786,18 @@ void clanclerk_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				if (it[in].ID==IID_CLANJEWEL) {
 					res=add_jewel(cnr,co,it[in].drdata[4]);
-					
+
 					if (!res) {
 						say(cn,"Added one jewel worth %d points to our storage.",it[in].drdata[4]);
-						
+
 						destroy_item(ch[cn].citem);
 						ch[cn].citem=0;
 						remove_message(cn,msg);
 						continue;
 					} else {
-						say(cn,"Failed to add jewel to storage, please try again.");						
+						say(cn,"Failed to add jewel to storage, please try again.");
 					}
-				}				
+				}
                                 // try to give it back
                                 if (!give_char_item(co,in)) destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -824,7 +823,7 @@ void clanmaster_dead(int cn,int co)
 int clanspawn_reg(int in,int co)
 {
 	if (*(unsigned int*)(it[in].drdata+20)==co && *(unsigned int*)(it[in].drdata+24)==ch[co].ID) return 1;
-	
+
 	*(unsigned int*)(it[in].drdata+20)=co;
 	*(unsigned int*)(it[in].drdata+24)=ch[co].ID;
 	*(unsigned int*)(it[in].drdata+28)=ticker;
@@ -872,7 +871,7 @@ void clanspawn_driver(int in,int cn)
 		if ((co=map[it[in].x+it[in].y*MAXMAP-1+MAXMAP].ch)) cnt+=clanspawn_reg(in,co);
 		if ((co=map[it[in].x+it[in].y*MAXMAP-1-MAXMAP].ch)) cnt+=clanspawn_reg(in,co);
 
-		
+
 		if ((co=map[it[in].x+it[in].y*MAXMAP+2].ch)) cnt+=clanspawn_reg(in,co);
 		if ((co=map[it[in].x+it[in].y*MAXMAP-2].ch)) cnt+=clanspawn_reg(in,co);
 		if ((co=map[it[in].x+it[in].y*MAXMAP+MAXMAP*2].ch)) cnt+=clanspawn_reg(in,co);
@@ -889,7 +888,7 @@ void clanspawn_driver(int in,int cn)
 		if ((co=map[it[in].x+it[in].y*MAXMAP+2-MAXMAP*2].ch)) cnt+=clanspawn_reg(in,co);
 		if ((co=map[it[in].x+it[in].y*MAXMAP-2+MAXMAP*2].ch)) cnt+=clanspawn_reg(in,co);
 		if ((co=map[it[in].x+it[in].y*MAXMAP-2-MAXMAP*2].ch)) cnt+=clanspawn_reg(in,co);
-		
+
 
 		if (ticker-*(unsigned int*)(it[in].drdata+32)>TICKS*10) {
 			co=*(unsigned int*)(it[in].drdata+20);
@@ -916,20 +915,20 @@ void clanspawn_driver(int in,int cn)
 
 			*(unsigned int*)(it[in].drdata+32)=ticker;
 		}
-		
+
                 // -- jewel spawning stuff --
 
 		// init: determine first bigspawn time
 		if (!*(unsigned int*)(it[in].drdata+4)) {
 			*(unsigned int*)(it[in].drdata+4)=1;
 			*(unsigned int*)(it[in].drdata+8)=(realtime/(BIGSPAWNFREQ))*BIGSPAWNFREQ+BIGSPAWNFREQ;
-			*(unsigned int*)(it[in].drdata+12)=(realtime/(BIGSPAWNFREQ))*BIGSPAWNFREQ+BIGSPAWNFREQ+60*60;			
+			*(unsigned int*)(it[in].drdata+12)=(realtime/(BIGSPAWNFREQ))*BIGSPAWNFREQ+BIGSPAWNFREQ+60*60;
 			*(unsigned int*)(it[in].drdata+16)=(realtime/BIGSPAWNFREQ)%3;
 		}
-		
+
                 if (realtime>=*(unsigned int*)(it[in].drdata+8)) {
 			int idx=*(unsigned int*)(it[in].drdata+16);
-			
+
 			if ((idx==0 && it[in].drdata[0]<40) ||
 			    (idx==1 && it[in].drdata[0]>=40 && it[in].drdata[0]<64) ||
 			    (idx==2 && it[in].drdata[0]>=64)) {
@@ -996,7 +995,7 @@ void clanspawn_driver(int in,int cn)
         if (!in2) {
 		elog("clanspawn item driver: could not create item");
 		log_char(cn,LOG_SYSTEM,0,"Oops. Bug in clanspawn driver!");
-		return;			
+		return;
 	}
 	it[in2].drdata[4]=value;
 	sprintf(it[in2].description,"The jewel is worth %d points.",value);
@@ -1013,7 +1012,7 @@ void clanspawn_driver(int in,int cn)
 	}
 
 	cname=get_char_clan_name(cn);
-	
+
 	if (cname) sprintf(buf,"0000000000°c15Clan: %s won a Jewel for %s from level %d!",ch[cn].name,cname,it[in].drdata[0]);
 	else sprintf(buf,"0000000000°c15Clan: %s has won a Jewel from level %d!",ch[cn].name,it[in].drdata[0]);
         server_chat(10,buf);
@@ -1036,7 +1035,7 @@ void clanjewel_driver(int in,int cn)
 		*(unsigned int*)(it[in].drdata+0)=realtime;	// remember current time if we havent already done so
 	}
 	if (realtime>*(unsigned int*)(it[in].drdata+0)+60*60) {	// time's up?
-		
+
                 if ((co=it[in].carried)) {
 			log_char(co,LOG_SYSTEM,0,"Your %s expired.",it[in].name);
 			if (ch[co].flags&CF_PLAYER) dlog(co,in,"dropped because it expired");
@@ -1052,7 +1051,7 @@ void clanspawn_exit(int in,int cn)
 	int oldx,oldy;
 
 	if (!cn) return;
-	
+
 	if (ch[cn].resta!=areaID) {
                 if (!change_area(cn,ch[cn].resta,ch[cn].restx,ch[cn].resty)) {
 			log_char(cn,LOG_SYSTEM,0,"Nothing happens - target area server is down.");
@@ -1086,12 +1085,12 @@ static int can_hit(int in,int co,int frx,int fry,int tox,int toy)
 	// line algorithm with a step of 0.5 tiles
 	if (abs(dx)>abs(dy)) { dy=dy*256/abs(dx); dx=dx*256/abs(dx); }
 	else { dx=dx*256/abs(dy); dy=dy*256/abs(dy); }
-	
-        for (n=0; n<48; n++) {	
+
+        for (n=0; n<48; n++) {
 
 		x+=dx;
 		y+=dy;
-		
+
 		cx=x/1024;
 		cy=y/1024;
 
@@ -1131,7 +1130,7 @@ void clandefense_driver(int in,int cn)
 		elog("defense for non existant clan %d at %d,%d",cnr,it[in].x,it[in].y);
 		return;
 	}
-	
+
         if (!get_clanalive(cnr)) {
 		if (it[in].sprite!=14160) { it[in].sprite=14160; set_sector(it[in].x,it[in].y); }
 		return;
@@ -1140,7 +1139,7 @@ void clandefense_driver(int in,int cn)
 		it[in].sprite=14164;
 		set_sector(it[in].x,it[in].y);
 	}
-	
+
 	for (n=0; n<25;  n++) {
 		for (co=getfirst_char_sector(it[in].x+offx[n],it[in].y+offy[n]); co; co=ch[co].sec_next) {
 			//if (get_char_clan(co)==cnr) continue;
@@ -1162,19 +1161,19 @@ void clandefense_driver(int in,int cn)
 				if (ch[co].y<it[in].y) oy=-1;
 				ox=0;
 			}
-	
+
                         if (ch[co].action!=AC_WALK) { tx=ch[co].x; ty=ch[co].y; }
 			else {
-	
+
 				dir=ch[co].dir;
 				dx2offset(dir,&dx,&dy,NULL);
 				dist=map_dist(it[in].x,it[in].y,ch[co].x,ch[co].y);
-			
+
 				eta=dist*1.5;
-				
+
 				left=ch[co].duration-ch[co].step;
 				step=ch[co].duration;
-			
+
 				eta-=left;
 				if (eta<=0) { tx=ch[co].tox; ty=ch[co].toy; }
 				else {
@@ -1182,12 +1181,12 @@ void clandefense_driver(int in,int cn)
 						eta-=step;
 						if (eta<=0) { tx=ch[co].x+dx*m; ty=ch[co].y+dy*m; break; }
 					}
-			
+
 					// too far away, time-wise to make any prediction. give up.
 					if (m==10) { tx=ch[co].x; ty=ch[co].y; }
 				}
 			}
-		
+
                         if (can_hit(in,co,it[in].x+ox,it[in].y+oy,tx,ty)) {
 				target[cnt].co=co;
 				target[cnt].ox=ox;
@@ -1247,7 +1246,7 @@ void clanvault_driver(int cn,int ret,int lastact)
 				}
                                 dat->last_hp=ch[cn].hp;
 				break;
-			
+
 			/*case NT_GIVE:
 				co=msg->dat1;
 
@@ -1276,7 +1275,7 @@ void clanvault_dead(int cn,int co)
 	cnr=((ch[cn].x-2)/49)*12+(ch[cn].y-2)/20+1;
 
 	if (co && (cno=get_char_clan(co))) {
-		
+
 		v=(cnt_jewels(cnr)+5)/10;
                 v=min(v,(cnt_jewels(cno)+3)/5);
 		v=max(v,10);

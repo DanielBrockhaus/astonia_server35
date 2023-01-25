@@ -79,7 +79,7 @@ struct qa qa[]={
 	{{"miner",NULL},NULL,3},
 	{{"enhancer",NULL},NULL,3},
         {{"trader",NULL},NULL,3},
-	{{"mercenary",NULL},NULL,3}	
+	{{"mercenary",NULL},NULL,3}
 };
 
 void lowerstrcpy(char *dst,char *src)
@@ -92,7 +92,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -112,7 +112,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -126,21 +126,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -152,7 +151,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
         return 0;
 }
 
@@ -187,7 +186,7 @@ int count_prof(int cn)
 	int n,cnt;
 
 	for (n=cnt=0; n<P_MAX; n++) {
-		if (ch[cn].prof[n]) cnt++;		
+		if (ch[cn].prof[n]) cnt++;
 	}
 	return cnt;
 }
@@ -237,7 +236,7 @@ int improve_prof(int cn,int co,int nr)
         ch[co].prof[nr]+=step;
 	ch[co].flags|=CF_PROF;
 	update_char(co);
-	
+
 	say(cn,"Thy profession %s was improved to %d.",prof[nr].name,ch[co].prof[nr]);
 	return 1;
 }
@@ -262,7 +261,7 @@ void professor_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -337,7 +336,7 @@ void professor_driver(int cn,int ret,int lastact)
         // do something. whenever possible, call do_idle with as high a tick count
 	// as reasonable when doing nothing.
 
-        if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->dir,ret,lastact)) return;		
+        if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->dir,ret,lastact)) return;
 
         do_idle(cn,TICKS);
 }

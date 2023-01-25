@@ -102,7 +102,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -122,7 +122,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -136,21 +136,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -160,7 +159,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -190,7 +189,7 @@ struct aristocrat_data
         int last_talk;
         int current_victim;
 	int amgivingback;
-};	
+};
 
 void aristocrat_driver(int cn,int ret,int lastact)
 {
@@ -208,7 +207,7 @@ void aristocrat_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -216,7 +215,7 @@ void aristocrat_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -301,14 +300,14 @@ void aristocrat_driver(int cn,int ret,int lastact)
 					destroy_item_byID(co,IID_STAFF_ARIKEY);
                                         ppd->aristocrat_state=8;
 					if (tmp==1 && (in=create_money_item(1000*100))) {
-						if (!give_char_item(co,in)) destroy_item(in);						
+						if (!give_char_item(co,in)) destroy_item(in);
 					}
 				} else {
 					say(cn,"Thou hast better use for this than I do. Well, if there is a use for it at all.");
                                         if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
                                         ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -339,7 +338,7 @@ struct yoatin_data
         int last_talk;
         int current_victim;
 	int amgivingback;
-};	
+};
 
 void yoatin_driver(int cn,int ret,int lastact)
 {
@@ -357,7 +356,7 @@ void yoatin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -365,7 +364,7 @@ void yoatin_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -381,7 +380,7 @@ void yoatin_driver(int cn,int ret,int lastact)
                         ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if (ppd) {
-                                switch(ppd->yoatin_state) {					
+                                switch(ppd->yoatin_state) {
 					case 0:         quiet_say(cn,"Greetings stranger!");
 							questlog_open(co,39);
 							ppd->yoatin_state++; didsay=1;
@@ -409,8 +408,8 @@ void yoatin_driver(int cn,int ret,int lastact)
                                                         break;
 					case 8:		break; // waiting for bear to die
 					case 9:		break; // all done
-					
-					
+
+
 				}
 				if (didsay) {
 					dat->last_talk=ticker;
@@ -428,7 +427,7 @@ void yoatin_driver(int cn,int ret,int lastact)
 				ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
                                 switch((didsay=analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co))) {
 					case 2:         if (ppd && ppd->yoatin_state<=8) { dat->last_talk=0; ppd->yoatin_state=0; }
-                                                        break;				
+                                                        break;
 					case 3:		if (ch[co].flags&CF_GOD) { say(cn,"reset done"); ppd->yoatin_state=0; }
 							break;
 				}
@@ -452,7 +451,7 @@ void yoatin_driver(int cn,int ret,int lastact)
 					questlog_done(co,39);
 					destroy_item_byID(co,IID_STAFF_BEARHEAD);
                                         if ((in=create_item("WS_Hunter_Belt"))) {
-						if (!give_char_item(co,in)) destroy_item(in);						
+						if (!give_char_item(co,in)) destroy_item(in);
 					}
                                         ppd->yoatin_state=9;
 				} else {
@@ -460,7 +459,7 @@ void yoatin_driver(int cn,int ret,int lastact)
                                         if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
                                         ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -491,7 +490,7 @@ void robberboss_dead(int cn,int co)
 	struct staffer_ppd *ppd;
 
 	if (!co) return;
-	
+
 	if (!(ch[co].flags&CF_PLAYER)) return;
 	if (!(ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd)))) return;
 
@@ -511,7 +510,7 @@ void robberboss_dead(int cn,int co)
 		destroy_item_byID(co,IID_STAFF_ROBBERKEY8);
 
 	}
-	
+
 }
 
 int it_driver(int nr,int in,int cn)

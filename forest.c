@@ -117,7 +117,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -137,7 +137,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -151,21 +151,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -175,7 +174,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -205,7 +204,7 @@ void imp_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -289,7 +288,7 @@ void imp_driver(int cn,int ret,int lastact)
 		}
 
 		if (msg->type==NT_SEEHIT) {
-			co=msg->dat2;			
+			co=msg->dat2;
 			if (co && (ch[co].flags&CF_PLAYER) && ch[co].hp<ch[co].value[1][V_HP]*POWERSCALE/2 && !RANDOM(4) && !has_spell(co,IDR_HEAL)) {
 				if (ch[cn].flags&CF_INVISIBLE) {
 					ch[cn].flags&=~CF_INVISIBLE;
@@ -320,16 +319,16 @@ void imp_driver(int cn,int ret,int lastact)
 			ch[cn].flags&=~CF_INVISIBLE;
 			set_sector(ch[cn].x,ch[cn].y);
 		}
-	}	
+	}
 
 	if (talkdir) turn(cn,talkdir);
 
 	if (spell_self_driver(cn)) return;
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -356,7 +355,7 @@ void william_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -475,7 +474,7 @@ void william_driver(int cn,int ret,int lastact)
 			if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 		}
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -502,7 +501,7 @@ void hermit_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -584,7 +583,7 @@ void hermit_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				// let it vanish, then
 				destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -597,9 +596,9 @@ void hermit_driver(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -620,7 +619,7 @@ void monster_dead(int cn,int co)
 		ppd->hermit_state=5;
 		log_char(co,LOG_SYSTEM,0,"Thou hast slain the spider queen.");
 	}
-	
+
 	if (ch[co].x>=182 && ch[co].y>=185 && ch[co].x<=192 && ch[co].y<=192) bit=8;
 
         if (hour==0 && bit && (in=ch[co].item[WN_RHAND]) && it[in].driver==0 && !(it[in].drdata[36]&bit)) {
@@ -636,7 +635,7 @@ void chest(int in,int cn)
 {
 	int in2;
 	struct area3_ppd *ppd;
-	
+
 	if (!cn) return;
 
 	if (ch[cn].citem) {
@@ -644,12 +643,12 @@ void chest(int in,int cn)
 		return;
 	}
 
-	if (it[in].drdata[0]==0) {	
+	if (it[in].drdata[0]==0) {
 		if (!has_item(cn,IID_AREA16_ROBBERKEY)) {
 			log_char(cn,LOG_SYSTEM,0,"The chest is locked and you don't have the right key.");
 			return;
 		}
-	
+
 		ppd=set_data(cn,DRD_AREA3_PPD,sizeof(struct area3_ppd));
 		if (!ppd || (ppd->imp_flags&1) || !(in2=create_money_item(9733))) {
 			log_char(cn,LOG_SYSTEM,0,"The chest is empty.");
@@ -661,7 +660,7 @@ void chest(int in,int cn)
 			log_char(cn,LOG_SYSTEM,0,"The chest is locked and you don't have the right key.");
 			return;
 		}
-	
+
 		ppd=set_data(cn,DRD_AREA3_PPD,sizeof(struct area3_ppd));
 		if (!ppd || (ppd->imp_flags&2) || !(in2=create_money_item(17587))) {
 			log_char(cn,LOG_SYSTEM,0,"The chest is empty.");
@@ -669,7 +668,7 @@ void chest(int in,int cn)
 		}
 		ppd->imp_flags|=2;
 	}
-	
+
 	if (ch[cn].flags&CF_PLAYER) dlog(cn,in2,"took from forest chest");
 	ch[cn].citem=in2;
 	it[in2].carried=cn;
@@ -691,7 +690,7 @@ int ch_driver(int nr,int cn,int ret,int lastact)
 
 int it_driver(int nr,int in,int cn)
 {
-	switch(nr) {		
+	switch(nr) {
                 case IDR_FORESTCHEST:	chest(in,cn); return 1;
 
                 default:		return 0;

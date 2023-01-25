@@ -127,7 +127,7 @@ struct story ruby2_story[]={
 	{4,	"Yes, but I can't get one. All I get is torches.",	0,		0,			{{"I'll get one for thee!",5},		       	{"Oh. Well, good luck.",20},			{NULL}}},
         {5,	"(Waiting for golden skull)",				SPEC_ITEM,	IID_AREA2_ZOMBIESKULL3,	{{NULL,6},			       	{NULL}}},
 	{6,	"My eternal thanks, %s.",				SPEC_SETBIT,	BIT_ZOMBIE,		{{NULL}}},
-	
+
 	{20,	"Get lost, %s.",					0,		0,	{{NULL}}},
 	{0,	NULL}
 };
@@ -159,7 +159,7 @@ struct story ruby6_story[]={
         {1,	"Thou don't happen to have a spare orange crystal, %s?",0,		0,			{{"Yes, as a matter of fact I do.",2},		{"No, but I'll get one for thee.",2},		{"No.",20},			{NULL}}},
         {2,	"(Waiting for orange crystal)",				SPEC_ITEM,	IID_AREA6_YELLOWCRYSTAL,{{NULL,3},			       	{NULL}}},
 	{3,	"Thank thee, %s.",					SPEC_SETBIT,	BIT_OCRYSTAL,		{{NULL}}},
-	
+
 	{20,	"Nevermind then, %s.",					0,		0,	{{NULL}}},
 	{0,	NULL}
 };
@@ -169,7 +169,7 @@ struct story ruby8_story[]={
         {1,	"I'm looking for a big red crystal, %s.",		0,		0,			{{"Here, take this one.",2},			{"I'll get one for thee.",2},			{"I don't care.",20},		{NULL}}},
         {2,	"(Waiting for big red crystal)",			SPEC_ITEM32,	IID_AREA8_REDCRYSTAL,	{{NULL,3},			       	{NULL}}},
 	{3,	"Thank thee, %s.",					SPEC_SETBIT,	BIT_RCRYSTAL,		{{NULL}}},
-	
+
 	{20,	"So? Leave me alone then, %s.",				0,		0,	{{NULL}}},
 	{0,	NULL}
 };
@@ -179,7 +179,7 @@ struct story ruby10_story[]={
         {1,	"I'm lost and cold, can you help me, %s?",		0,		0,			{{"Sure, this scroll will take you to a fire.",2},	{"I'll get a scroll to take you back to a fire.",2},	{"I don't care.",20},		{NULL}}},
         {2,	"(Waiting for fire scroll)",				SPEC_ITEMDRV,	55,			{{NULL,3},			       			{NULL}}},
 	{3,	"I thank thee, %s!",					SPEC_SETBIT,	BIT_FSCROLL,		{{NULL}}},
-	
+
 	{20,	"So? Leave me to freeze alone then, %s.",		0,		0,	{{NULL}}},
 	{0,	NULL}
 };
@@ -191,7 +191,7 @@ struct story ruby11_story[]={
 	{3,	"Yes. Islena is wearing them. Wouldst thou bring me one of them?",	0,		0,			{{"Yes, I will.",4},		{"No, sorry. I cannot help thee with that.",21},	{NULL}}},
         {4,	"(Waiting for Islena's ring)",						SPEC_ITEM,	IID_ISLENARING,		{{NULL,5},			{NULL}}},
 	{5,	"Oh, it's wonderful. Thank thee, %s, thank thee very much! ",		SPEC_SETBIT,	BIT_ISLENA,		{{NULL}}},
-	
+
 	{20,	"So? Well, it's thy choice, %s, but I think thou wilt regret this.",	0,		0,	{{NULL}}},
 	{21,	"Oh. Alright. I understand.",						0,		0,	{{NULL}}},
 	{0,	NULL}
@@ -202,7 +202,7 @@ struct story ruby12_story[]={
         {1,	"My torch is running out, couldst thou spare one?",	0,		0,			{{"Yes, certainly.",2},					{"Not right now, but I'll go get one for thee.",2},	{"I don't care.",20},		{NULL}}},
         {2,	"(Waiting for torch)",					SPEC_ITEMDRV,	12,			{{NULL,3},			       			{NULL}}},
 	{3,	"Oh, jolly good. Thanks, %s!",				SPEC_SETBIT,	BIT_TORCH,		{{NULL}}},
-	
+
 	{20,	"So? Well, I'll go in the dark then, %s.",		0,		0,	{{NULL}}},
 	{0,	NULL}
 };
@@ -212,7 +212,7 @@ struct story ruby15_story[]={
         {1,	"I am looking for Swamp Beast heads, thou dost not happen to have any, %s?",0,0,		{{"Here, I can spare one.",2},				{"Not right now, but I'll go get one for thee.",2},	{"No, and I don't care what thou wantst.",20},{NULL}}},
         {2,	"(Waiting for Swamp Beast head)",			SPEC_ITEM,	IID_AREA15_HEAD,	{{NULL,3},			       			{NULL}}},
 	{3,	"Ah, yes, that's it. Thanks, %s!",			SPEC_SETBIT,	BIT_SWAMP,		{{NULL}}},
-	
+
 	{20,	"So? I don't like thee either, %s.",			0,		0, 		     	{{NULL}}},
 	{0,	NULL}
 };
@@ -223,7 +223,7 @@ struct story ruby16_story[]={
 	{2,	"Well, I think it's right here, but my spade broke....",0,		0,			{{"Here, take my spade.",3},	{"I'll get a spade for thee, %s.",3},	{"That's too bad. Well, I must be going.",20},{NULL}}},
         {3,	"(Waiting for Spade)",					SPEC_ITEMDRV,	77,			{{NULL,4},			{NULL}}},
 	{4,	"Thanks, %s! *Starts digging*",				SPEC_SETBIT,	BIT_FOREST,		{{NULL}}},
-	
+
 	{20,	"Oh? *Sighs*",						0,		0,			{{NULL}}},
 	{0,	NULL}
 };
@@ -233,7 +233,7 @@ struct story ruby17_story[]={
         {1,	"I'm trying to get on the good side of the governor, and I thought I'd bring him some nice food as a gift. Dost thou, perchance, know what he likes to eat?",0,0,	{{"Apple pie.",3},{"Plum pie.",3},{"Strawberry pie.",2},{"Pear pie.",3},{NULL}}},
         {2,	"Ah. Good. Thanks, %s!",				SPEC_SETBIT,	BIT_GOVERNOR,		{{NULL}}},
 	{3,	"Ah. Good. Thanks, %s!",				SPEC_SETBIT,	BIT_WRONG1,		{{NULL}}},
-	
+
         {0,	NULL}
 };
 
@@ -246,13 +246,13 @@ struct sidestory_ppd
 	struct story_npc ruby5;
 	struct story_npc ruby6;
 	struct story_npc ruby8;
-	struct story_npc ruby10;	
+	struct story_npc ruby10;
 	struct story_npc ruby11;
 	struct story_npc ruby12;
 	struct story_npc ruby15;
 	struct story_npc ruby16;
 	struct story_npc ruby17;
-	struct story_npc ruby18;	
+	struct story_npc ruby18;
 };
 
 struct ruby_driver_data
@@ -304,11 +304,11 @@ int do_story(int cn,int co,struct sidestory_ppd *ppd,struct story_npc *me,struct
 				}
 				pos+=sprintf(buf+pos," ]"); // (state=%d, like=%d)",me->state,me->like);
 				me->last_say=realtime;
-				say(cn,buf);
+				say(cn,"%s",buf);
 				do_story_special(cn,co,ppd,me,story,n,story[n].opt);
 				return 1;
 			} else if (story[n].a[0].nextstate) {
-                                say(cn,buf);
+                                say(cn,"%s",buf);
 				do_story_special(cn,co,ppd,me,story,n,story[n].opt);
 
 				if (story[n].special!=SPEC_ITEM && story[n].special!=SPEC_ALCITEM && story[n].special!=SPEC_ITEM32 && story[n].special!=SPEC_ITEMDRV) {
@@ -321,10 +321,10 @@ int do_story(int cn,int co,struct sidestory_ppd *ppd,struct story_npc *me,struct
 				}
 			} else {
 				me->last_say=0x7fffffff;
-				say(cn,buf);
+				say(cn,"%s",buf);
 				do_story_special(cn,co,ppd,me,story,n,story[n].opt);
 				return 2;
-			}			
+			}
 		}
 	}
 	me->last_say=0x7fffffff;
@@ -387,7 +387,7 @@ int give_story(int cn,int co,struct sidestory_ppd *ppd,struct story_npc *me,stru
 			me->last_say=0;
 			return 1;
 		}
-		
+
 	}
 	return 0;
 }
@@ -403,7 +403,7 @@ static int find_weapon(int cn,int *pskill,int *plevel)
 		}
 	}
 	if (!skl) return 0;
-	
+
 	if (best<10) best=1;
 	else best=(best/10)*10;
 
@@ -435,20 +435,20 @@ int ruby_create_item(struct ruby_aston_npc *me)
 	if (!in) return 0;
 
 	it[in].sprite=sprite;
-	
+
         it[in].mod_index[0]=V_WEAPON;
 	it[in].mod_value[0]=dam+20+400+4;
-	
+
 	it[in].mod_index[1]=V_DEFENSE;
 	it[in].mod_value[1]=-4-1;
-	
+
 	it[in].flags|=flags|IF_WNRHAND|IF_NOENHANCE;
 
 	it[in].mod_index[2]=me->mod1;
 	it[in].mod_index[3]=me->mod2;
 	it[in].mod_value[2]=it[in].mod_value[3]=me->add;
 	it[in].value=100*25;
-	
+
 	set_item_requirements(in);
 	calculate_complexity(in);
 
@@ -464,7 +464,7 @@ int ruby_aston_char(int cn,int co,struct sidestory_ppd *ppd)
 	unsigned int bit;
 
         if (realtime-ppd->ruby3.last_say<7) return 0;
-	
+
 	if (realtime-ppd->ruby3.last_see>60*5) ppd->ruby3.state=0;
 	ppd->ruby3.last_see=realtime;
 
@@ -545,7 +545,7 @@ int ruby_aston_char(int cn,int co,struct sidestory_ppd *ppd)
 		case 11:	if (ppd->ruby3.skl<V_DAGGER || ppd->ruby3.skl>V_TWOHAND) { ppd->ruby3.state=0; break; }
 				if (ppd->ruby3.mod1<0 || ppd->ruby3.mod1>=V_MAX) { ppd->ruby3.state=0; break; }
 				if (ppd->ruby3.mod2<0 || ppd->ruby3.mod2>=V_MAX) { ppd->ruby3.state=0; break; }
-				
+
 				if (ch[co].level<14) val=3;
                                 else if (ch[co].level<20) val=4;
 				else if (ch[co].level<23) val=5;
@@ -567,7 +567,7 @@ int ruby_aston_char(int cn,int co,struct sidestory_ppd *ppd)
 				if (!(ch[co].flags&CF_ARCH)) val=min(val,9);
 
 				ppd->ruby3.add=min(val,bitvalue*20/260);
-				
+
 				if (ppd->ruby3.skl==V_HAND) quiet_say(cn,"I have a pair of gloves, with %s+%d and %s+%d. [ °c4That'd be great!°c0 / °c4Uh, no, but thanks anyway.°c0 ]",skill[ppd->ruby3.mod1].name,ppd->ruby3.add,skill[ppd->ruby3.mod2].name,ppd->ruby3.add);
 				else if (ppd->ruby3.skl==V_TWOHAND) quiet_say(cn,"I have a two-handed sword with %s+%d and %s+%d. [ °c4That'd be great!°c0 / °c4Uh, no, but thanks anyway.°c0 ]",skill[ppd->ruby3.mod1].name,ppd->ruby3.add,skill[ppd->ruby3.mod2].name,ppd->ruby3.add);
 				else quiet_say(cn,"I have a %s with with %s+%d and %s+%d. [ °c4That'd be great!°c0 / °c4Uh, no, but thanks anyway.°c0 ]",skill[ppd->ruby3.skl].name,skill[ppd->ruby3.mod1].name,ppd->ruby3.add,skill[ppd->ruby3.mod2].name,ppd->ruby3.add);
@@ -604,7 +604,7 @@ int ruby_aston_char(int cn,int co,struct sidestory_ppd *ppd)
 				bzero(&ppd->ruby17,sizeof(struct story_npc));
 				bzero(&ppd->ruby18,sizeof(struct story_npc));
 				ppd->bits=0;
-				
+
 				log_char(co,LOG_SYSTEM,0,"You sense that %s has forgotten all about you...",ch[cn].name);
 				ppd->ruby3.state=0;
 				didsay=1;
@@ -626,14 +626,14 @@ void ruby_aston_text(int cn,int co,struct sidestory_ppd *ppd,char *ptr)
 		ppd->ruby3.state=0; ppd->ruby3.last_say=0;
 		return;
 	}
-	
+
 	if (ppd->ruby3.skl<V_DAGGER || ppd->ruby3.skl>V_TWOHAND) return;
 
         if (ppd->ruby3.state==7 && strcasestr(ptr,"tactics")) { ppd->ruby3.mod1=V_TACTICS; ppd->ruby3.state=8; ppd->ruby3.last_say=0; return; }
 	if (ppd->ruby3.state==7 && strcasestr(ptr,"bless")) { ppd->ruby3.mod1=V_BLESS; ppd->ruby3.state=8; ppd->ruby3.last_say=0; return; }
 	if (ppd->ruby3.state==7 && strcasestr(ptr,skill[ppd->ruby3.skl].name)) { ppd->ruby3.mod1=ppd->ruby3.skl; ppd->ruby3.state=8; ppd->ruby3.last_say=0; return; }
-	
-	if (ppd->ruby3.state==9 && strcasestr(ptr,"wisdom")) { ppd->ruby3.mod2=V_WIS; ppd->ruby3.state=10; ppd->ruby3.last_say=0; return; }	
+
+	if (ppd->ruby3.state==9 && strcasestr(ptr,"wisdom")) { ppd->ruby3.mod2=V_WIS; ppd->ruby3.state=10; ppd->ruby3.last_say=0; return; }
 	if (ppd->ruby3.state==9 && strcasestr(ptr,"intuition")) { ppd->ruby3.mod2=V_INT; ppd->ruby3.state=10; ppd->ruby3.last_say=0; return; }
 	if (ppd->ruby3.state==9 && strcasestr(ptr,"agility")) { ppd->ruby3.mod2=V_AGI; ppd->ruby3.state=10; ppd->ruby3.last_say=0; return; }
 	if (ppd->ruby3.state==9 && strcasestr(ptr,"strength")) { ppd->ruby3.mod2=V_STR; ppd->ruby3.state=10; ppd->ruby3.last_say=0; return; }
@@ -719,9 +719,9 @@ void ruby_driver(int cn,int retval,int lastact)
 				}
 
                         }
-			
+
 		}
-		
+
 		if (msg->type==NT_GIVE) {
 			co=msg->dat1;
 
@@ -743,7 +743,7 @@ void ruby_driver(int cn,int retval,int lastact)
 						default:	ret=0; break;
 					}
 				} else ret=0;
-				
+
 				ch[cn].citem=0;
 				if (ret || !give_char_item(co,in)) {
 					destroy_item(in);
@@ -776,9 +776,9 @@ void ruby_driver(int cn,int retval,int lastact)
 		co=dat->last_char;
 
                 dir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
-	
+
 		if (tile_char_dist(cn,co)>2 && move_driver(cn,ch[co].x,ch[co].y,2)) return;
-		turn(cn,dir);		
+		turn(cn,dir);
 	} else if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,retval,lastact)) return;
 
         do_idle(cn,TICKS/2);

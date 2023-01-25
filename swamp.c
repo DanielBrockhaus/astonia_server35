@@ -105,7 +105,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -125,7 +125,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -139,21 +139,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -163,7 +162,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -201,7 +200,7 @@ void swamparm(int in,int cn)
 			if ((co=map[it[in].x-2+it[in].y*MAXMAP].ch)) hurt(co,10*POWERSCALE,0,1,50,90);
 		}
 		if (it[in].drdata[0]>15) { it[in].drdata[0]=0; it[in].sprite-=16; }
-		set_sector(it[in].x,it[in].y);		
+		set_sector(it[in].x,it[in].y);
 	}
 	call_item(it[in].driver,in,0,ticker+1);
 }
@@ -214,14 +213,14 @@ void swampwhisp(int in,int cn)
 {
 	int x,y,dx,dy;
 
-	if (cn) return;	
+	if (cn) return;
 
 	x=it[in].x; y=it[in].y;
 
 	if (!it[in].drdata[1]) {
 		it[in].drdata[1]=x;
 		it[in].drdata[2]=y;
-		it[in].drdata[3]=DX_DOWN;		
+		it[in].drdata[3]=DX_DOWN;
 	}
 
 	dx=it[in].x-it[in].drdata[1];
@@ -243,7 +242,7 @@ void swampwhisp(int in,int cn)
 					}
 				}
 				break;
-		
+
 		case DX_UP:	it[in].drdata[0]--;
                                 if (it[in].drdata[0]>15) it[in].drdata[0]=15;
 				if (it[in].drdata[0]==2) {
@@ -272,7 +271,7 @@ void swampwhisp(int in,int cn)
 					}
 				}
 				break;
-		
+
 		case DX_RIGHT:	it[in].drdata[0]--;
                                 if (it[in].drdata[0]>15) it[in].drdata[0]=15;
 				if (it[in].drdata[0]==6) {
@@ -290,7 +289,7 @@ void swampwhisp(int in,int cn)
 				it[in].drdata[0]--;
                                 if (it[in].drdata[0]>15) it[in].drdata[0]=15;
 				if (dx<2 && !RANDOM(10)) it[in].drdata[3]=DX_RIGHT;
-				if (dy<2 && !RANDOM(10)) it[in].drdata[3]=DX_DOWN;				
+				if (dy<2 && !RANDOM(10)) it[in].drdata[3]=DX_DOWN;
 				break;
 		case DXX_CIRCLE_RIGHT:
 				it[in].drdata[0]++;
@@ -387,20 +386,20 @@ void swampspawn(int in,int cn)
 		if (it[in].drdata[2]>stop) {
                         it[in].drdata[2]=0;
 			it[in].sprite=0;
-			
+
 			if ((co=create_char(name[it[in].drdata[0]],0))) {
 				if (set_char(co,it[in].x,it[in].y,0)) {
 					ch[co].tmpx=ch[co].x;
 					ch[co].tmpy=ch[co].y;
-	
+
 					update_char(co);
-				
+
 					ch[co].hp=ch[co].value[0][V_HP]*POWERSCALE;
 					ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
 					ch[co].mana=ch[co].value[0][V_MANA]*POWERSCALE;
-				
+
 					ch[co].dir=DX_RIGHTDOWN;
-	
+
 					*(unsigned int*)(it[in].drdata+4)=co;
 					*(unsigned int*)(it[in].drdata+8)=ch[co].serial;
 					*(unsigned int*)(it[in].drdata+12)=ticker;
@@ -411,7 +410,7 @@ void swampspawn(int in,int cn)
 		}
 		set_sector(it[in].x,it[in].y);
                 call_item(it[in].driver,in,0,ticker+3);
-	} else call_item(it[in].driver,in,0,ticker+TICKS);	
+	} else call_item(it[in].driver,in,0,ticker+TICKS);
 }
 
 struct clara_driver_data
@@ -437,7 +436,7 @@ void clara_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -563,9 +562,9 @@ void clara_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -581,7 +580,7 @@ void monster_dead(int cn,int co)
 		ppd->clara_state=14;
 		log_char(co,LOG_SYSTEM,0,"Well done. Clara will be proud of thee!");
 	}
-	
+
 	if (ch[co].x>=142 && ch[co].y>=83 && ch[co].x<=153 && ch[co].y<=92) bit=1;
 	if (ch[co].x>=34 && ch[co].y>=150 && ch[co].x<=44 && ch[co].y<=160) bit=2;
 	if (ch[co].x>=183 && ch[co].y>=154 && ch[co].x<=192 && ch[co].y<=162) bit=4;

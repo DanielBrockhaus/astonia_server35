@@ -101,7 +101,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -121,7 +121,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -135,21 +135,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -161,7 +160,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -219,7 +218,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -239,7 +238,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 		if (msg->type==NT_TEXT) {
 			analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,msg->dat3);
 
-                        if ((msg->dat1==1 || msg->dat1==2) && (co=msg->dat3)!=cn) {	// talk, and not our talk				
+                        if ((msg->dat1==1 || msg->dat1==2) && (co=msg->dat3)!=cn) {	// talk, and not our talk
                                 if ((ptr=strcasestr((char*)msg->dat2,"found:"))) {
 					if (!get_char_clan(co) && !get_char_club(co)) {
 						if (ch[co].gold>=500*100) {
@@ -250,7 +249,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 								name[n]=*ptr++;
 							}
 							name[n]=0;
-							
+
 							if ((n=create_club(name))) {
 								take_money(co,500*100);
 								ch[co].clan=n+CLUBOFFSET;
@@ -305,7 +304,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 							dat->accept_clan=0;
 							dat->join[0]=0;
 						}
-						
+
 					}
 				}
 				if ((ptr=strcasestr((char*)msg->dat2,"leave!"))) {
@@ -327,7 +326,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 							tmp[n]=*ptr++;
 						}
 						tmp[n]=0;
-						
+
 						rank=atoi(ptr);
 
 						if (rank<0 || rank>1) {
@@ -371,7 +370,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 							tmp[n]=*ptr++;
 						}
 						tmp[n]=0;
-						
+
                                                 for (cc=getfirst_char(); cc; cc=getnext_char(cc)) {
 							if (!strcasecmp(tmp,ch[cc].name) && (ch[cc].flags&CF_PLAYER)) break;
 						}
@@ -427,7 +426,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 						} else quiet_say(cn,"The club does not have that much gold, %s.",ch[co].name);
 					}
 				}
-			}			
+			}
 		}
 
 		// got an item?
@@ -437,7 +436,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				// try to give it back
                                 if (give_char_item(cn,co)) return;
-				
+
 				// didnt work, let it vanish, then
 				destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -463,7 +462,7 @@ void clubmaster_driver(int cn,int ret,int lastact)
 			case 7:		murmur(cn,"Gold and Silver, Silver and Gold."); break;
 			default:	break;
 		}
-		
+
 		dat->last_talk=ticker;
 	}
 

@@ -123,10 +123,10 @@ void lab3_passguard_driver(int cn, int ret, int lastact)
 
 			// dont talk to other NPCs
 			if (!(ch[co].flags&CF_PLAYER)) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -215,7 +215,7 @@ void lab3_passguard_driver(int cn, int ret, int lastact)
         // turn to the one he's talking with
         if (talkdir) turn(cn,talkdir);
         if (dat->last_talk+TICKS*5<ticker) {
-                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
         }
 
         do_idle(cn,TICKS);
@@ -271,13 +271,13 @@ void lab3_prisoner_driver(int cn, int ret, int lastact)
 
 			// dont talk to other NPCs
 			if (!(ch[co].flags&CF_PLAYER)) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // only talk when the old sentence is read
 			if (ticker<dat->next_talk) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -389,7 +389,7 @@ void lab3_prisoner_driver(int cn, int ret, int lastact)
         if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+                if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
         }
 
         do_idle(cn,TICKS);
@@ -524,7 +524,7 @@ void lab3_plant(int in, int cn)
                         else if (drdata[1]/2==2) in2=create_item("lab3_yellowberry_two");
                         else if (drdata[1]/2==1) in2=create_item("lab3_yellowberry_one");
                         else { log_char(cn,LOG_SYSTEM,0,"At the moment this plant has no berries to pick!"); return; }
-			
+
                         // the server calls the item to init it, but then it will start to rot immediately, so we increase the freshness by one
                         it[in2].drdata[2]++;
                         it[in2].sprite--;
@@ -534,7 +534,7 @@ void lab3_plant(int in, int cn)
                         else if (drdata[1]/2==2) in2=create_item("lab3_whiteberry_two");
                         else if (drdata[1]/2==1) in2=create_item("lab3_whiteberry_one");
                         else { log_char(cn,LOG_SYSTEM,0,"At the moment this plant has no berries to pick!"); return; }
-			
+
                         // the server calls the item to init it, but then it will start to rot immediately, so we increase the freshness by one
                         it[in2].drdata[2]++;
                         it[in2].sprite--;
@@ -542,7 +542,7 @@ void lab3_plant(int in, int cn)
                 else {
                         if (drdata[1]/2==1) in2=create_item("lab3_brownberry");
                         else { log_char(cn,LOG_SYSTEM,0,"At the moment this plant has no berries to pick!"); return; }
-			
+
                 }
                 if (!in2) return;
 
@@ -683,8 +683,8 @@ void lab3_init_password(struct lab_ppd *ppd)
         if (*ppd->password1) return;
 
         ho=RANDOM(sizeof(password)/(8*2))*2;
-        sprintf(ppd->password1,password[ho]);
-        sprintf(ppd->password2,password[ho+1]);
+        sprintf(ppd->password1,"%s",password[ho]);
+        sprintf(ppd->password2,"%s",password[ho+1]);
 }
 
 void lab3_special(int in, int cn)

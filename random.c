@@ -289,7 +289,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -309,7 +309,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -323,21 +323,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -347,7 +346,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -356,7 +355,7 @@ struct cell
 {
         int t,l;
 	int v;
-	
+
 	int special;
 };
 
@@ -383,7 +382,7 @@ int build_enemy(int x,int y,int level)
 		switch(n) {
 			case V_HP:		val=max(10,base-15); break;
 			case V_ENDURANCE:	val=max(10,base-15); break;
-			
+
 			case V_WIS:		val=max(10,base-25); break;
 			case V_INT:		val=max(10,base-5); break;
 			case V_AGI:		val=max(10,base-5); break;
@@ -393,7 +392,7 @@ int build_enemy(int x,int y,int level)
                         case V_ATTACK:		val=max(1,base); break;
 			case V_PARRY:		val=max(1,base); break;
 			case V_IMMUNITY:	val=max(1,base); break;
-			
+
 			case V_TACTICS:		val=max(1,base-5); break;
 			case V_WARCRY:		val=max(1,base-15); break;
 			case V_SURROUND:	val=max(1,base-20); break;
@@ -410,7 +409,7 @@ int build_enemy(int x,int y,int level)
         ch[cn].x=ch[cn].tmpx=x;
 	ch[cn].y=ch[cn].tmpy=y;
 	ch[cn].dir=DX_RIGHTDOWN;
-	
+
 	ch[cn].exp=ch[cn].exp_used=calc_exp(cn);
 	ch[cn].level=exp2level(ch[cn].exp);
 	ch[cn].class=ch[cn].level+500;
@@ -421,10 +420,10 @@ int build_enemy(int x,int y,int level)
 	it[in].carried=cn;
 	it[in].drdata[0]=level;
 	ch[cn].item[30]=in;
-	
+
         // create special equipment bonus to equal that of the average player
 	in=create_item("equip1");
-	
+
         for (n=0; n<5; n++) it[in].mod_value[n]=1+level/3;
 //	for (n=0; n<5; n++) it[in].mod_value[n]=(level*level/125+level)/2-4;
 	ch[cn].item[12]=in; it[in].carried=cn;
@@ -443,7 +442,7 @@ int build_enemy(int x,int y,int level)
 	//it[in].mod_value[0]=17*20;
 
         update_char(cn);
-	
+
 	ch[cn].hp=ch[cn].value[0][V_HP]*POWERSCALE;
 	ch[cn].endurance=ch[cn].value[0][V_ENDURANCE]*POWERSCALE;
 	ch[cn].mana=ch[cn].value[0][V_MANA]*POWERSCALE;
@@ -529,13 +528,13 @@ int build_gastrap1(int x,int y,int level)
 	if (!set_item_map(in,x+1,y)) {
 		destroy_item(in);
 	}
-	
+
 	in=create_item("gastrap");
 	it[in].drdata[0]=level;
 	if (!set_item_map(in,x+1,y+1)) {
 		destroy_item(in);
 	}
-	
+
 	map[x+1+y*MAXMAP].fsprite=15291;
 
 	//xlog("trap1 at %d,%d",x,y);
@@ -552,13 +551,13 @@ int build_gastrap2(int x,int y,int level)
 	if (!set_item_map(in,x,y+1)) {
 		destroy_item(in);
 	}
-	
+
 	in=create_item("gastrap");
 	it[in].drdata[0]=level;
 	if (!set_item_map(in,x+1,y+1)) {
 		destroy_item(in);
 	}
-	
+
 	map[x+(y+1)*MAXMAP].fsprite=15300;
 
 	//xlog("trap2 at %d,%d",x,y);
@@ -572,7 +571,7 @@ int build_trapdoor1(int x,int y,int level)
 
 	in=create_item("trapdoor");
         if (!set_item_map(in,x+1,y+1)) { destroy_item(in); return 0; }
-	
+
         map[x+1+(y+0)*MAXMAP].flags|=MF_MOVEBLOCK;
 	map[x+1+(y+2)*MAXMAP].flags|=MF_MOVEBLOCK;
 
@@ -587,7 +586,7 @@ int build_trapdoor2(int x,int y,int level)
 
 	in=create_item("trapdoor2");
         if (!set_item_map(in,x+1,y+1)) { destroy_item(in); return 0; }
-	
+
         map[x+0+(y+1)*MAXMAP].flags|=MF_MOVEBLOCK;
 	map[x+2+(y+1)*MAXMAP].flags|=MF_MOVEBLOCK;
 
@@ -620,7 +619,7 @@ void build_empty(int x,int y)
 	}
 
         map[m].flags=MF_INDOORS;
-	map[m].fsprite=0;	
+	map[m].fsprite=0;
 	map[m].gsprite=15237+(x%3)+(y%3)*3;
 	map[m].dlight=0;
 	map[m].light=0;
@@ -655,9 +654,9 @@ void build_remove(int x,int y)
 			    !drop_item(in,250,235) &&
 			    !drop_item(in,250,230)) {
 				dlog(0,in,"RD: Could not teleport body %s (%d). Destroyed.",it[in].name,in);
-				destroy_item(in);				
+				destroy_item(in);
 			} else set_expire_body(in,PLAYER_BODY_DECAY_TIME);
-		} else if (it[in].flags&IF_TAKE) {		
+		} else if (it[in].flags&IF_TAKE) {
 			//xlog("remove: destroying %s",it[in].name);
 			remove_item_map(in);
 			destroy_item(in);
@@ -781,7 +780,7 @@ void build_cell(int cx,int cy,struct cell *cell)
 		build_wall(cx*4+xoff,cy*4+1+yoff);
 		build_wall(cx*4+xoff,cy*4+2+yoff);
 		build_wall(cx*4+xoff,cy*4+3+yoff);
-	}	
+	}
 
 	switch(cell->special) {
 		case 3:		build_enemy(cx*4+xoff+2,cy*4+yoff+2,maze_level); break;
@@ -801,7 +800,7 @@ int special_fill(struct cell *cell,int nr,int val)
 	int tmp,best=999;
 
 	if (cell[nr].special==999) return val;
-	
+
 	if (cell[nr].special && cell[nr].special<=val) return 0;
 
 	cell[nr].special=val;
@@ -825,7 +824,7 @@ void build_maze(struct cell *cell)
 		cell[m].l=1;
 	}
 	stack[ptr++]=RANDOM(m);
-	
+
 	while (visited<xsize*ysize) {
 		if (ptr==0) { elog("ran out of stack (%d of %d)",visited,xsize*ysize); break; }
                 n=stack[--ptr];
@@ -850,7 +849,7 @@ void build_maze(struct cell *cell)
 
 		if (n%xsize>0 && !cell[n-1].v) {
 			if (opt) { opt--; }
-			else {				
+			else {
 				cell[n].l=0;
                                 n=n-1;
 				cell[n].v=1; visited++;
@@ -910,7 +909,7 @@ void show_maze(struct cell *cell)
 		printf("!\n");
 	}
 	for (x=0; x<xsize; x++) printf("====");
-	printf("!\n");	
+	printf("!\n");
 }
 
 int create_maze(int base,int level,int show)
@@ -964,7 +963,7 @@ int create_maze(int base,int level,int show)
 		m=RANDOM(xsize*ysize);
 		if (m==xsize*ysize-ysize) continue;
 		if (cell[m].special) continue;
-		
+
 		if (cell[m].t) cell[m].special=5;
 		else if (cell[m].l) cell[m].special=6;
 		else continue;
@@ -1003,7 +1002,7 @@ int create_maze(int base,int level,int show)
 	}
 	if (panic<0) { xfree(cell); return 0; }
 
-        for (m=0; m<xsize*ysize; m++) build_cell(m%xsize,m/xsize,cell+m);		
+        for (m=0; m<xsize*ysize; m++) build_cell(m%xsize,m/xsize,cell+m);
 
 	if (show) show_maze(cell);
 
@@ -1065,8 +1064,8 @@ void create_dungeon(int cn,int co,int level,struct master_data *dat)
 
 	for (n=0; n<16; n++) {
                 if (dat->created[n]) tmp=ticker-dat->created[n]; else tmp=max(DUNGEONTIME,ticker-dat->created[n]);
-		if (tmp>best) { best=tmp; bestn=n; }		
-		if (!dat->created[n]) free_d++;		
+		if (tmp>best) { best=tmp; bestn=n; }
+		if (!dat->created[n]) free_d++;
 	}
 	if (!(ch[co].flags&CF_PAID) && free_d<3) {
 		say(cn,"Sorry, the remaining dungeons are reserved for paying players.");
@@ -1109,7 +1108,7 @@ void enter_dungeon(int cn,int co,int target,struct master_data *dat)
 		say(cn,"Sorry, this dungeon does not exist.");
 		return;
 	}
-	
+
         tmp=DUNGEONTIME-ticker+dat->created[target];
 	if (tmp<TICKS*60) {
 		say(cn,"Sorry, this dungeon is about to collapse.");
@@ -1120,7 +1119,7 @@ void enter_dungeon(int cn,int co,int target,struct master_data *dat)
 		say(cn,"Sorry, this dungeon was created for levels %d to %d.",dat->ownerlevel[target]-3,dat->ownerlevel[target]+3);
 		return;
 	}
-	say(cn,"This dungeon will collapse in %.2f minutes,",tmp/(TICKS*60.0));	
+	say(cn,"This dungeon will collapse in %.2f minutes,",tmp/(TICKS*60.0));
 
 	teleport_char_driver(co,(target%4)*61+4,(target/4)*61+60);
 }
@@ -1153,7 +1152,7 @@ void warn_dungeon(int nr,int left)
 			if (((ch[co].x-2)/61)+((ch[co].y-2)/61)*4==nr) {
 				log_char(co,LOG_SYSTEM,0,"This dungeon will collapse in %.2f minutes.",left/(TICKS*60.0));
 			}
-		}		
+		}
 	}
 }
 
@@ -1205,7 +1204,7 @@ void randommaster(int cn,int ret,int lastact)
 			co=msg->dat3;
 
 			if (!(ch[co].flags&CF_PLAYER)) { remove_message(cn,msg); continue; }
-			
+
 			switch(analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co)) {
 				case 2:		say(cn,"Use: 'create <nr>' to create a dungeon of level <nr>, 'enter <nr>' to enter dungeon <nr>, 'list' to get a listing of all dungeons or 'destroy <nr>' to destroy the dungeon <nr> you have created.");
 						break;
@@ -1258,7 +1257,7 @@ void randommaster(int cn,int ret,int lastact)
 
                         // let it vanish, then
 			destroy_item(ch[cn].citem);
-			ch[cn].citem=0;			
+			ch[cn].citem=0;
 		}
 
 		if (msg->type==NT_NPC && msg->dat1==NTID_DUNGEON) {
@@ -1280,9 +1279,9 @@ void randommaster(int cn,int ret,int lastact)
 
 	for (n=0; n<16; n++) {
 		if (!dat->created[n]) continue;
-		
+
 		tmp=ticker-dat->created[n];
-		
+
 		if (tmp>DUNGEONTIME) {
 			destroy_dungeon(n);
                         dat->level[n]=0;
@@ -1290,10 +1289,10 @@ void randommaster(int cn,int ret,int lastact)
 			dat->warning[n]=0;
 			dat->owner[n]=0;
 		}
-		
+
 		if (tmp>dat->warning[n]) {
 			warn_dungeon(n,DUNGEONTIME-tmp);
-			dat->warning[n]+=TICKS*60*5;			
+			dat->warning[n]+=TICKS*60*5;
 		}
 	}
 
@@ -1331,7 +1330,7 @@ int shrine_check(int cn,int nr,struct shrine_ppd *ppd)
 void shrine_set(int nr,struct shrine_ppd *ppd)
 {
 	int i,bit;
-	
+
 	if (nr<0 || nr>=MAXSHRINE) {
 		elog("Bug #2116c.");
 		return;
@@ -1370,7 +1369,7 @@ void shrine_bribes(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 		return;
 	}
         log_char(cn,LOG_SYSTEM,0,"You feel a hand reach into your pocket and touch your purse. Shocked, you reach for your purse and find it %sempty.",want<val ? "almost " : "");
-	
+
 	val=min(val,want);
 
 	ch[cn].gold-=val;
@@ -1432,7 +1431,7 @@ void shrine_welding(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 	}
 
         for (n=cnt=0; n<12; n++) {
-                if ((tmp=ch[cn].item[n]) && can_give_mod(tmp)) cnt++;		
+                if ((tmp=ch[cn].item[n]) && can_give_mod(tmp)) cnt++;
 	}
 	if (!cnt) {
 		log_char(cn,LOG_SYSTEM,0,"You feel a cold hand touch your equipment. After it has touched all your items, it leaves with a laugh of contempt.");
@@ -1443,7 +1442,7 @@ void shrine_welding(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 
 	for (n=0; n<12; n++) {
                 if ((tmp=ch[cn].item[n]) && (in2=can_give_mod(tmp)) && !cnt--) break;
-                if (cnt<0) break;		
+                if (cnt<0) break;
 	}
 
         for (n=cnt=0; n<12; n++) {
@@ -1462,7 +1461,7 @@ void shrine_welding(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 
         dlog(cn,in1,"Used shrine of welding (lvl %d): Welding %s (%d) with %s (%d)(1)",level,it[in1].name,in1,it[in2].name,in2);
 	dlog(cn,in2,"Used shrine of welding (lvl %d): Welding %s (%d) with %s (%d)(2)",level,it[in1].name,in1,it[in2].name,in2);
-	
+
 	log_char(cn,LOG_SYSTEM,0,"You feel a burning hand touch your %s and your %s.",it[in1].name,it[in2].name);
 
 	n=m=0;
@@ -1502,7 +1501,7 @@ void shrine_welding(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 	tmp=it[in1].complexity;
 	it[in1].complexity=it[in2].complexity;
 	it[in2].complexity=tmp;
-	
+
 	tmp=it[in1].quality;
 	it[in1].quality=it[in2].quality;
 	it[in2].quality=tmp;
@@ -1510,7 +1509,7 @@ void shrine_welding(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 	tmp=it[in1].value;
 	it[in1].value=it[in2].value;
 	it[in2].value=tmp;
-	
+
         set_item_requirements(in1);
 	set_item_name(in1);
         set_item_requirements(in2);
@@ -1582,7 +1581,7 @@ void shrine_vitality(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 		cost+=raise_cost(v,ch[cn].value[1][v]+n);
 
 	dlog(cn,0,"Used shrine of vitality (%d %s, %d exp, lvl %d)",cnt,skill[v].name,cost,level);
-	
+
         ch[cn].value[1][v]+=cnt;
 	ch[cn].exp_used+=cost;
 	give_exp(cn,cost);
@@ -1632,7 +1631,7 @@ void shrine_death(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 	sendquestlog(cn,ch[cn].player);
 
 	dlog(cn,0,"Used shrine of death (lvl %d)",level);
-	
+
         log_char(cn,LOG_SYSTEM,0,"You hear a manical laugh.");
 	kill_char(cn,0);
 }
@@ -1683,7 +1682,7 @@ void shrine_jobless(int in,int cn,int nr,int level,struct shrine_ppd *ppd)
 	int n;
 
 	for (n=0; n<P_MAX; n++) {
-		if (ch[cn].prof[n]) break;		
+		if (ch[cn].prof[n]) break;
 	}
 	if (n==P_MAX) {
 		log_char(cn,LOG_SYSTEM,0,"A bored voice says: 'Thou art jobless already.'");
@@ -1826,7 +1825,7 @@ void randomshrine(int in,int cn)
 		case 81:        if (shrine_check(cn,it[in].drdata[0],ppd))
 				    shrine_welding(in,cn,it[in].drdata[0],it[in].drdata[1],ppd);
 				return;
-		case 82:	
+		case 82:
 		case 83:
 		case 84:
 		case 85:
@@ -1971,7 +1970,7 @@ void randomshrine(int in,int cn)
 		case 224:
 		case 225:
 		case 226:
-		case 227:	
+		case 227:
 		case 228:
 		case 229:
 		case 230:
@@ -2064,7 +2063,7 @@ void trapdoor(int in,int cn)
 		}
 
 		log_char(cn,LOG_SYSTEM,0,"You'd need something like a hard stick to lock the door.");
-		
+
 		return;
 	}
 	if (it[in].drdata[0]!=1) return;	// closed or blocked

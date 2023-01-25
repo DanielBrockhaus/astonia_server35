@@ -109,7 +109,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -129,7 +129,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -143,21 +143,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -167,7 +166,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -262,7 +261,7 @@ void warpteleport_driver(int in,int cn)
 	}
 
         target=(it[in].drdata[0]-1)*5+(it[in2].drdata[0]-1);
-	
+
 	//log_char(cn,LOG_SYSTEM,0,"target=%d",target);
 	if (teleport_char_driver(cn,tl[target].x,tl[target].y)) {
 		ch[cn].citem=0; ch[cn].flags|=CF_ITEMS;
@@ -344,16 +343,16 @@ void warpbonus_driver(int in,int cn)
 		if (ppd->base>139) return;
 	} else if (!ppd->nostepexp) give_exp_bonus(cn,level_value(level)/70);
 
-	log_char(cn,LOG_SYSTEM,0,"You are at level %d, and you have %d of %d points.",(ppd->base-35)/5,ppd->points,ppd->base/4);	
+	log_char(cn,LOG_SYSTEM,0,"You are at level %d, and you have %d of %d points.",(ppd->base-35)/5,ppd->points,ppd->base/4);
 }
 
 void warpkeyspawn_driver(int in,int cn)
 {
 	int in2;
         char buf[80];
-	
+
 	if (!cn) return;
-	
+
 	if (ch[cn].citem) {
 		log_char(cn,LOG_SYSTEM,0,"Please empty your hand (mouse cursor) first.");
 		return;
@@ -370,7 +369,7 @@ void warpkeyspawn_driver(int in,int cn)
 	ch[cn].citem=in2;
 	it[in2].carried=cn;
 	ch[cn].flags|=CF_ITEMS;
-	log_char(cn,LOG_SYSTEM,0,"You got a glowing half sphere.");	
+	log_char(cn,LOG_SYSTEM,0,"You got a glowing half sphere.");
 }
 
 void warped_raise(int cn,int base)
@@ -384,7 +383,7 @@ void warped_raise(int cn,int base)
 		switch(n) {
 			case V_HP:		val=max(10,base-(base/4)); break;
 			case V_ENDURANCE:	val=max(10,base-(base/4)); break;
-			
+
 			case V_WIS:		val=max(10,base-(base/5)); break;
 			case V_INT:		val=max(10,base-(base/10)); break;
 			case V_AGI:		val=max(10,base-(base/10)); break;
@@ -394,7 +393,7 @@ void warped_raise(int cn,int base)
 			case V_ATTACK:		val=max(1,base); break;
 			case V_PARRY:		val=max(1,base); break;
 			case V_IMMUNITY:	val=max(1,base); break;
-			
+
 			case V_TACTICS:		val=max(1,base-5); break;
 			case V_WARCRY:		val=max(1,base); break;
 			case V_SURROUND:	val=max(1,base-20); break;
@@ -429,7 +428,7 @@ void warped_raise(int cn,int base)
 	ch[cn].item[15]=in; it[in].carried=cn;
 
 	in=create_item("weapon_spell_med");
-	ch[cn].item[16]=in; it[in].carried=cn;	
+	ch[cn].item[16]=in; it[in].carried=cn;
 }
 
 int warptrialdoor_driver(int in,int cn)
@@ -444,7 +443,7 @@ int warptrialdoor_driver(int in,int cn)
 
         if (!it[in].drdata[2]) {
 		xs=xe=ys=ye=in2=0;
-	
+
                 for (x=it[in].x+1,y=it[in].y; x<it[in].x+15; x++) {
                         if (map[x+y*MAXMAP].it && it[map[x+y*MAXMAP].it].driver==IDR_WARPTRIALDOOR) {
 				in2=map[x+y*MAXMAP].it;
@@ -468,7 +467,7 @@ int warptrialdoor_driver(int in,int cn)
 					in2=map[x+y*MAXMAP].it;
 					xe=it[in].x;
 					xs=it[in2].x;
-	
+
 					for (x=it[in].x-1,y=it[in].y; y<it[in].y+15; y++) {
 						if (map[x+y*MAXMAP].flags&MF_MOVEBLOCK) { ye=y; break; }
 					}
@@ -487,7 +486,7 @@ int warptrialdoor_driver(int in,int cn)
 					in2=map[x+y*MAXMAP].it;
 					ys=it[in].y;
 					ye=it[in2].y;
-	
+
 					for (x=it[in].x,y=it[in].y+1; x<it[in].x+15; x++) {
 						if (map[x+y*MAXMAP].flags&MF_MOVEBLOCK) { xe=x; break; }
 					}
@@ -506,7 +505,7 @@ int warptrialdoor_driver(int in,int cn)
 					in2=map[x+y*MAXMAP].it;
 					ye=it[in].y;
 					ys=it[in2].y;
-	
+
 					for (x=it[in].x,y=it[in].y-1; x<it[in].x+15; x++) {
                                                 if (map[x+y*MAXMAP].flags&MF_MOVEBLOCK) { xe=x; break; }
 					}
@@ -520,7 +519,7 @@ int warptrialdoor_driver(int in,int cn)
 		}
 
 		//xlog("xs=%d, ys=%d, xe=%d, ye=%d, in=%d, in2=%d",xs,ys,xe,ye,in,in2);
-		
+
 		it[in].drdata[2]=xs; it[in].drdata[3]=ys;
 		it[in].drdata[4]=xe; it[in].drdata[5]=ye;
 		*(unsigned short*)(it[in].drdata+6)=in2;
@@ -537,7 +536,7 @@ int warptrialdoor_driver(int in,int cn)
 		return 2;
 	}
 
-	for (y=ys+1; y<ye; y++) {		
+	for (y=ys+1; y<ye; y++) {
 		for (x=xs+1,m=x+y*MAXMAP; x<xe; x++,m++) {
 			if ((co=map[m].ch) && ch[co].driver!=CDR_SIMPLEBADDY) {
                                 log_char(cn,LOG_SYSTEM,0,"You hear fighting noises and the door won't open.");
@@ -566,7 +565,7 @@ int warptrialdoor_driver(int in,int cn)
 	ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
 	ch[co].mana=ch[co].value[0][V_MANA]*POWERSCALE;
 	ch[co].lifeshield=ch[co].value[0][V_MAGICSHIELD]*POWERSCALE/MAGICSHIELDMOD;
-	
+
 	ch[co].dir=DX_RIGHTDOWN;
 
 	dat=set_data(co,DRD_WARPFIGHTER,sizeof(struct warpfighter_data));
@@ -610,7 +609,7 @@ int warpkeydoor_driver(int in,int cn)
 	}
 
 	in2=has_item(cn,IID_AREA25_DOORKEY);
-	
+
 	if (!in2) {
 		log_char(cn,LOG_SYSTEM,0,"The door is locked and you do not have the right key.");
 		return 2;
@@ -627,7 +626,7 @@ int warpkeydoor_driver(int in,int cn)
 		}
 
 		log_char(cn,LOG_SYSTEM,0,"A %s vanished. You have %d keys left in that stack.",it[in2].name,cnt);
-		
+
                 switch(ch[cn].dir) {
 			case DX_RIGHT:	ch[cn].dir=DX_LEFT; break;
 			case DX_LEFT:	ch[cn].dir=DX_RIGHT; break;
@@ -658,14 +657,14 @@ void warpfighter(int cn,int ret,int lastact)
 			case NT_CREATE:
                                 fight_driver_set_dist(cn,40,0,40);
 				dat->creation_time=ticker;
-                                break;			
+                                break;
 
 			case NT_TEXT:
 				co=msg->dat3;
 				tabunga(cn,co,(char*)msg->dat2);
-				break;			
+				break;
 		}
-		
+
 
                 standard_message_driver(cn,msg,1,0);
                 remove_message(cn,msg);
@@ -714,7 +713,7 @@ void warpfighter(int cn,int ret,int lastact)
 			ch[cn].endurance=min(ch[cn].value[0][V_ENDURANCE]*POWERSCALE,ch[cn].endurance+32*POWERSCALE);
 		}
 	}*/
-	
+
 	if (ch[cn].hp<ch[cn].value[0][V_HP]*POWERSCALE/2 && dat->pot_done<5) {
 		dat->pot_done++;
 		if (ch[cn].level>40 && !RANDOM(4)) {
@@ -744,7 +743,7 @@ void warpfighter_died(int cn,int co)
 
 	if (dat->co!=co) { xlog("1"); return; }
         if (!ch[co].flags || ch[co].serial!=dat->cser || ch[co].x<dat->xs || ch[co].y<dat->ys || ch[co].x>dat->xe || ch[co].y>dat->ye) { xlog("2"); return; }
-	
+
 	teleport_char_driver(co,dat->tx,dat->ty);
 	//xlog("3 %d %d",dat->tx,dat->ty);
 }
@@ -764,7 +763,7 @@ int give_key(int cn,int cnt)
 	*(unsigned int*)(it[in].drdata+0)=cnt;
         if (cnt>1) sprintf(it[in].description,"%s keys from Rodney's Warped World.",bignumber(*(unsigned int*)(it[in].drdata+0)));
 	else sprintf(it[in].description,"A key from Rodney's Warped World.");
-	
+
 	return give_char_item(cn,in);
 }
 
@@ -816,7 +815,7 @@ void warpmaster(int cn,int ret,int lastact)
 			co=msg->dat1;
 
 			if ((in=ch[cn].citem)) {
-				
+
 				type=it[in].drdata[0];
                                 if (it[in].ID==IID_ALCHEMY_INGREDIENT) {
 					if (type==23) {
@@ -910,7 +909,7 @@ void collect_keys(int in,int cn)
 
 		if (a==1) sprintf(it[in].description,"A key from Rodney's Warped World.");
 		else sprintf(it[in].description,"%s keys from Rodney's Warped World.",bignumber(*(unsigned int*)(it[in].drdata+0)));
-		
+
 		if (b==1) sprintf(it[in2].description,"A key from Rodney's Warped World.");
 		else sprintf(it[in2].description,"%s keys from Rodney's Warped World.",bignumber(*(unsigned int*)(it[in2].drdata+0)));
 

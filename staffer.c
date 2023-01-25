@@ -112,7 +112,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -132,7 +132,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -146,21 +146,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -170,7 +169,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -264,7 +263,7 @@ void staffer_block_move(int in,int cn)
 		if (ticker-*(unsigned int*)(it[in].drdata+4)>TICKS*60*15 &&
 		    (*(unsigned short*)(it[in].drdata+8)!=it[in].x ||
 		     *(unsigned short*)(it[in].drdata+10)!=it[in].y)) {
-			
+
 			m=it[in].x+it[in].y*MAXMAP;
 			m2=(*(unsigned short*)(it[in].drdata+8))+(*(unsigned short*)(it[in].drdata+10))*MAXMAP;
 
@@ -272,7 +271,7 @@ void staffer_block_move(int in,int cn)
 				map[m].flags&=~MF_TMOVEBLOCK;
 				map[m].it=0;
 				set_sector(it[in].x,it[in].y);
-	
+
 				map[m2].flags|=MF_TMOVEBLOCK;
 				map[m2].it=in;
 				it[in].x=*(unsigned short*)(it[in].drdata+8);
@@ -302,7 +301,7 @@ struct smugglecom_data
 	int pos;
 	int current_victim;
 	int amgivingback;
-};	
+};
 
 void smugglecom_driver(int cn,int ret,int lastact)
 {
@@ -320,7 +319,7 @@ void smugglecom_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -328,7 +327,7 @@ void smugglecom_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -383,7 +382,7 @@ void smugglecom_driver(int cn,int ret,int lastact)
                                                         break;
 					case 10:	break;
 
-	
+
 
 				}
 				if (didsay) {
@@ -405,7 +404,7 @@ void smugglecom_driver(int cn,int ret,int lastact)
 					case 2:         if (ppd && ppd->smugglecom_state<=4) { dat->last_talk=0; ppd->smugglecom_state=0; }
 							if (ppd && ppd->smugglecom_state>=5 && ppd->smugglecom_state<=6) { dat->last_talk=0; ppd->smugglecom_state=5; }
 							if (ppd && ppd->smugglecom_state>=7 && ppd->smugglecom_state<=8) { dat->last_talk=0; ppd->smugglecom_state=7; }
-							break;				
+							break;
 					case 3:		if (ch[co].flags&CF_GOD) ppd->smugglecom_bits=ppd->smugglecom_state=0;
 							break;
 				}
@@ -432,41 +431,41 @@ void smugglecom_driver(int cn,int ret,int lastact)
                                         ppd->smugglecom_state=5;
 				} else if (it[in].ID==IID_STAFF_SMUGGLEPEARLS && ppd && !(ppd->smugglecom_bits&SMUGGLEBIT_PEARLS) && (ch[co].flags&CF_PLAYER)) {
 					quiet_say(cn,"Thank you for bringing back the %s, %s.",it[in].name,ch[co].name);
-					
+
 					val=questlog_scale(questlog_count(co,36),1000);
                                         dlog(co,0,"Received %d exp for doing quest Contraband I for the %d. time (nominal value %d exp)",val,questlog_count(co,36)+1,1000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
-					
+
 					ppd->smugglecom_bits|=SMUGGLEBIT_PEARLS;
 				} else if (it[in].ID==IID_STAFF_SMUGGLERING && ppd && !(ppd->smugglecom_bits&SMUGGLEBIT_RING) && (ch[co].flags&CF_PLAYER)) {
 					quiet_say(cn,"Thank you for bringing back the %s, %s.",it[in].name,ch[co].name);
-					
+
 					val=questlog_scale(questlog_count(co,36),1000);
                                         dlog(co,0,"Received %d exp for doing quest Contraband II for the %d. time (nominal value %d exp)",val,questlog_count(co,36)+1,1000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
-					
+
 					ppd->smugglecom_bits|=SMUGGLEBIT_RING;
 				} else if (it[in].ID==IID_STAFF_SMUGGLECAPE && ppd && !(ppd->smugglecom_bits&SMUGGLEBIT_CAPE) && (ch[co].flags&CF_PLAYER)) {
 					quiet_say(cn,"Thank you for bringing back the %s, %s.",it[in].name,ch[co].name);
-					
+
 					val=questlog_scale(questlog_count(co,36),1000);
                                         dlog(co,0,"Received %d exp for doing quest Contraband III for the %d. time (nominal value %d exp)",val,questlog_count(co,36)+1,1000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
-					
+
 					ppd->smugglecom_bits|=SMUGGLEBIT_CAPE;
 				} else if (it[in].ID==IID_STAFF_SMUGGLENECKLACE && ppd && !(ppd->smugglecom_bits&SMUGGLEBIT_NECKLACE) && (ch[co].flags&CF_PLAYER)) {
 					quiet_say(cn,"Thank you for bringing back the %s, %s.",it[in].name,ch[co].name);
-					
+
 					val=questlog_scale(questlog_count(co,36),1000);
                                         dlog(co,0,"Received %d exp for doing quest Contraband IV for the %d. time (nominal value %d exp)",val,questlog_count(co,36)+1,1000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
-					
+
 					ppd->smugglecom_bits|=SMUGGLEBIT_NECKLACE;
 				} else {
                                         quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
-					if (give_char_item(co,ch[cn].citem)) ch[cn].citem=0;					
+					if (give_char_item(co,ch[cn].citem)) ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -497,11 +496,11 @@ void smugglelead_died(int cn,int co)
 	struct staffer_ppd *ppd;
 
 	if (!(ch[co].flags&CF_PLAYER)) return;
-	
+
 	if (!(ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd)))) return;
-	
+
 	if (ppd->smugglecom_state!=8) return;
-	
+
 	ppd->smugglecom_state=9;
 }
 

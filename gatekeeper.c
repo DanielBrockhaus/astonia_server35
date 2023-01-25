@@ -133,7 +133,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -153,7 +153,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -167,21 +167,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -191,7 +190,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -207,7 +206,7 @@ static int enter_room(int cn,int class,int xs,int ys)
 {
 	int x,y,m,in,n,co;
 	struct gate_ppd *ppd;
-	
+
 	ppd=set_data(cn,DRD_GATE_PPD,sizeof(struct gate_ppd));
 	if (!ppd) return 0;
 
@@ -215,7 +214,7 @@ static int enter_room(int cn,int class,int xs,int ys)
 		for (y=ys; y<ys+17; y++) {
 			m=x+y*MAXMAP;
 			if (map[m].ch) return 0;
-			if ((in=map[m].it) && (it[in].flags&IF_TAKE)) return 0;			
+			if ((in=map[m].it) && (it[in].flags&IF_TAKE)) return 0;
 		}
 	}
 
@@ -226,9 +225,9 @@ static int enter_room(int cn,int class,int xs,int ys)
 		case 8:		co=create_char("gatekeeper_s",0); break;
 		default:	return 0;
 	}
-	
+
 	if (!co) return 0;
-	
+
 	update_char(co);
         ch[co].hp=ch[co].value[0][V_HP]*POWERSCALE;
 	ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
@@ -236,14 +235,14 @@ static int enter_room(int cn,int class,int xs,int ys)
         ch[co].dir=DX_RIGHTDOWN;
 	ch[co].tmpx=xs+4;
 	ch[co].tmpy=ys+13;
-	
+
 	notify_char(co,NT_NPC,NTID_GATEKEEPER,cn,0);
 
 	if (!drop_char(co,xs+4,ys+13,0)) {
 		destroy_char(co);
 		return 0;
 	}
-	
+
 	if (!teleport_char_driver(cn,xs+4,ys+4)) {
 		remove_destroy_char(co);
 		return 0;
@@ -289,7 +288,7 @@ static int enter_test(int cn,int class)
 		switch(class) {
 			case 5:		// arch warrior
 					if (ch[cn].flags&(CF_MAGE|CF_ARCH)) return 0;
-					break;				
+					break;
 			case 6:		// arch mage
 					if (ch[cn].flags&(CF_WARRIOR|CF_ARCH)) return 0;
 					break;
@@ -303,17 +302,17 @@ static int enter_test(int cn,int class)
 					break;
 			default:	return 0;
 		}
-	
+
 		for (cnt=0,n=30; n<INVENTORYSIZE; n++) {
 			if (ch[cn].item[n]) cnt++;
 		}
 		if (ch[cn].citem) cnt++;
-	
+
 		if (cnt && class!=8) {
 			log_char(cn,LOG_SYSTEM,0,"Sorry, you may not enter while you are carrying items. You currently have %d items.",cnt);
 			return 1;
 		}
-	
+
 		if (cnt>1) {
 			log_char(cn,LOG_SYSTEM,0,"Sorry, you may not enter while you are carrying more than one item. You currently have %d items.",cnt);
 			return 1;
@@ -362,7 +361,7 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -406,7 +405,7 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 								ppd->welcome_state=2; didsay=1;
 								break;
 							}
-								
+
 							if (ch[co].flags&CF_ARCH) {	// arch-XXX
 								say(cn,"There is nothing I can do for thee, %s, though, since thou art already an Arch-%s.",
 								    ch[co].name,
@@ -418,7 +417,7 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 							} else {
 								say(cn,"The choice is hard, and so is the test. If thou wishest to take the test, decide which path to follow. That of the Arch-%s, or that of the Seyan'Du.",(ch[co].flags&CF_WARRIOR) ? "Warrior" : "Mage");
 								ppd->welcome_state++; didsay=1;
-							}							
+							}
 							break;
 					case 5:		say(cn,"Name the class thou wishest to become to begin the test. Each try will cost thee 100 gold coins.");
 							ppd->welcome_state++; didsay=1;
@@ -447,12 +446,12 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 				case 2:		ppd=set_data(co,DRD_GATE_PPD,sizeof(struct gate_ppd));
 						if (ppd && ppd->welcome_state<=6) ppd->welcome_state=0;
 						break;
-				case 5:	
+				case 5:
 				case 6:
 				case 7:
 				case 8:         if (!enter_test(co,didsay)) {
 							say(cn,"That is not a possible choice.");
-						}				
+						}
 						break;
 				case 9:		if (ch[co].flags&CF_GOD) del_data(co,DRD_LAB_PPD);
 						break;
@@ -469,14 +468,14 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
-                                if (!dat->amgivingback) {					
+
+                                if (!dat->amgivingback) {
 					say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					dat->amgivingback=1;
 				} else dat->amgivingback++;
-					
+
 				if (dat->amgivingback<20 && give_driver(cn,co)) return;
-					
+
                                 // let it vanish, then
 				destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -494,9 +493,9 @@ void gate_welcome_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_UP,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_UP,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -556,7 +555,7 @@ void gate_fight_driver(int cn,int ret,int lastact)
 
         if (fight_driver_attack_visible(cn,0)) return;
 	if (fight_driver_follow_invisible(cn)) return;
-			
+
 	if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 
 	if (regenerate_driver(cn)) return;
@@ -605,14 +604,14 @@ void turn_seyan(int cn)
 		if (m==INVENTORYSIZE) {
 			free_item(in);
 		} else ch[cn].item[m]=in;
-                ch[cn].item[n]=0;		
+                ch[cn].item[n]=0;
 	}
 
 	// remove spells
 	for (n=12; n<30; n++) {
 		if (!(in=ch[cn].item[n])) continue;
 		free_item(in);
-		ch[cn].item[n]=0;		
+		ch[cn].item[n]=0;
 	}
 	destroy_chareffects(cn);
 
@@ -623,7 +622,7 @@ void turn_seyan(int cn)
 	ch[cn].hp=ch[cn].value[0][V_HP]*POWERSCALE;
 	ch[cn].endurance=ch[cn].value[0][V_ENDURANCE]*POWERSCALE;
 	ch[cn].mana=ch[cn].value[0][V_MANA]*POWERSCALE;
-	
+
 	update_char(cn);
 
 	del_data(cn,DRD_TREASURE_CHEST_PPD);
@@ -632,7 +631,7 @@ void turn_seyan(int cn)
 	del_data(cn,DRD_AREA3_PPD);
 	del_data(cn,DRD_RANK_PPD);
 	del_data(cn,DRD_FLOWER_PPD);
-	del_data(cn,DRD_RANDCHEST_PPD);	
+	del_data(cn,DRD_RANDCHEST_PPD);
         del_data(cn,DRD_DEMONSHRINE_PPD);
 	del_data(cn,DRD_MILITARY_PPD);
 	del_data(cn,DRD_FARMY_PPD);
@@ -655,9 +654,9 @@ void turn_seyan(int cn)
         for (n=0; n<INVENTORYSIZE; n++) {
 		if (!(in=ch[cn].item[n])) continue;
 		if (!(it[in].flags&IF_QUEST)) continue;
-		
+
 		free_item(in);
-		ch[cn].item[n]=0;		
+		ch[cn].item[n]=0;
 	}
 
 	// remove quest items from depot
@@ -674,7 +673,7 @@ void gate_fight_dead(int cn,int co)
 {
 	struct gate_ppd *ppd;
 	char buf[256];
-	
+
 	ppd=set_data(co,DRD_GATE_PPD,sizeof(struct gate_ppd));
 	if (!ppd) return;
 
@@ -686,12 +685,12 @@ void gate_fight_dead(int cn,int co)
 				ch[co].flags|=CF_ARCH;
 				ch[co].value[1][V_RAGE]=1;
 				log_char(co,LOG_SYSTEM,0,"You are an Arch-Warrior now.");
-				
+
 				sprintf(buf,"0000000000°c10Grats: %s is an Arch-Warrior now!",ch[co].name);
 				server_chat(6,buf);
 
 				dlog(co,0,"turned arch-warrior");
-				break;				
+				break;
 		case 6:		// arch mage
 				if (ch[co].flags&(CF_WARRIOR|CF_ARCH)) return;
 				ch[co].flags|=CF_ARCH;

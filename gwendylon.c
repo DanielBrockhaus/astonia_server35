@@ -127,7 +127,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -147,7 +147,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -161,21 +161,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -185,7 +184,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -217,7 +216,7 @@ void gwendylon_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -271,11 +270,11 @@ void gwendylon_driver(int cn,int ret,int lastact)
 							break;
 					case 7:         quiet_say(cn,"Maybe the villagers know something about it. Some of them go hunting in the forest, they might have seen something. Thou might inquire in the tavern.");
 							ppd->gwendy_state++; didsay=1;
-							break;		
+							break;
 					case 8:		quiet_say(cn,"Somewhere in that place, there must be another magical item. Couldst thou bring me that one as well? I would double thine reward.");
 							ppd->gwendy_state++; didsay=1;
                                                         break;
-					case 9:		if (realtime-ppd->gwendy_seen_timer>60) {					
+					case 9:		if (realtime-ppd->gwendy_seen_timer>60) {
 								quiet_say(cn,"Be greeted, %s! Didst thou find anything magical in the other skeleton place? Or dost thou want me to °c4repeat°c0 mine offer?",ch[co].name);
 								didsay=1;
 							}
@@ -288,7 +287,7 @@ void gwendylon_driver(int cn,int ret,int lastact)
 					case 11:	quiet_say(cn,"Oh, if thou couldst find it, %s, I would be very grateful. Pray thee %s, locate this skull and bring it to me.",ch[co].name,ch[co].name);
 							ppd->gwendy_state++; didsay=1;
                                                         break;
-					case 12:	if (realtime-ppd->gwendy_seen_timer>60) {					
+					case 12:	if (realtime-ppd->gwendy_seen_timer>60) {
 								quiet_say(cn,"Ah, %s! Didst thou find the skull? It really is of the utmost importance. Or dost thou want me to °c4repeat°c0  mine offer?",ch[co].name);
 								didsay=1;
 							}
@@ -359,7 +358,7 @@ void gwendylon_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_AREA1_PPD,sizeof(struct area1_ppd));
 
                                 if (it[in].ID==IID_AREA1_SKELSKULL && ppd && ppd->gwendy_state<=5) {
@@ -383,7 +382,7 @@ void gwendylon_driver(int cn,int ret,int lastact)
 					}
 				} else if (it[in].ID==IID_AREA1_WOODSKULL && ppd && ppd->gwendy_state>=6 && ppd->gwendy_state<=9) {
 					int tmp;
-					
+
 					quiet_say(cn,"Ahh, yes, this is the thing I was looking for. Thank thee, %s.",ch[co].name);
 					tmp=questlog_done(co,2);
 					destroy_item_byID(co,IID_AREA1_WOODSKULL);
@@ -434,11 +433,11 @@ void gwendylon_driver(int cn,int ret,int lastact)
 				} else if (it[in].ID==IID_CALIGARLETTER) {
                                         quiet_say(cn,"Hmm, I see. Well, I can teleport you to the area but I am uncertain of what will be there waiting for you. Be prepared adventurer. I would not trust those mages as far as I could throw them!");
 					log_char(co,LOG_SYSTEM,0,"While you are still trying to figure out how far Gwendylon might be able to throw those mages he quickly mutters a spell and teleports you.");
-					
+
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
 
-					if (!change_area(co,36,240,10)) quiet_say(cn,"Uh-Oh. There seems to be a rift in the space-time continuum. Please come again later so we can try again.");					
+					if (!change_area(co,36,240,10)) quiet_say(cn,"Uh-Oh. There seems to be a rift in the space-time continuum. Please come again later so we can try again.");
 				} else {
 					quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 
@@ -475,7 +474,7 @@ struct yoakin_driver_data
         int last_talk;
 	int current_victim;
 	int nighttime;
-};	
+};
 
 void yoakin_driver(int cn,int ret,int lastact)
 {
@@ -493,7 +492,7 @@ void yoakin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -537,7 +536,7 @@ void yoakin_driver(int cn,int ret,int lastact)
 					case 3:		quiet_say(cn,"This bear has been killing several travellers, and I put a price on its head. So if thou happen to kill it, bring me its teeth as proof.");
 							ppd->yoakin_state=4; didsay=1;
 							break;
-					case 4:		if (realtime-ppd->yoakin_seen_timer>60) {					
+					case 4:		if (realtime-ppd->yoakin_seen_timer>60) {
 								quiet_say(cn,"Hail, %s! Didst thou find that big bear? Or dost thou want me to °c4repeat°c0 mine offer?",ch[co].name);
 								didsay=1;
 							}
@@ -610,7 +609,7 @@ void yoakin_driver(int cn,int ret,int lastact)
 					// let it vanish, then
 					destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
-				} else {				
+				} else {
                                         quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
@@ -633,7 +632,7 @@ void yoakin_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;	
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -647,7 +646,7 @@ struct terion_driver_data
 	int last_walk;
 	int pos;
 	int current_victim;
-};	
+};
 
 void terion_driver(int cn,int ret,int lastact)
 {
@@ -671,7 +670,7 @@ void terion_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -679,7 +678,7 @@ void terion_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*5) { remove_message(cn,msg); continue; }
 
@@ -714,8 +713,8 @@ void terion_driver(int cn,int ret,int lastact)
 					case 3:		quiet_say(cn,"Anyway. They found nothing. Guess that is because they dare not go late at night.");
 							ppd->terion_state=4; didsay=1;
                                                         break;
-					
-					
+
+
 					case 4:		if (ppd->gwendy_state>=10 && ppd->gwendy_state<=12) {
 								quiet_say(cn,"Be greeted again, %s. I hope this day finds thee well.",ch[co].name);
 								ppd->terion_state++; didsay=1;
@@ -776,7 +775,7 @@ void terion_driver(int cn,int ret,int lastact)
 						if (ppd && ppd->terion_state>=5 && ppd->terion_state<=6) { dat->last_talk=0; ppd->terion_state=4; }
 						if (ppd && ppd->terion_state>=7 && ppd->terion_state<=9) { dat->last_talk=0; ppd->terion_state=6; }
 						if (ppd && ppd->terion_state>=10 && ppd->terion_state<=14) { dat->last_talk=0; ppd->terion_state=9; }
-						break;				
+						break;
 			}
 			if (didsay) {
                                 talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
@@ -823,7 +822,7 @@ int has_empty_inventory(int cn)
 	for (n=30; n<INVENTORYSIZE; n++)
 		if (ch[cn].item[n]) return 0;
 
-	return 1;	
+	return 1;
 }
 
 struct james_driver_data
@@ -852,7 +851,7 @@ void james_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -890,7 +889,7 @@ void james_driver(int cn,int ret,int lastact)
 							ppd->james_state++; didsay=1;
 							break;
 					case 2:		quiet_say(cn,"She lives with her father, Gwendylon the Mage. Thou canst find her in the mage's tower, north of here, %s.",ch[co].name);
-							ppd->james_state++; didsay=1;							
+							ppd->james_state++; didsay=1;
 							break;
 					case 3:		if (ppd->lydia_state<6) break;
 							quiet_say(cn,"Ah, %s. I am glad that thou could help Lydia.",ch[co].name);
@@ -900,12 +899,12 @@ void james_driver(int cn,int ret,int lastact)
 							ppd->james_state++; didsay=1;
 							break;
 					case 5:		break;
-					
-				}				
+
+				}
 				if (didsay) {
 					dat->last_talk=ticker;
 					talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
-					dat->current_victim=co;					
+					dat->current_victim=co;
 				}
 			}
 		}
@@ -957,7 +956,7 @@ void james_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHTDOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHTDOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -967,7 +966,7 @@ struct nook_driver_data
 {
         int last_talk;
 	int current_victim;
-};	
+};
 
 void nook_driver(int cn,int ret,int lastact)
 {
@@ -985,7 +984,7 @@ void nook_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1081,7 +1080,7 @@ void nook_driver(int cn,int ret,int lastact)
 						if (ppd && ppd->nook_state<=4) { dat->last_talk=0; ppd->nook_state=0; }
 						if (ppd && ppd->nook_state>=5 && ppd->nook_state<=11) { dat->last_talk=0; ppd->nook_state=5; }
 						if (ppd && ppd->nook_state>=12 && ppd->nook_state<=15) { dat->last_talk=0; ppd->nook_state=12; }
-						break;				
+						break;
 			}
 
 			if (didsay) {
@@ -1107,7 +1106,7 @@ void nook_driver(int cn,int ret,int lastact)
 					// let it vanish, then
 					destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
-				} else {				
+				} else {
                                         quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
@@ -1137,7 +1136,7 @@ struct lydia_driver_data
 {
         int last_talk;
 	int current_victim;
-};	
+};
 
 void lydia_driver(int cn,int ret,int lastact)
 {
@@ -1155,7 +1154,7 @@ void lydia_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1211,7 +1210,7 @@ void lydia_driver(int cn,int ret,int lastact)
 							ppd->lydia_state++; didsay=1;
 							break;
 					case 7:		break;
-	
+
 
 
 				}
@@ -1266,7 +1265,7 @@ void lydia_driver(int cn,int ret,int lastact)
                                         if (ch[co].flags&CF_MAGE) in=create_item("mana_potion1");
 					else in=create_item("healing_potion1");
 					if (!give_char_item(co,in)) destroy_item(in);
-				} else {				
+				} else {
                                         quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
@@ -1284,7 +1283,7 @@ void lydia_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
 
 	do_idle(cn,TICKS);
@@ -1316,7 +1315,7 @@ void balltrap_skelly_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,20,0,40);		
+                        fight_driver_set_dist(cn,20,0,40);
                 }
 
                 standard_message_driver(cn,msg,0,0);
@@ -1339,10 +1338,10 @@ void balltrap_skelly_driver(int cn,int ret,int lastact)
 
 	if (ticker>dat->last_fire+TICKS*3) {
 		dat->last_fire=ticker;
-		
-		if (do_use(cn,DX_LEFT,0)) return;		
+
+		if (do_use(cn,DX_LEFT,0)) return;
 	}
-	
+
         //quiet_say(cn,"i am %d",cn);
         do_idle(cn,TICKS);
 }
@@ -1368,7 +1367,7 @@ void robber_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,20,0,40);		
+                        fight_driver_set_dist(cn,20,0,40);
                 }
 
                 standard_message_driver(cn,msg,0,0);
@@ -1395,7 +1394,7 @@ void robber_driver(int cn,int ret,int lastact)
 		ch[cn].item[WN_LHAND]=in;
 		update_char(cn);
 	} else {
-		if (!it[in].drdata[0]) use_item(cn,in);		
+		if (!it[in].drdata[0]) use_item(cn,in);
 	}
 
 	fight_driver_set_home(cn,ch[cn].x,ch[cn].y);
@@ -1422,7 +1421,7 @@ void robber_driver(int cn,int ret,int lastact)
 				dat->state++; break;
 		case 7:		if (move_driver(cn,145,54,1)) return;
 				dat->state++; break;
-		case 8:		if (move_driver(cn,145,72,1)) return;		
+		case 8:		if (move_driver(cn,145,72,1)) return;
                                 if (ch[cn].dir!=DX_UP) turn(cn,DX_UP);
 				if ((hour>0 || minute>15) && hour!=23) dat->state++;
 				break;
@@ -1443,7 +1442,7 @@ void robber_driver(int cn,int ret,int lastact)
                                 if (use_driver(cn,in,0)) return;
 				dat->state=0; break;
 	}
-	
+
 
         do_idle(cn,TICKS);
 }
@@ -1468,7 +1467,7 @@ void sanoa_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,20,0,40);		
+                        fight_driver_set_dist(cn,20,0,40);
                 }
 
                 standard_message_driver(cn,msg,0,0);
@@ -1519,11 +1518,11 @@ void sanoa_driver(int cn,int ret,int lastact)
 		case 9:		if (move_driver(cn,21,27,0)) return;
 				dat->state++; break;
 		case 10:	if (!is_closed(21,26) && use_item_at(cn,21,26,0)) return;
-				dat->state++; break;				
+				dat->state++; break;
 		case 11:	if (move_driver(cn,21,31,1)) return;
                                 dat->state=0; break;
 	}
-	
+
 
         do_idle(cn,TICKS);
 }
@@ -1536,7 +1535,7 @@ struct reskin_driver_data
 	int last_walk;
 	int pos;
 	int current_victim;
-};	
+};
 
 void reskin_driver(int cn,int ret,int lastact)
 {
@@ -1560,7 +1559,7 @@ void reskin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1568,7 +1567,7 @@ void reskin_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*5) { remove_message(cn,msg); continue; }
 
@@ -1597,7 +1596,7 @@ void reskin_driver(int cn,int ret,int lastact)
 					case 2:		quiet_say(cn,"In spite of the beer shortage, people still visit my tavern, so I can't go out to find ingredients as often as I'd like. If thou happenst to come across any new flower, berry or mushroom and bring it to me, I'd pay thee handsomely.");
 							ppd->reskin_state++; didsay=1;
                                                         break;
-					case 3:		if (realtime-ppd->reskin_seen_timer>600) {					
+					case 3:		if (realtime-ppd->reskin_seen_timer>600) {
 								quiet_say(cn,"Hello again, %s! Didst thou find any new ingredients? Or dost thou want me to °c4repeat°c0 mine offer?",ch[co].name);
 								didsay=1;
 							} else if (ppd->logain_state>8) ppd->reskin_state++;
@@ -1643,7 +1642,7 @@ void reskin_driver(int cn,int ret,int lastact)
 				case 2:         if (ppd && ppd->reskin_state<=4) { dat->last_talk=0; ppd->reskin_state=0; }
 						if (ppd && ppd->reskin_state>=4 && ppd->reskin_state<=7) { dat->last_talk=0; ppd->reskin_state=4; }
 						if (ppd && ppd->reskin_state>=8 && ppd->reskin_state<=9) { dat->last_talk=0; ppd->reskin_state=8; }
-						break;				
+						break;
 			}
 			if (didsay) {
                                 talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
@@ -1659,7 +1658,7 @@ void reskin_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				if (it[in].ID==IID_ALCHEMY_INGREDIENT) {	// alchemy ingredient
 					if (!(ppd->reskin_got_bits&(bit=(1<<it[in].drdata[0])))) {
-						
+
 						if (it[in].drdata[0]==24 && ch[co].level<80) {	// earth stone
 							quiet_say(cn,"Oh, a very nice stone, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==23 && ch[co].level<10) {	// earth stone
@@ -1669,25 +1668,25 @@ void reskin_driver(int cn,int ret,int lastact)
 						} else if (it[in].drdata[0]==22 && ch[co].level<60) {	// ice stone
 							quiet_say(cn,"Oh, a very nice stone, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==16 && ch[co].level<25) {	// shroom 9
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==15 && ch[co].level<23) {	// shroom 8
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==14 && ch[co].level<20) {	// shroom 7
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==13 && ch[co].level<18) {	// shroom 6
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==12 && ch[co].level<16) {	// shroom 5
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==11 && ch[co].level<14) {	// shroom 4
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==10 && ch[co].level<10) {	// shroom 3
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else if (it[in].drdata[0]==9 && ch[co].level<7) {	// shroom 2
-							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);						
+							quiet_say(cn,"Oh, a very nice mushroom, %s. But I'm afraid I cannot pay for it at the moment.",ch[co].name);
 						} else {
 							ppd->reskin_got_bits|=bit;
 							quiet_say(cn,"Ah, a nice %s thou found there. Here, this is for thy trouble.",it[in].name);
-	
+
 							ch[co].gold+=it[in].value*5; stats_update(co,0,it[in].value*5);
 							ch[co].flags|=CF_ITEMS;
 
@@ -1696,7 +1695,7 @@ void reskin_driver(int cn,int ret,int lastact)
                                                         ch[cn].citem=0;
 							destroy_item(in);
 							return;
-						}						
+						}
 					} else {
                                                 quiet_say(cn,"Oh, I'm sorry, %s, but thou brought me this one before.",ch[co].name);
 
@@ -1711,7 +1710,7 @@ void reskin_driver(int cn,int ret,int lastact)
 				ch[cn].citem=0;
 			}
 		}
-		
+
 		if (msg->type==NT_NPC) {
 			if (msg->dat1==NTID_TERION) {
 				co=msg->dat2;
@@ -1762,7 +1761,7 @@ void asturin_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,20,0,40);		
+                        fight_driver_set_dist(cn,20,0,40);
                 }
 
 		if (msg->type==NT_CHAR) {
@@ -1773,14 +1772,14 @@ void asturin_driver(int cn,int ret,int lastact)
 			    char_dist(cn,co)<16 &&
 			    char_see_char(cn,co) &&
 			    (ppd=set_data(co,DRD_AREA1_PPD,sizeof(struct area1_ppd)))) {
-				
+
 				if (realtime-ppd->asturin_seen_timer>10 && ppd->asturin_state>=1 && ppd->asturin_state<=3) {
 					ppd->asturin_state=0;
 				}
 				if (realtime-ppd->asturin_seen_timer>30 && ppd->asturin_state>=7 && ppd->asturin_state<=8) {
 					ppd->asturin_state=8;
 				}
-				
+
                                 if (ch[co].x<115) {
 					if (ppd->asturin_state<3) {
 						shout(cn,"GUARDS!");
@@ -1881,7 +1880,7 @@ void guiwynn_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1953,7 +1952,7 @@ void guiwynn_driver(int cn,int ret,int lastact)
                                                                 quiet_say(cn,"This key opens the front door of the Order.");
 							}
                                                         break;
-					case 8:		if (realtime-ppd->guiwynn_seen_timer>60) {					
+					case 8:		if (realtime-ppd->guiwynn_seen_timer>60) {
 								quiet_say(cn,"Be greeted, %s! Didst thou find the recipe? Or dost thou want me to °c4repeat°c0 mine offer?",ch[co].name);
 								didsay=1;
 							}
@@ -2012,7 +2011,7 @@ void guiwynn_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_AREA1_PPD,sizeof(struct area1_ppd));
 
                                 if (it[in].ID==IID_AREA1_MADPOTION && ppd && ppd->guiwynn_state<=5) {
@@ -2076,7 +2075,7 @@ void guiwynn_driver(int cn,int ret,int lastact)
 				}
 			}
 		}
-		
+
 		if (msg->type==NT_NPC && msg->dat1==NTID_DIDSAY && msg->dat2!=cn) dat->last_talk=ticker;
 
 		remove_message(cn,msg);
@@ -2087,7 +2086,7 @@ void guiwynn_driver(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
         if (ticker-dat->last_talk<TICKS*10) { do_idle(cn,TICKS); return; }
 
-	if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_UP,ret,lastact)) return;			
+	if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_UP,ret,lastact)) return;
 
 	do_idle(cn,TICKS);
 }
@@ -2124,7 +2123,7 @@ void logain_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2200,7 +2199,7 @@ void logain_driver(int cn,int ret,int lastact)
                                                                 if (!give_char_item(co,in)) destroy_item(in);
 								quiet_say(cn,"Shouldst thou wish to visit the Brotherhood again, here's the key.");
 							}
-                                                        break;							
+                                                        break;
 					case 9:		if (realtime-ppd->logain_seen_timer>60) {
 								quiet_say(cn,"I am pleased to see thee, %s.",ch[co].name);
 								didsay=1;
@@ -2242,7 +2241,7 @@ void logain_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_AREA1_PPD,sizeof(struct area1_ppd));
 
                                 if (it[in].ID==IID_AREA1_MADNOTE2 && ppd && ppd->logain_state<=5) {
@@ -2286,7 +2285,7 @@ void logain_driver(int cn,int ret,int lastact)
 					dat->last_talk=ticker;
 				}
 			}
-			
+
 			if (msg->type==NT_NPC && msg->dat1==NTID_DIDSAY && msg->dat2!=cn) dat->last_talk=ticker;
 		}
 
@@ -2298,8 +2297,8 @@ void logain_driver(int cn,int ret,int lastact)
 
 	if (talkdir) turn(cn,talkdir);
         if (ticker-dat->last_talk<TICKS*10) { do_idle(cn,TICKS); return; }
-	
-        if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;			
+
+        if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 
         do_idle(cn,TICKS);
 }
@@ -2386,7 +2385,7 @@ int can_raise(int cn,int v)
 	int seyan;
 
 	if (!ch[cn].value[1][v]) return 0;
-	
+
 	if (!(ch[cn].flags&CF_ARCH) && ch[cn].value[1][v]>49) return 0;
 
 	if ((ch[cn].flags&(CF_WARRIOR|CF_MAGE))==(CF_WARRIOR|CF_MAGE)) seyan=1;
@@ -2448,7 +2447,7 @@ int james_raisehint(int cn,int doraise)
 
 	if (flash && fire) {
 		if (RANDOM(2)) { fire=1; flash=0; }
-		else { fire=0; flash=1; }		
+		else { fire=0; flash=1; }
 	}
 
 	if (!(ch[cn].flags&CF_MAGE)) warcry=1;
@@ -2456,7 +2455,7 @@ int james_raisehint(int cn,int doraise)
 
 	if (offense) {
 		if (can_raise(cn,V_ATTACK)) raise[V_ATTACK]+=1.0/(raise_cost(V_ATTACK,ch[cn].value[1][V_ATTACK]));
-		
+
 		if (!ch[cn].value[1][V_ATTACK]) {
 			if (can_raise(cn,V_BLESS)) raise[V_BLESS]+=1.0/(raise_cost(V_BLESS,ch[cn].value[1][V_BLESS])*16);
 			if (can_raise(cn,V_HEAL)) raise[V_HEAL]+=1.0/(raise_cost(V_HEAL,ch[cn].value[1][V_HEAL])*16);
@@ -2465,12 +2464,12 @@ int james_raisehint(int cn,int doraise)
 			if (can_raise(cn,V_FLASH)) raise[V_FLASH]+=1.0/(raise_cost(V_FLASH,ch[cn].value[1][V_FLASH])*16);
 			if (can_raise(cn,V_FIRE)) raise[V_FIRE]+=1.0/(raise_cost(V_FIRE,ch[cn].value[1][V_FIRE])*16);
 		}
-		
+
 		v=get_fight_skill_skill(cn);
 		if (can_raise(cn,v)) raise[v]+=1.0/(raise_cost(v,ch[cn].value[1][v])*2);
-	
+
 		if (can_raise(cn,V_TACTICS)) raise[V_TACTICS]+=1.0/(raise_cost(V_TACTICS,ch[cn].value[1][V_TACTICS])*4);
-	
+
 		if (!ch[cn].value[1][V_ATTACK]) {
 			// skill
 			if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*10/blessmod);
@@ -2501,23 +2500,23 @@ int james_raisehint(int cn,int doraise)
 			if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*20/blessmod);
 			if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*20/blessmod);
 			if (can_raise(cn,skill[v].base3)) raise[skill[v].base3]+=1.0/(raise_cost(skill[v].base3,ch[cn].value[1][skill[v].base3])*20/blessmod);
-		
+
 			if (can_raise(cn,V_BLESS)) raise[V_BLESS]+=1.0/(raise_cost(V_BLESS,ch[cn].value[1][V_BLESS])*40/3.5/3);
 		}
 	}
 
 	if (defense) {
 		if (can_raise(cn,V_PARRY)) raise[V_PARRY]+=1.0/(raise_cost(V_PARRY,ch[cn].value[1][V_PARRY]));
-		
+
 		if (!ch[cn].value[1][V_PARRY]) {
 			if (can_raise(cn,V_MAGICSHIELD)) raise[V_MAGICSHIELD]+=1.0/(raise_cost(V_MAGICSHIELD,ch[cn].value[1][V_MAGICSHIELD]));
 		}
-		
+
 		v=get_fight_skill_skill(cn);
 		if (can_raise(cn,v)) raise[v]+=1.0/(raise_cost(v,ch[cn].value[1][v])*2);
-	
+
 		if (can_raise(cn,V_TACTICS)) raise[V_TACTICS]+=1.0/(raise_cost(V_TACTICS,ch[cn].value[1][V_TACTICS])*4);
-	
+
 		if (!ch[cn].value[1][V_PARRY]) {
 			// skill
 			if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*10/blessmod);
@@ -2529,7 +2528,7 @@ int james_raisehint(int cn,int doraise)
 			if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*10/2/blessmod);
 			if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*10/2/blessmod);
 			if (can_raise(cn,skill[v].base3)) raise[skill[v].base3]+=1.0/(raise_cost(skill[v].base3,ch[cn].value[1][skill[v].base3])*10/2/blessmod);
-		
+
 			if (can_raise(cn,V_BLESS)) raise[V_BLESS]+=1.0/(raise_cost(V_BLESS,ch[cn].value[1][V_BLESS])*40/2/3);
 		} else {
 			// skill
@@ -2548,7 +2547,7 @@ int james_raisehint(int cn,int doraise)
 			if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*20/blessmod);
 			if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*20/blessmod);
 			if (can_raise(cn,skill[v].base3)) raise[skill[v].base3]+=1.0/(raise_cost(skill[v].base3,ch[cn].value[1][skill[v].base3])*20/blessmod);
-		
+
 			if (can_raise(cn,V_BLESS)) raise[V_BLESS]+=1.0/(raise_cost(V_BLESS,ch[cn].value[1][V_BLESS])*40/3.5/3);
 		}
 	}
@@ -2556,7 +2555,7 @@ int james_raisehint(int cn,int doraise)
 	if (immun) {
 		if (can_raise(cn,V_IMMUNITY)) raise[V_IMMUNITY]+=1.0/(raise_cost(V_IMMUNITY,ch[cn].value[1][V_IMMUNITY]));
 		if (can_raise(cn,V_TACTICS)) raise[V_TACTICS]+=1.0/(raise_cost(V_TACTICS,ch[cn].value[1][V_TACTICS])*5);
-		
+
 		v=V_IMMUNITY;
 		if (!ch[cn].value[1][V_TACTICS]) {
 			// skill
@@ -2583,7 +2582,7 @@ int james_raisehint(int cn,int doraise)
 
 	if (flash && ch[cn].value[1][V_FLASH] && (ch[cn].flags&(CF_MAGE|CF_WARRIOR))!=(CF_MAGE|CF_WARRIOR)) {
 		if (can_raise(cn,V_FLASH)) raise[V_FLASH]+=1.0/(raise_cost(V_FLASH,ch[cn].value[1][V_FLASH]));
-		
+
 		v=V_FLASH;
 		if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*5/blessmod);
 		if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*5/blessmod);
@@ -2594,7 +2593,7 @@ int james_raisehint(int cn,int doraise)
 
 	if (fire && ch[cn].value[1][V_FIRE] && (ch[cn].flags&(CF_MAGE|CF_WARRIOR))!=(CF_MAGE|CF_WARRIOR)) {
 		if (can_raise(cn,V_FIRE)) raise[V_FIRE]+=1.0/(raise_cost(V_FIRE,ch[cn].value[1][V_FIRE]));
-		
+
 		v=V_FIRE;
 		if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*5/blessmod);
 		if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*5/blessmod);
@@ -2605,7 +2604,7 @@ int james_raisehint(int cn,int doraise)
 
         if (warcry && ch[cn].value[1][V_WARCRY]) {
 		if (can_raise(cn,V_WARCRY)) raise[V_WARCRY]+=1.0/(raise_cost(V_WARCRY,ch[cn].value[1][V_WARCRY])*2);
-		
+
 		v=V_WARCRY;
 		if (can_raise(cn,skill[v].base1)) raise[skill[v].base1]+=1.0/(raise_cost(skill[v].base1,ch[cn].value[1][skill[v].base1])*10/blessmod);
 		if (can_raise(cn,skill[v].base2)) raise[skill[v].base2]+=1.0/(raise_cost(skill[v].base2,ch[cn].value[1][skill[v].base2])*10/blessmod);
@@ -2615,11 +2614,14 @@ int james_raisehint(int cn,int doraise)
 		for (v=0; v<V_MAX; v++) {
 			switch(v) {
                                 case V_HP:		if ((ch[cn].flags&(CF_WARRIOR|CF_MAGE))==CF_WARRIOR) weight=2;
-							else weight=5; break;
+							else weight=5;
+							break;
 				case V_MANA:		if ((ch[cn].flags&(CF_WARRIOR|CF_MAGE))==CF_MAGE) weight=1;
-							else weight=3; break;
-				case V_ENDURANCE:	if (warcry) weight=4; else weight=8; break;
-				
+							else weight=3;
+							break;
+				case V_ENDURANCE:	if (warcry) weight=4; else weight=8;
+				break;
+
                                 case V_DURATION:	weight=4; break;
 				case V_RAGE:		weight=4; break;
 				case V_PROFESSION:	weight=2; break;
@@ -2636,10 +2638,10 @@ int james_raisehint(int cn,int doraise)
 	}
 
 	for (v=0; v<V_MAX; v++) {
-		mr=max(mr,raise[v]);		
+		mr=max(mr,raise[v]);
 	}
 	if (mr==0) return 0;
-	
+
 	for (v=0; v<V_MAX; v++) {
 		if (raise[v]/mr>0.90 && !done[v]) {
 			if (doraise) didraise+=raise_value(cn,v);
@@ -2648,7 +2650,7 @@ int james_raisehint(int cn,int doraise)
 		}
 	}
 	if (doraise) return didraise;
-	
+
 	for (v=0; v<V_MAX; v++) {
 		if (raise[v]/mr>0.80 && !done[v]) {
 			log_char(cn,LOG_SYSTEM,0,"You should consider raising %s.",skill[v].name);

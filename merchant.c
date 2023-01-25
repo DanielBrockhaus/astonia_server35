@@ -90,7 +90,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -110,7 +110,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -124,21 +124,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -149,7 +148,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -239,19 +238,19 @@ void merchant_driver(int cn,int ret,int lastact)
 		ch[cn].arg=NULL;
 	}
 	if (!ch[cn].store) {
-		create_store(cn,dat->ignore);		
+		create_store(cn,dat->ignore);
 		if (dat->special) {
 			for (n=0; n<5; n++) add_special_store(cn);
 		}
 	}
-	
+
 	// loop through our messages
 	for (msg=ch[cn].msg; msg; msg=next) {
 		next=msg->next;
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -276,7 +275,7 @@ void merchant_driver(int cn,int ret,int lastact)
 				    strcasestr((char*)msg->dat2,"trade")) {
 					ch[co].merchant=cn;
 				}
-			}			
+			}
 		}
 
 		// got an item?
@@ -314,13 +313,13 @@ void merchant_driver(int cn,int ret,int lastact)
                         if (dat->doorx && is_closed(dat->doorx,dat->doory)) {	// door is still closed
                                 if (use_item_at(cn,dat->doorx,dat->doory,0)) return;
 				do_idle(cn,TICKS);
-				return;			
+				return;
 			}
 
-			if (secure_move_driver(cn,dat->dayx,dat->dayy,dat->daydir,ret,lastact)) return;			
+			if (secure_move_driver(cn,dat->dayx,dat->dayy,dat->daydir,ret,lastact)) return;
 		}
 	} else {		// just one position
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->dir,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->dir,ret,lastact)) return;
 	}
 
         if (ticker>dat->last_talk+TICKS*60 && !RANDOM(25)) {
@@ -330,7 +329,7 @@ void merchant_driver(int cn,int ret,int lastact)
 			case 2:		murmur(cn,"Oh yeah, those were the days."); break;
 			case 3:		murmur(cn,"Now where did I put it?"); break;
 			case 4:		murmur(cn,"Oh my, life is hard but unfair."); break;
-			case 5:		murmur(cn,"Beware of the fire snails!"); break;	
+			case 5:		murmur(cn,"Beware of the fire snails!"); break;
 			case 6:		murmur(cn,"Ishtar! Oh, what has become of us!"); break;
 			case 7:		murmur(cn,"The demons will get you."); break;
 			case 8:		emote(cn,"scratches %s back",hisname(cn)); break;
@@ -341,7 +340,7 @@ void merchant_driver(int cn,int ret,int lastact)
 
 			default:	break;
 		}
-		
+
 		dat->last_talk=ticker;
 	}
 	if (dat->special && ticker>dat->lastadd+TICKS*60*60*12) {
@@ -365,7 +364,7 @@ void merchant_dead(int cn,int co)
 int ch_driver(int nr,int cn,int ret,int lastact)
 {
 	switch(nr) {
-		case CDR_MERCHANT:	merchant_driver(cn,ret,lastact); return 1;		
+		case CDR_MERCHANT:	merchant_driver(cn,ret,lastact); return 1;
 		default:		return 0;
 	}
 }

@@ -123,7 +123,7 @@ static char *inbuf=NULL;
 
 static int connect_chat(void)
 {
-        int one=1,ret;
+        int one=1;
 	static struct sockaddr_in addr;
 	struct hostent *he;
 
@@ -139,7 +139,7 @@ static int connect_chat(void)
 
 	ioctl(sock,FIONBIO,(u_long*)&one);      // non-blocking mode
 
-	ret=connect(sock,(struct sockaddr *)&addr,sizeof(addr));
+	connect(sock,(struct sockaddr *)&addr,sizeof(addr));
 
         return 1;
 }
@@ -176,7 +176,7 @@ static void rec_chat(unsigned short channel,char *text)
 
 		bit=1<<(channel-1);
 		uID=atoi(text);
-		
+
 		if (channel==7 || channel==12 || channel==13) { cnr=atoi(text+11); step=14; }
 		else if (channel==8) { anr=atoi(text+11); step=14; }
 		else if (channel==9) { anr=atoi(text+11); mnr=atoi(text+14); step=17; }
@@ -194,7 +194,7 @@ static void rec_chat(unsigned short channel,char *text)
                         if (anr && anr!=areaID) continue;
 			if (mnr && mnr!=areaM) continue;
 			if (channel==13 && get_char_club(n)!=cnr) continue;
-			
+
 			log_char(n,LOG_SYSTEM,0,"%s",text+step);
 		}
 	} else if (channel==1024 || channel==1030) {	// tell
@@ -221,7 +221,7 @@ static void rec_chat(unsigned short channel,char *text)
 		coID=atoi(text+11);
 		look_values_bg(cnID,coID);
 	} else if (channel==1028) {	// empty
-		
+
 	} else if (channel==1029) {	// chat receive ack
 		int cnID,coID;
 
@@ -288,7 +288,7 @@ static int send_chat(unsigned short channel,char *text)
 		*(unsigned short*)(buf)=len;
 		*(unsigned short*)(buf+2)=channel;
 		strcpy(buf+4,text);
-	
+
 		ret=send(sock,buf,len+2,0);
                 if (ret==-1) {
 			connected=0;
@@ -330,10 +330,10 @@ void tick_chat(void)
 			} else break;
 		} else break;
 	}
-	
+
 	if (!connected) {
 		if (delay>0) { delay--; return; }
-		
+
 		if (state==0) {
 			//xlog("trying chat connect");
 			connect_chat();
@@ -341,14 +341,14 @@ void tick_chat(void)
 			delay=10;
 			return;
 		}
-		
+
 		if (state==1) {
 			bzero(&tv,sizeof(tv));
 			FD_ZERO(&fd_out); FD_ZERO(&fd_err); FD_ZERO(&fd_in);
                         FD_SET(sock,&fd_out); FD_SET(sock,&fd_err);
 
 			ret=select(sock+1,&fd_in,&fd_out,&fd_err,&tv);
-			
+
 			if (ret==-1) {
 				close(sock);
 				state=0;
@@ -356,11 +356,11 @@ void tick_chat(void)
 				return;
 			}
 			if (ret==0) return;
-	
+
                         if (FD_ISSET(sock,&fd_err)) {
 				close(sock);
 				delay=100;
-				state=0;				
+				state=0;
 			} else if (FD_ISSET(sock,&fd_out)) {
 				unsigned int sol,sollen=4;
 				if (getsockopt(sock,SOL_SOCKET,SO_ERROR,&sol,&sollen)) { close(sock); delay=100; state=0; }
@@ -459,7 +459,7 @@ static int write_chat(int cn,int channel,char *text)
 	char buf[256],name[100];
 
 	while (isspace(*text)) text++;
-	
+
 	if (!*text) {
 		log_char(cn,LOG_SYSTEM,0,"You cannot send empty chat messages.");
 		return 1;
@@ -528,7 +528,7 @@ static int write_chat(int cn,int channel,char *text)
 		case 32:	col=8; break;	// god
 		default:	col=2; break;
 	}
-	
+
 	if (ch[cn].flags&CF_STAFF) {
 		strcpy(name,"°c3°c17");
                 for (n=0; n<75 && ch[cn].name[n]; n++) name[n+7]=toupper(ch[cn].name[n]);
@@ -539,7 +539,7 @@ static int write_chat(int cn,int channel,char *text)
 	} else if (ch[cn].flags&CF_GOD) {
 		sprintf(name,"°c8°c17%s°c18°c%d",ch[cn].name,col);
 	} else sprintf(name,"°c17%s°c18",ch[cn].name);
-	
+
 
         if (channel==0) sprintf(buf,"°c%d%s",col,text);	// announce
         else if (channel==7 || channel==12) sprintf(buf,"%010u:%02u:°c%d%s: %s says: \"%s\"",xID,get_char_clan(cn),col,cname[channel].name,name,text);		// clan internal
@@ -590,7 +590,7 @@ static int write_chat(int cn,int channel,char *text)
 			text);	// normal
 	}
 
-	
+
 
 	send_chat(channel,buf);
 
@@ -632,7 +632,7 @@ int cmd_chat(int cn,char *text)
 
 	for (n=0; n<33; n++) {
 		if (!cname[n].name) continue;
-		
+
 		sprintf(buf,"c%d",n);
 		if ((len=cmdcmp(text,buf))) {
 			return write_chat(cn,n,text+len);

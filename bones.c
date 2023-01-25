@@ -92,19 +92,19 @@ void create_special_execs(struct rune_ppd *ppd)
 		for (m=0; m<5; m++) {
 			while (42) {
 				v=RANDOM(n*111);
-				
+
 				if (v<100) continue;
-				
+
 				for (i=0; i<ARRAYSIZE(badlist); i++)	// none from bad list
 					if (v==badlist[i]) break;
 				if (i<ARRAYSIZE(badlist)) continue;
-				
+
 				for (i=0; i<m; i++)	// no duplicates
 					if (v==ppd->special_exec[(n-5)*5+i]) break;
 				if (i<m) continue;
 
 				sprintf(buf,"%03d",v);
-				
+
 				for (i=0; buf[i]; i++)	// no zero's and no digits > n
 					if (buf[i]=='0' || buf[i]>n+'0') break;
 				if (buf[i]) continue;
@@ -112,7 +112,7 @@ void create_special_execs(struct rune_ppd *ppd)
 				for (i=0; buf[i]; i++)	// at least one digit n
 					if (buf[i]==n+'0') break;
 				if (!buf[i]) continue;
-				
+
 				ppd->special_exec[(n-5)*5+m]=v;
 				break;
 			}
@@ -126,14 +126,14 @@ void bonebridge(int in,int cn)
 
 	if (!cn) {	// timer call: remove old bridges
 		if (!it[in].drdata[1]) return;
-		
+
 		if (it[in].carried) {
 			elog("bonebridge: bug 77");
 			return;
 		}
 
 		m=it[in].x+it[in].y*MAXMAP;
-		
+
 		if (map[m].flags&MF_TMOVEBLOCK) {
 			call_item(it[in].driver,in,0,ticker+TICKS);
 			return;
@@ -144,12 +144,12 @@ void bonebridge(int in,int cn)
 		it[in].drdata[1]++;
 		it[in].sprite++;
 		set_sector(it[in].x,it[in].y);
-		
+
 		if (it[in].drdata[1]>9) {
                         remove_item_map(in);
 			destroy_item(in);
 		} else call_item(it[in].driver,in,0,ticker+3);
-		
+
 		return;
 	}
 
@@ -178,7 +178,7 @@ void bonebridge(int in,int cn)
 
 		map[m].it=in2;
 		map[m].flags&=~MF_MOVEBLOCK;
-		
+
                 ch[cn].citem=0;
 		ch[cn].flags|=CF_ITEMS;
 
@@ -188,12 +188,12 @@ void bonebridge(int in,int cn)
 		it[in2].y=y;
 		it[in2].flags&=~IF_TAKE;
 		it[in2].drdata[1]=1;
-		
+
 		if (flag) it[in2].sprite=13045;
 		else it[in2].sprite=13035;
-		
+
 		set_sector(x,y);
-		
+
 		call_item(it[in2].driver,in2,0,ticker+TICKS*60);
 		return;
 	}
@@ -208,7 +208,7 @@ void bonebridge(int in,int cn)
 			it[in].drdata[0]++;
 			it[in].sprite=13030+it[in].drdata[0];
 			ch[cn].flags|=CF_ITEMS;
-			
+
 			it[in2].drdata[0]--;
 			it[in2].sprite=13030+it[in2].drdata[0];
 			if (it[in2].drdata[0]==0) {
@@ -228,7 +228,7 @@ void bonebridge(int in,int cn)
 			it[in].drdata[0]--;
 			it[in].sprite=13030+it[in].drdata[0];
 			ch[cn].flags|=CF_ITEMS;
-			
+
 			in2=create_item("bone");
 			ch[cn].citem=in2;
 			it[in2].carried=cn;
@@ -239,7 +239,7 @@ void bonebridge(int in,int cn)
 void boneladder(int in,int cn)
 {
 	if (!cn) return;
-	
+
 	if (it[in].drdata[0]) {
 		teleport_char_driver(cn,it[in].x-4,it[in].y-3);
 	} else {
@@ -267,7 +267,7 @@ int rune_check(int cn,int nr,struct rune_ppd *ppd)
 void rune_set(int nr,struct rune_ppd *ppd)
 {
 	int i,bit;
-	
+
 	if (nr<0 || nr>=MAXRUNE) {
 		elog("Bug #5136b.");
 		return;
@@ -350,7 +350,7 @@ void exec_rune(int cn,int nr,int lastholder)
 		case 241:	if (raise_value_exp(cn,V_IMMUNITY)) log_char(cn,LOG_SYSTEM,0,"You gained immunity.");
 				flag=1;
 				break;
-				
+
 		// level 5
 		case 5:		teleport_char_driver(cn,176,110); break;		// teleport to next area
 		case 55:	give_exp(cn,level_value(min(ch[cn].level+5,55))/6); flag=1; 	// bonus
@@ -437,9 +437,10 @@ void exec_rune(int cn,int nr,int lastholder)
 						break;
 					}
 				}
-				if (n==25) log_char(cn,LOG_SYSTEM,0,"Nothing happened."); break;
+				if (n==25) log_char(cn,LOG_SYSTEM,0,"Nothing happened.");
+				break;
 	}
-        if (flag) rune_set(nr,ppd);	
+        if (flag) rune_set(nr,ppd);
 }
 
 void update_holder(int in)
@@ -451,11 +452,11 @@ void update_holder(int in)
 	if (it[in].drdata[0]==0) {
 		if (it[in].drdata[1]==0) it[in].sprite=13103;
 		else it[in].sprite=13104;
-		
+
 		map[m].fsprite=0;
 	} else {
 		it[in].sprite=13104+it[in].drdata[0];
-		
+
 		if (it[in].drdata[1]==0) map[m].fsprite=13103;
 		else map[m].fsprite=13104;
 	}
@@ -480,7 +481,7 @@ void remove_rune_from_holder(int in,int cn)
 	in2=create_rune_from_holder(in);
 	it[in].drdata[0]=0;
 	update_holder(in);
-	
+
 	if (in2 && !give_char_item(cn,in2)) {
 		destroy_item(in2);
 	}
@@ -550,7 +551,7 @@ void boneholder(int in,int cn)
 			log_char(cn,LOG_SYSTEM,0,"This rune does not belong to you. You cannot take it.");
 			return;
 		}
-		
+
 		in2=create_rune_from_holder(in);
                 if (!in2) {
 			log_char(cn,LOG_SYSTEM,0,"You found bug #11970");
@@ -582,7 +583,7 @@ void bonewall(int in,int cn)
 
 	if (it[in].drdata[0]<5) {
                 it[in].drdata[0]++;
-		it[in].sprite++;		
+		it[in].sprite++;
 		set_sector(it[in].x,it[in].y);
 		call_item(it[in].driver,in,0,ticker+2);
 		return;
@@ -612,7 +613,7 @@ void bonewall(int in,int cn)
 		it[in].drdata[0]=0;
 		it[in].flags|=IF_USE;
 		it[in].flags&=~IF_VOID;
-		
+
 		remove_lights(it[in].x,it[in].y);
 		map[it[in].x+it[in].y*MAXMAP].it=in;
 		map[it[in].x+it[in].y*MAXMAP].flags|=MF_TSIGHTBLOCK|MF_TMOVEBLOCK;
@@ -628,7 +629,7 @@ void bonehint(int in,int cn)
 	int level,nr,pos,val,res;
 	char buf[40];
 	struct rune_ppd *ppd;
-	
+
 	static char *rune_name[10]={
 		"none",
 		"Ansuz",
@@ -662,7 +663,7 @@ void bonehint(int in,int cn)
 		it[in].drdata[2]=sqrt(RANDOM(25));
 		it[in].drdata[3]=RANDOM(3);
 	}
-	
+
 	level=it[in].drdata[0];
 	nr=it[in].drdata[2];
 	pos=it[in].drdata[3];
@@ -688,7 +689,7 @@ int ch_driver(int nr,int cn,int ret,int lastact)
 
 int it_driver(int nr,int in,int cn)
 {
-	switch(nr) {		
+	switch(nr) {
 		case IDR_BONEBRIDGE:	bonebridge(in,cn); return 1;
 		case IDR_BONELADDER:	boneladder(in,cn); return 1;
 		case IDR_BONEHOLDER:	boneholder(in,cn); return 1;

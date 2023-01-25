@@ -124,7 +124,7 @@ struct pent_nppd
 	int pent_value[6];	// internal value (must be unique)
 	int pent_worth[6];	// exp awarded for this pentagram
 	int bonus;		// bonus
-	
+
 	int pent_cnt;		// number of pents used in this session
 };
 
@@ -152,7 +152,7 @@ static void solve_pents(int cc)
 
 			nppd->pent_it[n]=nppd->pent_color[n]=0;
 		}
-		
+
 		exp+=nppd->bonus;
 		nppd->status=nppd->bonus=0;
 
@@ -183,12 +183,11 @@ static void solve_pents(int cc)
 
 static void add_pent(int cn,int in,int didsolve)
 {
-	int level,status,color,nr,n,same,lastcolor,value,worth;
+	int level,color,nr,n,same,lastcolor,value,worth;
 	struct pent_nppd *nppd;
 	static char *colortext[4]={"none","red","green","blue"};
 
 	level=*(unsigned char*)(it[in].drdata+0);
-	status=*(unsigned char*)(it[in].drdata+1);
 	color=*(unsigned char*)(it[in].drdata+2);
 	nr=*(unsigned char*)(it[in].drdata+3);
 	value=level*50+nr;
@@ -224,7 +223,7 @@ static void add_pent(int cn,int in,int didsolve)
 			}
 			for (n=same=lastcolor=0; n<5; n++) {
 				if (!nppd->pent_value[n]) break;
-		
+
 				if (lastcolor==nppd->pent_color[n]) {
 					same++;
 				} else {
@@ -275,7 +274,7 @@ static void add_pent(int cn,int in,int didsolve)
 			 colortext[nppd->pent_color[n]],
 			 nppd->pent_worth[n]);
 		worth+=nppd->pent_worth[n];
-			
+
 	}
 	log_char(cn,LOG_SYSTEM,0,"#90Bonus: %d, total: %d",nppd->bonus,worth+nppd->bonus);
 
@@ -301,7 +300,7 @@ static void set_pent_solve_cnt(void)
 	cnt=online;
 
 	solve=12+(cnt+1)*4+RANDOM((cnt+1)*7);
-	
+
 	if (solve>total-total/4) solve=total-total/4;
 }
 
@@ -316,7 +315,7 @@ void pent_init(void)
 	for (n=MAXITEM-1; n>0; n--) {
 		if (!it[n].flags) continue;
                 if (it[n].driver!=IDR_PENT) continue;
-		
+
 		// set number
 		l=it[n].drdata[0];	// level
 		level_nr[l]++;
@@ -339,7 +338,7 @@ void pent_init(void)
 	for (n=1; n<=MAXLEVEL; n++) {
                 xlog(" level %d, %d pents",n,level_nr[n]);
 		if (level_nr[n] && !minlevel) minlevel=n;
-		if (level_nr[n]) maxlevel=n;		
+		if (level_nr[n]) maxlevel=n;
 	}
 	minlevel--;
 	maxlevel--;
@@ -372,7 +371,7 @@ void pentenhance_char(int cn)
 
 void pent_driver(int in,int cn)
 {
-	int co,ser,level,n,status,color,cnt=0,nr,maxspawn,areastatus;
+	int co,ser,level,n,status,color,cnt=0,maxspawn,areastatus;
 	char name[80];
 
 	if (!init_done) {
@@ -383,7 +382,6 @@ void pent_driver(int in,int cn)
         level=*(unsigned char*)(it[in].drdata+0);
 	status=*(unsigned char*)(it[in].drdata+1);
 	color=*(unsigned char*)(it[in].drdata+2);
-	nr=*(unsigned char*)(it[in].drdata+3);
 	areastatus=*(unsigned char*)(it[in].drdata+4);
 
 	if (cn) {	// player activated pent
@@ -395,7 +393,7 @@ void pent_driver(int in,int cn)
 			status=*(unsigned char*)(it[in].drdata+1)=solve_ser;	// activate pent
 			it[in].sprite+=color;
 			remove_item_light(in); it[in].mod_value[0]=100; add_item_light(in);
-			
+
                         active++;
 			sound_area(it[in].x,it[in].y,42);
 
@@ -409,7 +407,7 @@ void pent_driver(int in,int cn)
 				lastareasolve[level]=ticker;
 				//xlog("area %d will reset: %d",level,areaser[level]);
 			}
-			
+
 			if (active>=solve) {
 				add_pent(cn,in,1);
 				solve_ser++; if (solve_ser>255) solve_ser=1;
@@ -417,7 +415,7 @@ void pent_driver(int in,int cn)
 				for (n=0; n<MAXLEVEL; n++) areadone[n]=0;
 
 				set_pent_solve_cnt();
-				
+
 				solve_pents(cn);
 				return;	// no spawn on solve
 			} else add_pent(cn,in,0);
@@ -431,16 +429,16 @@ void pent_driver(int in,int cn)
 				status=*(unsigned char*)(it[in].drdata+1)=*(unsigned char*)(it[in].drdata+4)=0;	// mark pent non-active
 				it[in].sprite-=color;
 				remove_item_light(in); it[in].mod_value[0]=10; add_item_light(in);
-				cnt=3;	// spawn three on reset	
+				cnt=3;	// spawn three on reset
 			} else return;
 		} else if (status && areastatus!=areaser[level]) {			// pent is active, but area has been solved
 			if (ticker-lastareasolve[level]>TICKS*60 || !RANDOM(10)) {
 				status=*(unsigned char*)(it[in].drdata+1)=*(unsigned char*)(it[in].drdata+4)=0;	// mark pent non-active
 				it[in].sprite-=color;
 				remove_item_light(in); it[in].mod_value[0]=10; add_item_light(in);
-				cnt=3;	// spawn three on reset	
+				cnt=3;	// spawn three on reset
 			} else return;
-		} else if (!status) { 			// pent is not active, but quest has not been solved		
+		} else if (!status) { 			// pent is not active, but quest has not been solved
                         if (!RANDOM(35)) cnt=1;		// spawn one on normal timer call
 			else return;
 			//cnt=1;
@@ -454,7 +452,7 @@ void pent_driver(int in,int cn)
         for (n=0; n<maxspawn; n++) {
 		co=*(unsigned short*)(it[in].drdata+6+n*4);
 		ser=*(unsigned short*)(it[in].drdata+8+n*4);
-		
+
 		if (!co || !ch[co].flags || (unsigned short)ch[co].serial!=(unsigned short)ser) {
 			sprintf(name,"penter%d",level*2+RANDOM(2));
 			co=create_char(name,0);
@@ -462,7 +460,7 @@ void pent_driver(int in,int cn)
 			ch[co].flags&=~CF_RESPAWN;
 
                         if (item_drop_char(in,co)) {
-				
+
 				ch[co].tmpx=ch[co].x;
 				ch[co].tmpy=ch[co].y;
 
@@ -471,12 +469,12 @@ void pent_driver(int in,int cn)
                                 update_char(co);
 
 				if (ch[co].value[0][V_BLESS]) bless_someone(co,ch[co].value[0][V_BLESS],BLESSDURATION);
-				
+
 				ch[co].hp=ch[co].value[0][V_HP]*POWERSCALE;
 				ch[co].endurance=ch[co].value[0][V_ENDURANCE]*POWERSCALE;
 				ch[co].mana=ch[co].value[0][V_MANA]*POWERSCALE;
 				ch[co].lifeshield=ch[co].value[0][V_MAGICSHIELD]*POWERSCALE/MAGICSHIELDMOD;
-				
+
 				ch[co].dir=DX_RIGHTDOWN;
 				ch[co].flags|=CF_NONOTIFY;
 
@@ -485,13 +483,13 @@ void pent_driver(int in,int cn)
 				*(unsigned short*)(it[in].drdata+6+n*4)=co;
 				*(unsigned short*)(it[in].drdata+8+n*4)=ch[co].serial;
 				cnt--;
-				if (cnt<1) break;	// only cnt spawns per call				
+				if (cnt<1) break;	// only cnt spawns per call
 			} else {
 				destroy_char(co);
                                 break;
 			}
 		}
-	}	
+	}
 }
 
 void pentboss_door_driver(int in,int cn)
@@ -520,7 +518,7 @@ void pentboss_door_driver(int in,int cn)
 
         oldx=ch[cn].x; oldy=ch[cn].y;
 	remove_char(cn);
-	
+
 	if (!drop_char(cn,x,y,0)) {
 		log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,10,"%s says: \"Please try again soon. Target is busy.\"",it[in].name);
 		drop_char(cn,oldx,oldy,0);
@@ -531,7 +529,7 @@ void pentboss_door_driver(int in,int cn)
 		case DX_LEFT:	ch[cn].dir=DX_RIGHT; break;
 		case DX_UP:	ch[cn].dir=DX_DOWN; break;
 		case DX_DOWN:	ch[cn].dir=DX_UP; break;
-	}	
+	}
 }
 
 void penter(int cn,int ret,int lastact)

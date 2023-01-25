@@ -92,7 +92,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -112,7 +112,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -126,21 +126,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -151,7 +150,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -245,7 +244,7 @@ void bank_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -259,7 +258,7 @@ void bank_driver(int cn,int ret,int lastact)
 
 			ppd=set_data(co,DRD_DEPOT_PPD,sizeof(struct depot_ppd));
 			if (!ppd) { remove_message(cn,msg); continue; }
-			
+
 			if (!ppd->loaded) quiet_say(cn,"Hello %s! The server could not load thy depot. Please come back later.",ch[co].name);
                         else if (!ppd->gold) quiet_say(cn,"Hello %s! Wouldst thou like to open an °c4account°c0 with the Imperial Bank?",ch[co].name);
 			else quiet_say(cn,"Ah, welcome %s! Thy °c4account°c0 is in good hands with the Imperial Bank.",ch[co].name);
@@ -303,7 +302,7 @@ void bank_driver(int cn,int ret,int lastact)
 					if (ppd->gold>=100) quiet_say(cn,"Thou hast %s gold in thine account.",bignumber(ppd->gold/100));
 					else quiet_say(cn,"Thou dost not have any money in thine account.");
 				}
-			}			
+			}
 		}
 
 		// got an item?
@@ -313,7 +312,7 @@ void bank_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				// try to give it back
                                 if (give_driver(cn,co)) return;
-				
+
 				// didnt work, let it vanish, then
 				destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -344,7 +343,7 @@ void bank_driver(int cn,int ret,int lastact)
                         if (dat->doorx && is_closed(dat->doorx,dat->doory)) {	// door is still closed
                                 if (use_item_at(cn,dat->doorx,dat->doory,0)) return;
 				do_idle(cn,TICKS);
-				return;			
+				return;
 			}
 
 			if (move_driver(cn,dat->dayx,dat->dayy,0)) return;
@@ -368,7 +367,7 @@ void bank_driver(int cn,int ret,int lastact)
 			case 8:		murmur(cn,"All those numbers! I love it."); break;
 			default:	break;
 		}
-		
+
 		dat->last_talk=ticker;
 	}
 
@@ -388,7 +387,7 @@ void bank_dead(int cn,int co)
 int ch_driver(int nr,int cn,int ret,int lastact)
 {
 	switch(nr) {
-		case CDR_BANK:		bank_driver(cn,ret,lastact); return 1;		
+		case CDR_BANK:		bank_driver(cn,ret,lastact); return 1;
 		default:		return 0;
 	}
 }
@@ -412,7 +411,7 @@ int ch_respawn_driver(int nr,int cn)
 {
 	switch(nr) {
 		case CDR_BANK:		return 1;
-		
+
 		default:		return 0;
 	}
 }

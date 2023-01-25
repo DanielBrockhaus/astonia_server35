@@ -97,7 +97,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -117,7 +117,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -131,21 +131,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -155,7 +154,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -168,7 +167,7 @@ struct dwarfchief_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void dwarfchief_driver(int cn,int ret,int lastact)
 {
@@ -186,7 +185,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -194,7 +193,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -226,7 +225,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
 							}
                                                         break;
 					case 3:		break; // waiting for player to save first miner
-					
+
 					case 4:		questlog_done(co,47);
                                                         ppd->dwarfchief_state++;
 							// fall-through intended
@@ -240,7 +239,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
 							}
                                                         break;
 					case 6:		break; // waiting for player to save second miner
-					
+
 					case 7:		questlog_done(co,48);
                                                         ppd->dwarfchief_state++;
 							// fall-through intended
@@ -254,7 +253,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
 							}
                                                         break;
 					case 9:		break; // waiting for player to save third miner
-					
+
 					case 10:	questlog_done(co,49);
                                                         ppd->dwarfchief_state++;
 							// fall-through intended
@@ -316,7 +315,7 @@ void dwarfchief_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 				if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -339,7 +338,7 @@ struct dwarfshaman_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void dwarfshaman_driver(int cn,int ret,int lastact)
 {
@@ -357,7 +356,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -365,7 +364,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -390,7 +389,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
                                                         ppd->dwarfshaman_state++; didsay=1;
 							break;
                                         case 2:         break;	// waiting for teeth
-					
+
 					case 3:		if (questlog_isdone(co,52)) { ppd->dwarfshaman_state=6; break; }
 							quiet_say(cn,"Ah! I see you've come back with all your teeth, and those of the lizards. I guess you are strong enough after all to do the quest I am about to give you. You see, I've seen the lizards come out with brown berries out of the water.");
 							questlog_open(co,52);
@@ -400,7 +399,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
                                                         ppd->dwarfshaman_state++; didsay=1;
                                                         break;
 					case 5:		break; // waiting for berries
-					
+
 					case 6:		if (questlog_isdone(co,53)) { ppd->dwarfshaman_state=10; break; }
 							quiet_say(cn,"It's good that you can swim, you have no idea how much I hate water. Thanks for the berries. As I suspected, they seem to have magic properties, which I may be able to use.");
 							questlog_open(co,53);
@@ -410,7 +409,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
                                                         ppd->dwarfshaman_state++; didsay=1;
                                                         break;
 					case 8:		break; // waiting for elite head
-					
+
 					case 9:		quiet_say(cn,"This is quite amazing! The reason these lizards are so varied is due to them being able to somehow absorb magical energy. To much of it seems to affect their mind however, as was the case with this elite lizard.");
 							ppd->dwarfshaman_state++; didsay=1;
                                                         break;
@@ -453,7 +452,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
 		// got an item?
 		if (msg->type==NT_GIVE) {
 			co=msg->dat1;
-			
+
 			ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if ((in=ch[cn].citem)) {	// we still have it
@@ -463,7 +462,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
 						ppd->dwarfshaman_state=3;
 						ppd->dwarfshaman_count=0;
 						dat->last_talk=0;
-						questlog_done(co,51);						
+						questlog_done(co,51);
 					} else {
 						quiet_say(cn,"%d done, %d to go.",ppd->dwarfshaman_count,9-ppd->dwarfshaman_count);
 					}
@@ -486,7 +485,7 @@ void dwarfshaman_driver(int cn,int ret,int lastact)
 					quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					ch[cn].citem=0;
 				}
-			
+
 				// let it vanish, then
 				if (ch[cn].citem) destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -512,7 +511,7 @@ struct dwarfsmith_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void dwarfsmith_driver(int cn,int ret,int lastact)
 {
@@ -530,7 +529,7 @@ void dwarfsmith_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -538,7 +537,7 @@ void dwarfsmith_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -591,7 +590,7 @@ void dwarfsmith_driver(int cn,int ret,int lastact)
 		// got an item?
 		if (msg->type==NT_GIVE) {
 			co=msg->dat1;
-			
+
 			ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if ((in=ch[cn].citem)) {	// we still have it
@@ -608,11 +607,11 @@ void dwarfsmith_driver(int cn,int ret,int lastact)
 						default:	in2=0; quiet_say(cn,"oops. bug # 3266/%d",ppd->dwarfsmith_type); break;
 					}
 					if (in2) {
-						if (!give_char_item(co,in2)) destroy_item(in2);						
+						if (!give_char_item(co,in2)) destroy_item(in2);
                                         }
 					ppd->dwarfsmith_state=1;
 					ppd->dwarfsmith_type=0;
-					
+
 				} else if (give_char_item(co,in)) {
 					if (it[in].driver==IDR_ENHANCE) {
 						if (it[in].drdata[0]!=1) quiet_say(cn,"I'll need silver, not any other material.");
@@ -621,7 +620,7 @@ void dwarfsmith_driver(int cn,int ret,int lastact)
 					} else quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					ch[cn].citem=0;
 				}
-			
+
 				// let it vanish, then
 				if (ch[cn].citem) destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -648,7 +647,7 @@ struct lostdwarf_data
         int nr;
         int invis_tick;
 	int last_talk;
-};	
+};
 
 void lostdwarf_driver(int cn,int ret,int lastact)
 {
@@ -678,7 +677,7 @@ void lostdwarf_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -686,7 +685,7 @@ void lostdwarf_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*60) { remove_message(cn,msg); continue; }
 
@@ -706,7 +705,7 @@ void lostdwarf_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
                         if ((in=ch[cn].citem)) {	// we still have it
 				ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
-				
+
 				if (ppd && ppd->dwarfchief_state<=3 && dat->nr==1 && it[in].ID==IID_DWARFRECALL1) {
 					ppd->dwarfchief_state=4;
 					say(cn,"Thank you for saving me, %s. I got so hungry I almost ate my beard.",ch[co].name);
@@ -744,7 +743,7 @@ void lostdwarf_driver(int cn,int ret,int lastact)
 					dat->invis_tick=ticker+TICKS*30;
 					set_sector(ch[cn].x,ch[cn].y);
 				}
-			
+
 				// let it vanish, then
 				destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -767,7 +766,7 @@ void oxy_potion(int in,int cn)
 {
 	if (!cn) return;
 	if (!it[in].carried) return;
-	
+
 	add_spell(cn,IDR_OXYGEN,TICKS*60,"nonomagic_spell");
 	remove_item(in);
 	destroy_item(in);
@@ -780,7 +779,7 @@ void pick_berry(int in,int cn)
 	struct flower_ppd *ppd;
 
 	if (!cn) return;
-	
+
 	if (ch[cn].citem) {
 		log_char(cn,LOG_SYSTEM,0,"Please empty your hand (mouse cursor) first.");
 		return;
@@ -828,7 +827,7 @@ void pick_berry(int in,int cn)
 
 void flower_mixer(int in,int cn)
 {
-	int bit1,bit2,in2;
+	int bit2,in2;
 
 	if (!cn) return;
 
@@ -842,13 +841,12 @@ void flower_mixer(int in,int cn)
 		return;
 	}
 
-	bit1=it[in].drdata[0];
 	bit2=it[in2].drdata[0];
 
 	if (it[in].sprite!=11189 && it[in2].sprite!=11189) {
 		log_char(cn,LOG_SYSTEM,0,"A bottle pops out of thin air as you try to combine the flowers. You're stunned for a moment, but then you mix the flowers in the bottle.");
 	}
-	
+
         it[in].drdata[0]|=bit2;
 	ch[cn].flags|=CF_ITEMS;
 
@@ -864,7 +862,7 @@ void flower_mixer(int in,int cn)
 	}
 
 	ch[cn].citem=0;
-	destroy_item(in2);	
+	destroy_item(in2);
 }
 
 

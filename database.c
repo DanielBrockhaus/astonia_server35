@@ -555,7 +555,7 @@ void save_depot(int sID,struct depot_ppd *dat,int cID,int leaving)
 {
 	char buf[sizeof(struct depot_ppd)*2+12+1024];
 	char query[sizeof(struct depot_ppd)*2+12+1024+160];
-	int len,xlen,add,expandto,size;
+	int len,xlen=0,add,expandto,size;
 
 	if (!dat->loaded) {
 		xlog("not saving depot, was not loaded");
@@ -597,7 +597,7 @@ int save_char(int cn,int area)
 	unsigned char cdata[sizeof(struct character)],idata[sizeof(struct item)*(INVENTORYSIZE+1)],ddata[MAXDRDATA];
 	unsigned char cbuf[sizeof(cdata)*2],ibuf[sizeof(idata)*2],dbuf[sizeof(ddata)*2];
 	unsigned char buf[sizeof(cbuf)+sizeof(ibuf)+sizeof(dbuf)+80];
-	int n,in,ilen=0,dlen=0,clen=0,xilen=0,xdlen=0,xclen=0;
+	int n,in,ilen=0,dlen=0,xilen=0,xdlen=0,xclen=0;
 	struct item *itmp;
 	struct data *dat;
 
@@ -653,7 +653,7 @@ int save_char(int cn,int area)
 
 	// ch.current_area and ch.current_mirror are not added if set, the field spacer is used to deal with those
 
-	mysql_real_escape_string(&mysql,cbuf,cdata,sizeof(struct character)); clen=xclen=sizeof(struct character);
+	mysql_real_escape_string(&mysql,cbuf,cdata,sizeof(struct character)); xclen=sizeof(struct character);
         ilen=compress_escape_string(&mysql,ibuf,idata,ilen,&xilen);
 	dlen=compress_escape_string(&mysql,dbuf,ddata,dlen,&xdlen);
 
@@ -2019,7 +2019,7 @@ static int load_char_pwd(char *pass,int sID,int *ppaid_till,int *ppaid,int vendo
 	MYSQL_RES *result;
 	MYSQL_ROW row;
 	char buf[256],stat_state[80];
-	int creation_time,paid_till,t,login_time;
+	int creation_time,paid_till,login_time;
 	int banned_till,karma,day1,day2;
 	struct tm tm;
 
@@ -2090,7 +2090,6 @@ static int load_char_pwd(char *pass,int sID,int *ppaid_till,int *ppaid,int vendo
 	}
 
         if (paid_till>time_now) {
-		t=paid_till;
 		if (ppaid) *ppaid=paid_till;
 		if (ppaid_till) *ppaid_till=paid_till;
 	} else {

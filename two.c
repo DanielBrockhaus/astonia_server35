@@ -127,7 +127,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -147,7 +147,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -161,21 +161,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -185,7 +184,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -260,7 +259,7 @@ struct twoguard_data
 	int lastsay;
 	int tx,ty;
 	int lastalert;
-	int good_tx_try;	
+	int good_tx_try;
 	int nofight_timer;
 
 	int patx[MAXPAT],paty[MAXPAT];
@@ -300,17 +299,17 @@ void guard_driver(int cn,int ret,int lastact)
 	in=ch[cn].item[WN_LHAND];
 	if (!in) {
 		in=ch[cn].item[WN_LHAND]=create_item("torch");
-		it[in].carried=cn;		
+		it[in].carried=cn;
 	}
-	
+
 	//if (it[in].drdata[0]) tlight=it[in].mod_value[0];
 	//else tlight=0;
 	tlight=ch[cn].value[0][V_LIGHT];
-	
+
 	light=check_dlight(ch[cn].x,ch[cn].y);
         if (light<40) on++;
 	if (light>50) off++;
-	
+
 	light=check_light(ch[cn].x,ch[cn].y);
 	if (light<10) on++;
 	if (light-tlight>10) off++;
@@ -318,7 +317,7 @@ void guard_driver(int cn,int ret,int lastact)
 	//say(cn,"on=%d, off=%d,light=%d, tlight=%d",on,off,light,tlight);
 	if (!it[in].drdata[0] && on==2) { use_item(cn,in); /* say(cn,"on! (%d)",cn); */ }
 	if (it[in].drdata[0] && off) { use_item(cn,in); /* say(cn,"off! (%d)",cn); */ }
-	
+
 
 	if (it[in].drdata[0]) ch[cn].sprite=317;
 	else ch[cn].sprite=318;
@@ -383,7 +382,7 @@ void guard_driver(int cn,int ret,int lastact)
 					if (dat->leave_state==2) {
 						fight_driver_add_enemy(cn,co,1,1);
 						ppd->last_attack=realtime;
-					}					
+					}
 				} else if (ppd->legal_status==LS_CLEAN) {
 					if (ppd->guard_intro==0 && char_dist(cn,co)<16) {
 						say(cn,"Listen carefully, %s. Thou art here on a guest pass. Any crime here, and thou wilt lose the right to enter our city.",ch[co].name);
@@ -418,7 +417,7 @@ void guard_driver(int cn,int ret,int lastact)
 						dir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 						turn(cn,dir);
 					}
-					if (dat->fine_state==2) {						
+					if (dat->fine_state==2) {
 						fight_driver_add_enemy(cn,co,1,1);
 						ppd->last_attack=realtime;
 					}
@@ -438,9 +437,9 @@ void guard_driver(int cn,int ret,int lastact)
 						if (!ppd) break;
                                                 if (ppd->legal_status==LS_FINE) {
 							if (ch[co].gold>=ppd->legal_fine) {
-								
+
 								say(cn,"Wise choice, %s.",ch[co].name);
-								
+
 								ch[co].gold-=ppd->legal_fine;
 								ch[co].flags|=CF_ITEMS;
 								ppd->legal_status=LS_CLEAN;
@@ -453,7 +452,7 @@ void guard_driver(int cn,int ret,int lastact)
                                                                         need=ppd->legal_fine;
 									need-=ch[co].gold;
 									if (need<=bank->gold) {
-										
+
 										say(cn,"Wise choice, %s (took %.2fG from bank account).",ch[co].name,need/100.0);
 
 										bank->gold-=need; bank->changes++;
@@ -461,7 +460,7 @@ void guard_driver(int cn,int ret,int lastact)
 										ch[co].flags|=CF_ITEMS;
 
                                                                                 ppd->legal_status=LS_CLEAN;
-										ppd->legal_fine=0;										
+										ppd->legal_fine=0;
 									} else say(cn,"Gosh, %s's broke. Well, %s'll die then.",hename(co),hename(co));
 								}
 							}
@@ -562,7 +561,7 @@ void guard_driver(int cn,int ret,int lastact)
 							ppd->last_attack=realtime;
 						}
 						//charlog(cn,"fine for %s (3): 30G",ch[co].name);
-					}					
+					}
 				}
 			}
 		}
@@ -574,10 +573,10 @@ void guard_driver(int cn,int ret,int lastact)
         if (dat->victim_timeout+TICKS*3<ticker) dat->victim_timeout=dat->current_victim=dat->fine_state=dat->leave_state=dat->leave_timeout=0;
 
         fight_driver_update(cn);
-	
+
 	if (fight_driver_attack_visible(cn,0)) { dat->busy=1; return; }
 	if (fight_driver_follow_invisible(cn)) { dat->busy=1; return; }
-	
+
         if (spell_self_driver(cn)) { dat->busy=1; return; }
 	if (regenerate_driver(cn)) { dat->busy=1; return; }
 
@@ -600,8 +599,8 @@ void guard_driver(int cn,int ret,int lastact)
                 if (abs(dat->patx[dat->pi]-ch[cn].x)<4 && abs(dat->paty[dat->pi]-ch[cn].y)<4) dat->pi++;
                 if (!dat->patx[dat->pi]) dat->pi=0;
 
-		if (swap_move_driver(cn,dat->patx[dat->pi],dat->paty[dat->pi],3)) return;		
-		
+		if (swap_move_driver(cn,dat->patx[dat->pi],dat->paty[dat->pi],3)) return;
+
 		dat->pi++;
                 if (!dat->patx[dat->pi]) dat->pi=0;
 	}
@@ -619,8 +618,8 @@ void guard_dead(int cn,int co)
         struct twocity_ppd *ppd;
 
 	if (!co) return;
-	if (!(ch[co].flags&CF_PLAYER)) return;	
-	
+	if (!(ch[co].flags&CF_PLAYER)) return;
+
         ppd=set_data(co,DRD_TWOCITY_PPD,sizeof(struct twocity_ppd));
 	if (!ppd) return;
 
@@ -635,8 +634,8 @@ void guard_dead(int cn,int co)
 struct barkeeper_data
 {
         int last_talk;
-	int current_victim;		
-};	
+	int current_victim;
+};
 
 void barkeeper(int cn,int ret,int lastact)
 {
@@ -654,7 +653,7 @@ void barkeeper(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -691,7 +690,7 @@ void barkeeper(int cn,int ret,int lastact)
 								ppd->barkeeper_state++; didsay=1;
 								ppd->barkeeper_last=realtime;
 							}
-							break;					
+							break;
 					case 2:		if (realtime-ppd->barkeeper_last>60*10) ppd->barkeeper_state=2;
 							break;
 				}
@@ -720,7 +719,7 @@ void barkeeper(int cn,int ret,int lastact)
 							if (ppd->legal_status==LS_FINE) cost=15000+ppd->legal_fine;
 							else if (ppd->legal_status==LS_DEAD) cost=250000;
 							else cost=15000;
-							
+
 							if (take_money(co,cost)) {
 								say(cn,"Thou canst now enter Exkordon, %s. But do be careful there, they are most strict with their laws.",ch[co].name);
 								ppd->citizen_status=CS_GUEST;
@@ -744,7 +743,7 @@ void barkeeper(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
                                 // let it vanish, then
 				destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -757,7 +756,7 @@ void barkeeper(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;	
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -766,7 +765,7 @@ void barkeeper(int cn,int ret,int lastact)
 struct servant_data
 {
         int last_talk;
-	int current_victim;		
+	int current_victim;
 	int current_state;
 	int nr;
 	int lastalert;
@@ -807,7 +806,7 @@ void servant(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -841,7 +840,7 @@ void servant(int cn,int ret,int lastact)
 								break;
 						case 1:		break;
 					}
-				
+
 				if (illegal_place(ch[cn].x,ch[co].x)>ppd->citizen_status) {
 				} else {
 					switch(dat->current_state) {
@@ -992,7 +991,7 @@ void servant(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
                                 // let it vanish, then
 				destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 		if (msg->type==NT_GOTHIT) {
@@ -1013,7 +1012,7 @@ void servant(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;	
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -1054,7 +1053,7 @@ int pick_door(int in,int cn)
 			return 2;
 		}
 		remove_lights(it[in].x,it[in].y);
-		
+
 		it[in].flags|=*(unsigned long long*)(it[in].drdata+30);
 		if (it[in].flags&IF_MOVEBLOCK) map[m].flags|=MF_TMOVEBLOCK;
 		if (it[in].flags&IF_SIGHTBLOCK) map[m].flags|=MF_TSIGHTBLOCK;
@@ -1082,7 +1081,7 @@ int pick_door(int in,int cn)
 	}
 
 	remove_lights(it[in].x,it[in].y);
-		
+
 	*(unsigned long long*)(it[in].drdata+30)=it[in].flags&(IF_MOVEBLOCK|IF_SIGHTBLOCK|IF_DOOR|IF_SOUNDBLOCK);
 	it[in].flags&=~(IF_MOVEBLOCK|IF_SIGHTBLOCK|IF_DOOR|IF_SOUNDBLOCK);
 	map[m].flags&=~(MF_TMOVEBLOCK|MF_TSIGHTBLOCK|MF_DOOR|MF_TSOUNDBLOCK);
@@ -1132,7 +1131,7 @@ void pick_chest(int in,int cn)
 	ch[cn].citem=in2;
 	it[in2].carried=cn;
 	ch[cn].flags|=CF_ITEMS;
-	
+
 	log_char(cn,LOG_SYSTEM,0,"You found a %s.",lower_case(it[in2].name));
 
         return;
@@ -1146,7 +1145,7 @@ void burndown(int in,int cn)
 	if (!cn) {
 		if (it[in].drdata[0]) {
                         it[in].drdata[0]--;
-			
+
 			if (it[in].drdata[0]>15) {
 				it[in].sprite++;
 				set_sector(it[in].x,it[in].y);
@@ -1195,15 +1194,15 @@ void burndown(int in,int cn)
 		ppd->thief_state=14;
 		ppd->thief_killed[0]++;
 	}
-	
+
         return;
 }
 
 struct thiefguard_data
 {
         int last_talk;
-	int current_victim;		
-};	
+	int current_victim;
+};
 
 void thiefguard(int cn,int ret,int lastact)
 {
@@ -1221,7 +1220,7 @@ void thiefguard(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1266,14 +1265,14 @@ void thiefguard(int cn,int ret,int lastact)
 							ppd->thief_state++; didsay=1;
 							break;
 					case 51:	say(cn,"Well, thou hast done us and our new master a favor with that. Not that we'd pay thee anything for it, but we won't hold any grudges either.");
-							ppd->thief_state=1; didsay=1;							
+							ppd->thief_state=1; didsay=1;
 							break;
 				}
                                 if (didsay) {
 					dat->last_talk=ticker;
 					talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 					dat->current_victim=co;
-				}				
+				}
 			}
 		}
 
@@ -1312,7 +1311,7 @@ void thiefguard(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
                                 // let it vanish, then
 				destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -1330,7 +1329,7 @@ void thiefguard(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;	
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -1339,8 +1338,8 @@ void thiefguard(int cn,int ret,int lastact)
 struct thiefmaster_data
 {
         int last_talk;
-	int current_victim;		
-};	
+	int current_victim;
+};
 
 void thiefmaster(int cn,int ret,int lastact)
 {
@@ -1358,7 +1357,7 @@ void thiefmaster(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1383,7 +1382,7 @@ void thiefmaster(int cn,int ret,int lastact)
 
                         if (ppd) {
 				if (ppd->thief_state<4) ppd->thief_state=4;
-				
+
 				switch(ppd->thief_state) {
                                         case 4:		say(cn,"Ah. A new member. Welcome, %s.",ch[co].name);
 							ppd->thief_state++; didsay=1;
@@ -1443,10 +1442,10 @@ void thiefmaster(int cn,int ret,int lastact)
                                                         give_exp(co,min(level_value(ch[co].level)/5,val));
                                                         ppd->thief_bits|=1;
 							questlog_done(co,25);
-							
+
 							in=create_item("lockpick");
 							if (in && !give_char_item(co,in)) destroy_item(in);
-                                                        ppd->thief_state++; didsay=1;							
+                                                        ppd->thief_state++; didsay=1;
 							break;
 					case 11:	// start of next mission
 							if (!has_item(co,IID_AREA17_LOCKPICK)) {
@@ -1476,14 +1475,14 @@ void thiefmaster(int cn,int ret,int lastact)
 							}
 							say(cn,"Here's a key that might come in handy. It opens most of the doors in the sewers.");
 							ppd->thief_killed[0]=ppd->thief_killed[1]=ppd->thief_killed[2]=ppd->thief_killed[3]=ppd->thief_killed[4]=ppd->thief_killed[5]=0;
-							
+
 							tmp=val;
 							val=questlog_scale(questlog_count(co,26),val);
                                                         dlog(cn,0,"Received %d exp for doing quest Extortion for the %d. time (nominal value %d exp)",val,questlog_count(co,26)+1,tmp);
                                                         give_exp(co,min(level_value(ch[co].level)/5,val));
                                                         ppd->thief_bits|=2;
 							questlog_done(co,26);
-							
+
 							in=create_item("sewer_key1");
 							if (in && !give_char_item(co,in)) destroy_item(in);
                                                         ppd->thief_state++; didsay=1;
@@ -1609,11 +1608,11 @@ void thiefmaster(int cn,int ret,int lastact)
 
 				if (it[in].ID==IID_AREA17_MERCHANTNOTE1 && ppd && ppd->thief_state==17) {
 					say(cn,"Ah, yes, that is the agreement I wanted. Nice job, %s. Here, this key will open the remaining sewer doors.",ch[co].name);
-					
+
 					questlog_done(co,27);
 					destroy_item_byID(co,IID_AREA17_MERCHANTNOTE1);
                                         ppd->thief_bits|=4;
-					
+
 					in=create_item("sewer_key2");
 					if (in && !give_char_item(co,in)) destroy_item(in);
 
@@ -1624,14 +1623,14 @@ void thiefmaster(int cn,int ret,int lastact)
 					questlog_done(co,28);
 					destroy_item_byID(co,IID_AREA17_GOLDENLOCKPICK);
                                         ppd->thief_bits|=8;
-					
+
 					in=create_item("palace_key3");
 					if (in && !give_char_item(co,in)) destroy_item(in);
                                         ppd->thief_state=20;
 				}
                                 // let it vanish, then
 				destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -1649,7 +1648,7 @@ void thiefmaster(int cn,int ret,int lastact)
         if (talkdir) turn(cn,talkdir);
 
         if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;	
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 
         do_idle(cn,TICKS);
@@ -1716,7 +1715,7 @@ void sanwyn(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1801,7 +1800,7 @@ void sanwyn(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_TWOCITY_PPD,sizeof(struct twocity_ppd));
 
                                 if (it[in].ID==IID_AREA17_PALACENOTE1 && ppd->sanwyn_state<=6 && !(ppd->sanwyn_bits&1)) {
@@ -1851,16 +1850,16 @@ void sanwyn(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
 void randomize_tiles(struct twocity_ppd *ppd)
 {
 	int n;
-	
+
 	for (n=0; n<ARRAYSIZE(ppd->goodtile); n++) {
 		ppd->goodtile[n]=RANDOM(6)+1;
 	}
@@ -1869,7 +1868,7 @@ void randomize_tiles(struct twocity_ppd *ppd)
 void bookcase(int in,int cn)
 {
 	int r;
-	
+
 	struct twocity_ppd *ppd;
 	static char *standard={"After reading the title you put the book back."};
 	char *name="Lady Manners' Guide to Decent Behaviour",*text=standard,buf[120];
@@ -1887,7 +1886,7 @@ void bookcase(int in,int cn)
 		if (it[in].drdata[0]==0) it[in].sprite+=RANDOM(4);	// randomize looks
 		return;
 	}
-	
+
 	if (!(ch[cn].flags&CF_PLAYER)) return;
 
         ppd=set_data(cn,DRD_TWOCITY_PPD,sizeof(struct twocity_ppd));
@@ -1923,8 +1922,8 @@ void bookcase(int in,int cn)
 			case 22:	name="Luctim - Superstition or Reality? by Mintu the Enlightened"; break;
 			case 23:	name="I Have, Alas by Goytila"; break;
 			case 24:	name="A Midwinter Day's Wake by Pearshaks"; break;
-			case 25:	name="Fama Fraternitatis by Valentin Andreae"; break;			
-		}		
+			case 25:	name="Fama Fraternitatis by Valentin Andreae"; break;
+		}
 	} else {			// special books
 		switch(it[in].drdata[0]) {
 			case 1:         if (!has_item(cn,IID_AREA17_LIBRARYKEY)) {
@@ -1957,7 +1956,7 @@ void bookcase(int in,int cn)
 					break;
 		}
 	}
-	
+
 	log_char(cn,LOG_SYSTEM,0,"°c2%s.°c0 %s",name,text);
 }
 
@@ -1974,7 +1973,7 @@ void colortile(int in,int cn)
 	if (!ppd) return;	// oops
 
 	if (!ppd->goodtile[0]) randomize_tiles(ppd);
-	
+
 	row=it[in].drdata[0];
 	nr=it[in].drdata[1];
 
@@ -1999,11 +1998,11 @@ void skelraise(int in,int cn)
 				set_sector(it[in].x,it[in].y);
 			} else {
 				call_item(it[in].driver,in,0,ticker+TICKS*10);
-			}			
+			}
 		}
 		return;
 	}
-	
+
 	if (it[in].drdata[2]) {
 		log_char(cn,LOG_SYSTEM,0,"You touch the chair.");
 		return;
@@ -2015,12 +2014,12 @@ void skelraise(int in,int cn)
 		*(unsigned *)(it[in].drdata+8)=0;
 	} else {
 		log_char(cn,LOG_SYSTEM,0,"The skeleton comes to life as you pour the blood over it.");
-		
+
 		if (ch[cn].flags&CF_PLAYER) dlog(cn,in2,"dropped over skeleton");
 		destroy_item(in2);
 		ch[cn].citem=0;
 		ch[cn].flags|=CF_ITEMS;
-		
+
 		switch(it[in].drdata[0]) {
                         case 0:         co=create_drop_char("raised_skeleton_green",it[in].x,it[in].y);
 					*(unsigned *)(it[in].drdata+4)=co;
@@ -2048,7 +2047,7 @@ void skelraise(int in,int cn)
 					break;
 		}
 	}
-	
+
 	it[in].drdata[2]=1;
 	it[in].sprite++;
 
@@ -2083,7 +2082,7 @@ void skelly(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2151,7 +2150,7 @@ void skelly(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_TWOCITY_PPD,sizeof(struct twocity_ppd));
 
                                 if (it[in].ID==IID_AREA17_CROSS && ppd->skelly_state<=2) {
@@ -2183,13 +2182,13 @@ void skelly(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
 	if (ticker-dat->alive>TICKS*30) {
 		kill_char(cn,0);
 		return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2223,7 +2222,7 @@ void alchemist(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2296,7 +2295,7 @@ void alchemist(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_TWOCITY_PPD,sizeof(struct twocity_ppd));
 
                                 if (it[in].ID==IID_AREA17_POISON && ppd->alchemist_state<=4) {
@@ -2336,7 +2335,7 @@ void alchemist(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_LEFT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_LEFT,ret,lastact)) return;
 	}
         do_idle(cn,TICKS);
 }
@@ -2360,7 +2359,7 @@ int ch_driver(int nr,int cn,int ret,int lastact)
 
 int it_driver(int nr,int in,int cn)
 {
-	switch(nr) {		
+	switch(nr) {
 		case IDR_PICKDOOR:	return pick_door(in,cn);
 		case IDR_PICKCHEST:	pick_chest(in,cn); return 1;
 		case IDR_BURNDOWN:	burndown(in,cn); return 1;

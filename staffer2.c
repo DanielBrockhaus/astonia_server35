@@ -59,7 +59,7 @@
 #include "questlog.h"
 #include "arkhata.h"
 
-#define BRANFO_EXP_BASE	10000	
+#define BRANFO_EXP_BASE	10000
 #define BRAN_EXP_BASE	15000	//(gives out base*19 = 285,000 exp)
 
 // library helper functions needed for init
@@ -116,7 +116,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -136,7 +136,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -150,21 +150,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -174,7 +173,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -182,12 +181,12 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 void staffer_book(int in,int cn)
 {
 	if (!cn) return;
-	
+
 	if (*(unsigned int*)(it[in].drdata+4)!=ch[cn].ID) {
 		it[in].drdata[1]=0;
 		*(unsigned int*)(it[in].drdata+4)=ch[cn].ID;
 	}
-	
+
 	switch(it[in].drdata[1]) {
 		case 0:		it[in].drdata[1]++;
 				log_char(cn,LOG_SYSTEM,0,
@@ -250,7 +249,7 @@ void staffer_mine(int in,int cn)
 				case 1:		it[in].sprite=15078; break;
 				case 2:		it[in].sprite=15086; break;
 			}
-			
+
 		}
 
                 if (it[in].drdata[3]==8) {
@@ -262,7 +261,7 @@ void staffer_mine(int in,int cn)
 			it[in].drdata[3]=0;
 			it[in].flags|=IF_USE;
 			it[in].flags&=~IF_VOID;
-			
+
 			remove_lights(it[in].x,it[in].y);
 			map[it[in].x+it[in].y*MAXMAP].it=in;
 			map[it[in].x+it[in].y*MAXMAP].flags|=MF_TSIGHTBLOCK|MF_TMOVEBLOCK;
@@ -285,7 +284,7 @@ void staffer_mine(int in,int cn)
                 it[in].drdata[3]++;
 		it[in].drdata[5]=0;
 		it[in].sprite++;
-		
+
 		if (it[in].drdata[3]==8) {
                         map[it[in].x+it[in].y*MAXMAP].it=0;
 			map[it[in].x+it[in].y*MAXMAP].flags&=~MF_TMOVEBLOCK;
@@ -293,7 +292,7 @@ void staffer_mine(int in,int cn)
 			it[in].flags|=IF_VOID;
 			call_item(it[in].driver,in,0,ticker+TICKS*60*5+RANDOM(TICKS*60*5));
 		}
-		
+
 		set_sector(it[in].x,it[in].y);
 
 		if (it[in].drdata[3]==3) {
@@ -304,7 +303,7 @@ void staffer_mine(int in,int cn)
 			add_lights(it[in].x,it[in].y);
 		}
 	}
-	
+
 	if (it[in].drdata[3]<8) player_driver_dig_on(cn);
 	else player_driver_dig_off(cn);
 }
@@ -320,7 +319,7 @@ void staffer_block_move(int in,int cn)
 		m2=(it[in].x+dx)+(it[in].y+dy)*MAXMAP;
 
 		if ((map[m2].gsprite<20291 || map[m2].gsprite>20299) && map[m2].gsprite!=13154 && map[m2].gsprite>13156) wrongsprite=1;
-		
+
                 if ((map[m2].flags&(MF_MOVEBLOCK|MF_TMOVEBLOCK)) || map[m2].it || wrongsprite) {
 			log_char(cn,LOG_SYSTEM,0,"It won't move.");
 			return;
@@ -352,7 +351,7 @@ void staffer_block_move(int in,int cn)
 		if (ticker-*(unsigned int*)(it[in].drdata+4)>TICKS*60*2 &&
 		    (*(unsigned short*)(it[in].drdata+8)!=it[in].x ||
 		     *(unsigned short*)(it[in].drdata+10)!=it[in].y)) {
-			
+
 			m=it[in].x+it[in].y*MAXMAP;
 			m2=(*(unsigned short*)(it[in].drdata+8))+(*(unsigned short*)(it[in].drdata+10))*MAXMAP;
 
@@ -360,7 +359,7 @@ void staffer_block_move(int in,int cn)
 				map[m].flags&=~MF_TMOVEBLOCK;
 				map[m].it=0;
 				set_sector(it[in].x,it[in].y);
-	
+
 				map[m2].flags|=MF_TMOVEBLOCK;
 				map[m2].it=in;
 				it[in].x=*(unsigned short*)(it[in].drdata+8);
@@ -428,7 +427,7 @@ int staffer_spec_door(int in,int cn)
 		it[in].sprite++;
 
 		it[in].drdata[39]++;	// timer counter
-		if (!it[in].drdata[5]) call_item(it[in].driver,in,0,ticker+TICKS*10);		
+		if (!it[in].drdata[5]) call_item(it[in].driver,in,0,ticker+TICKS*10);
 	}
 
         reset_los(it[in].x,it[in].y);
@@ -473,7 +472,7 @@ void countbran_give_keys(int cn,int co,struct staffer_ppd *ppd)
 	int in,cnt=0;
 
 	if (!ppd) return;
-	
+
 	if ((ppd->countbran_bits&1) && !has_item(co,IID_STAFF_MAUSOLEUMKEY1)) {
 		in=create_item("warr_mausoleumkey1");
 		if (in) {
@@ -508,7 +507,7 @@ struct count_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void count_brannington_driver(int cn,int ret,int lastact)
 {
@@ -527,7 +526,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -535,7 +534,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -583,7 +582,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 				ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
                                 switch((didsay=analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co))) {
 					case 2:         if (ppd && ppd->countbran_state<=4) { dat->last_talk=0; ppd->countbran_state=0; countbran_give_keys(cn,co,ppd); }
-                                                        break;				
+                                                        break;
 					case 3:		if (ch[co].flags&CF_GOD) { say(cn,"reset done"); ppd->countbran_bits=ppd->countbran_state=ppd->countessabran_state=ppd->daughterbran_state=0; }
 							break;
 				}
@@ -615,7 +614,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 					destroy_item_byID(co,IID_STAFF_REDKEY23);
 					destroy_item_byID(co,IID_STAFF_REDKEY13);
 					destroy_item_byID(co,IID_STAFF_REDKEY123);
-					
+
 					val=questlog_scale(questlog_count(co,40),60000);
                                         dlog(cn,0,"Received %d exp for doing quest Three Jewels I for the %d. time (nominal value %d exp)",val,questlog_count(co,40)+1,60000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
@@ -624,7 +623,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 
 					ppd->countbran_bits|=1;
 					if ((ppd->countbran_bits&(1|2|4))==(1|2|4)) questlog_done(co,40);
-					countbran_give_keys(cn,co,ppd);					
+					countbran_give_keys(cn,co,ppd);
 				} else if (it[in].ID==IID_STAFF_COUNTESSAJEWEL && ppd && !(ppd->countbran_bits&2)) {
 					quiet_say(cn,"Ah, my wife will be most pleased! Here is your reward, %s. If you go to my wife she will give you an additional reward.",ch[co].name);
 					destroy_item_byID(co,IID_STAFF_COUNTESSAJEWEL);
@@ -636,7 +635,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 					destroy_item_byID(co,IID_STAFF_BLUEKEY23);
 					destroy_item_byID(co,IID_STAFF_BLUEKEY13);
 					destroy_item_byID(co,IID_STAFF_BLUEKEY123);
-					
+
 					val=questlog_scale(questlog_count(co,40),30000);
                                         dlog(cn,0,"Received %d exp for doing quest Three Jewels II for the %d. time (nominal value %d exp)",val,questlog_count(co,40)+1,30000);
 					give_exp(co,min(val,level_value(ch[co].level)/4));
@@ -680,7 +679,7 @@ void count_brannington_driver(int cn,int ret,int lastact)
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
-				}				
+				}
 			}
 		}
 
@@ -703,7 +702,7 @@ struct brenneth_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void brenneth_brannington_driver(int cn,int ret,int lastact)
 {
@@ -721,7 +720,7 @@ void brenneth_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -729,7 +728,7 @@ void brenneth_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -860,7 +859,7 @@ void brenneth_brannington_driver(int cn,int ret,int lastact)
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -888,7 +887,7 @@ struct spirit_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void spirit_brannington_driver(int cn,int ret,int lastact)
 {
@@ -906,7 +905,7 @@ void spirit_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -914,7 +913,7 @@ void spirit_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -930,7 +929,7 @@ void spirit_brannington_driver(int cn,int ret,int lastact)
                         ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if (ppd) {
-                                switch(ppd->spiritbran_state) {					
+                                switch(ppd->spiritbran_state) {
 					case 0:         quiet_say(cn,"Greetings %s, I have watched thee from below here, and have now need for thy strength!",ch[co].name);
 							questlog_open(co,44);
 							ppd->spiritbran_state++; didsay=1;
@@ -963,7 +962,7 @@ void spirit_brannington_driver(int cn,int ret,int lastact)
 				ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
                                 switch((didsay=analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co))) {
 					case 2:         if (ppd && ppd->spiritbran_state<=4) { dat->last_talk=0; ppd->spiritbran_state=0; }
-                                                        break;				
+                                                        break;
 					case 3:		if (ch[co].flags&CF_GOD) { say(cn,"reset done"); ppd->spiritbran_state=0; }
 							break;
 				}
@@ -991,13 +990,13 @@ void spirit_brannington_driver(int cn,int ret,int lastact)
 						ch[co].saves++;
 						log_char(co,LOG_SYSTEM,0,"You received one save.");
 					}
-                                        ppd->spiritbran_state=5;					
+                                        ppd->spiritbran_state=5;
 				} else {
 					quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -1025,7 +1024,7 @@ struct forest_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void forest_brannington_driver(int cn,int ret,int lastact)
 {
@@ -1043,7 +1042,7 @@ void forest_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1051,7 +1050,7 @@ void forest_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1067,7 +1066,7 @@ void forest_brannington_driver(int cn,int ret,int lastact)
                         ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if (ppd) {
-                                switch(ppd->forestbran_state) {				
+                                switch(ppd->forestbran_state) {
 					case 0:         quiet_say(cn,"Welcome %s, how are you today?",ch[co].name);
 							ppd->forestbran_state++; didsay=1;
                                                         break;
@@ -1137,7 +1136,7 @@ void forest_brannington_driver(int cn,int ret,int lastact)
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -1165,7 +1164,7 @@ struct countessa_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void countessa_brannington_driver(int cn,int ret,int lastact)
 {
@@ -1183,7 +1182,7 @@ void countessa_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1191,7 +1190,7 @@ void countessa_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1288,7 +1287,7 @@ struct daughter_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void daughter_brannington_driver(int cn,int ret,int lastact)
 {
@@ -1306,7 +1305,7 @@ void daughter_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1314,7 +1313,7 @@ void daughter_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1412,7 +1411,7 @@ struct guard_brannington_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void guard_brannington_driver(int cn,int ret,int lastact)
 {
@@ -1431,7 +1430,7 @@ void guard_brannington_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1439,7 +1438,7 @@ void guard_brannington_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1455,7 +1454,7 @@ void guard_brannington_driver(int cn,int ret,int lastact)
                         ppd=set_data(co,DRD_STAFFER_PPD,sizeof(struct staffer_ppd));
 
                         if (ppd) {
-                                switch(ppd->guardbran_state) {					
+                                switch(ppd->guardbran_state) {
 					case 0:         if (ppd->countbran_state==0) quiet_say(cn,"Greetings stranger, welcome to the town of Brannington. If you will, the Count would like to ask for your services. We have already informed him of your arrival, and you can find him in the mansion at the end of this street.");
 							ppd->guardbran_state++; didsay=1;
                                                         break;
@@ -1483,7 +1482,7 @@ void guard_brannington_driver(int cn,int ret,int lastact)
 							ppd->guardbran_state++; didsay=1;
 							break;
 					case 8:		break;
-					
+
 				}
 				if (didsay) {
 					dat->last_talk=ticker;
@@ -1503,7 +1502,7 @@ void guard_brannington_driver(int cn,int ret,int lastact)
 					case 2:         if (ppd && ppd->guardbran_state<=1) { dat->last_talk=0; ppd->guardbran_state=0; }
 							if (ppd && ppd->guardbran_state>=2 && ppd->guardbran_state<=6) { dat->last_talk=0; ppd->guardbran_state=2; }
 							if (ppd && ppd->guardbran_state>=7 && ppd->guardbran_state<=8) { dat->last_talk=0; ppd->guardbran_state=7; }
-                                                        break;					
+                                                        break;
 				}
                                 if (didsay) {
 					talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
@@ -1560,7 +1559,7 @@ void broklin_trade_gold(int cn,int co)
 
 	for (n=30; n<INVENTORYSIZE; n++) {
 		if ((in=ch[co].item[n]) && it[in].driver==IDR_ENHANCE && it[in].drdata[0]==2) {
-			
+
 			if (*(unsigned int*)(it[in].drdata+1)<1000) continue;
 
 			*(unsigned int*)(it[in].drdata+1)-=1000;
@@ -1598,7 +1597,7 @@ void broklin_trade_silver(int cn,int co)
 
 	for (n=30; n<INVENTORYSIZE; n++) {
 		if ((in=ch[co].item[n]) && it[in].driver==IDR_ENHANCE && it[in].drdata[0]==1) {
-			
+
 			if (*(unsigned int*)(it[in].drdata+1)<5000) continue;
 
 			*(unsigned int*)(it[in].drdata+1)-=5000;
@@ -1637,7 +1636,7 @@ void broklin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1645,7 +1644,7 @@ void broklin_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1722,7 +1721,7 @@ void broklin_driver(int cn,int ret,int lastact)
 							ppd->broklin_state++; didsay=1;
                                                         break;
 					case 18:	break; // all done, done, done
-					
+
 				}
 				if (didsay) {
 					dat->last_talk=ticker;
@@ -1742,7 +1741,7 @@ void broklin_driver(int cn,int ret,int lastact)
 					case 2:         if (ppd && ppd->broklin_state>=0 && ppd->broklin_state<=4) { dat->last_talk=0; ppd->broklin_state=0; }
 							if (ppd && ppd->broklin_state>=5 && ppd->broklin_state<=10) { dat->last_talk=0; ppd->broklin_state=5; }
 							if (ppd && ppd->broklin_state>=11 && ppd->broklin_state<=19) { dat->last_talk=0; ppd->broklin_state=16; }
-                                                        break;				
+                                                        break;
 					case 3:		if (ch[co].flags&CF_GOD) { say(cn,"reset done"); ppd->broklin_state=0; }
 							break;
 					case 4:		broklin_trade_gold(cn,co); break;
@@ -1773,16 +1772,16 @@ void broklin_driver(int cn,int ret,int lastact)
 						quiet_say(cn,"Thank you! Take these 2,000 gu - I am sure it will be useful to you.");
 						in=create_item("gold_2000");
 						if (in) {
-							if (!give_char_item(co,in)) destroy_item(in);						
+							if (!give_char_item(co,in)) destroy_item(in);
 						}
 					} else quiet_say(cn,"Thank you!");
-                                        ppd->broklin_state=5;					
+                                        ppd->broklin_state=5;
 				} else {
 					quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 					ch[cn].citem=0;
 				}
-				
+
 				// let it vanish, then
 				if (ch[cn].citem) {
 					destroy_item(ch[cn].citem);
@@ -1810,7 +1809,7 @@ struct grinnich_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void grinnich_driver(int cn,int ret,int lastact)
 {
@@ -1828,7 +1827,7 @@ void grinnich_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1836,7 +1835,7 @@ void grinnich_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -1900,7 +1899,7 @@ void grinnich_driver(int cn,int ret,int lastact)
                         if ((in=ch[cn].citem)) {	// we still have it
 				quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 				if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
-				ch[cn].citem=0;				
+				ch[cn].citem=0;
 			}
 		}
 
@@ -1923,7 +1922,7 @@ struct shanra_data
 {
         int last_talk;
         int current_victim;
-};	
+};
 
 void shanra_driver(int cn,int ret,int lastact)
 {
@@ -1941,7 +1940,7 @@ void shanra_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1949,7 +1948,7 @@ void shanra_driver(int cn,int ret,int lastact)
 
 			// dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
 			// only talk every ten seconds
 			if (ticker<dat->last_talk+TICKS*4) { remove_message(cn,msg); continue; }
 
@@ -2018,7 +2017,7 @@ void shanra_driver(int cn,int ret,int lastact)
 				quiet_say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 				if (!give_char_item(co,ch[cn].citem)) destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
-				
+
 			}
 		}
 
@@ -2047,7 +2046,7 @@ void centinel_dead(int cn,int co)
 
 	ppd->centinel_count++;
 	if (ppd->centinel_count>30) ppd->centinel_count=30;
-	
+
 	switch(ppd->centinel_count) {
 		case 1:		log_char(co,LOG_SYSTEM,0,"You have killed the first sentinel on this floor, kill 29 more!"); break;
 		case 10:	log_char(co,LOG_SYSTEM,0,"You have killed 10 sentinels, 20 more to go!"); break;

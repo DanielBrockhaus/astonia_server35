@@ -118,7 +118,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -138,7 +138,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -152,21 +152,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -176,7 +175,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -202,7 +201,7 @@ struct caligar_ppd
 	int amazon_flag;
 	int guard2_last_talk;
 	unsigned char door_flag[4];
-};	
+};
 
 void guard_driver(int cn,int ret,int lastact)
 {
@@ -219,7 +218,7 @@ void guard_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -227,7 +226,7 @@ void guard_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -271,7 +270,7 @@ void guard_driver(int cn,int ret,int lastact)
 				case 5:	if (realtime-ppd->guard_last_talk>600) ppd->guard_state=0;
 					break;
 			}
-			
+
 		}
 
                 // got an item?
@@ -322,7 +321,7 @@ void guard2_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -330,7 +329,7 @@ void guard2_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) {continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { continue; }
 
@@ -412,7 +411,7 @@ void glori_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -420,7 +419,7 @@ void glori_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -540,7 +539,7 @@ void glori_driver(int cn,int ret,int lastact)
 				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 				ch[cn].clan_serial=10;
 			}
-			
+
 		}
 
                 // got an item?
@@ -602,7 +601,7 @@ void arquin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -610,7 +609,7 @@ void arquin_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -654,7 +653,7 @@ void arquin_driver(int cn,int ret,int lastact)
 				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 				ch[cn].clan_serial=10;
 			}
-			
+
 		}
 
                 // got an item?
@@ -709,7 +708,7 @@ void smith_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -717,7 +716,7 @@ void smith_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -764,7 +763,7 @@ void smith_driver(int cn,int ret,int lastact)
 				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 				ch[cn].clan_serial=10;
 			}
-			
+
 		}
 
                 // got an item?
@@ -786,8 +785,8 @@ void smith_driver(int cn,int ret,int lastact)
 
                         switch(analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,co)) {
 				case 2:		ppd=set_data(co,DRD_CALIGAR_PPD,sizeof(struct caligar_ppd));
-						if (ppd && ppd->smith_state>=1 && ppd->smith_state<=2) { ppd->smith_state=1; ppd->smith_last_talk=0; }	
-						if (ppd && ppd->smith_state>=3 && ppd->smith_state<=8) { ppd->smith_state=3; ppd->smith_last_talk=0; }	
+						if (ppd && ppd->smith_state>=1 && ppd->smith_state<=2) { ppd->smith_state=1; ppd->smith_last_talk=0; }
+						if (ppd && ppd->smith_state>=3 && ppd->smith_state<=8) { ppd->smith_state=3; ppd->smith_last_talk=0; }
                                                 break;
 				case 3:		if (has_item(co,IID_CALIGARKEYP1) && has_item(co,IID_CALIGARKEYP2) && has_item(co,IID_CALIGARKEYP3)) {
 							if (ch[co].gold<5000*100) {
@@ -861,7 +860,7 @@ void homden_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -869,7 +868,7 @@ void homden_driver(int cn,int ret,int lastact)
 
                         // dont talk to players without connection
 			if (ch[co].driver==CDR_LOSTCON) { remove_message(cn,msg); continue; }
-			
+
                         // dont talk to someone we cant see, and dont talk to ourself
 			if (!char_see_char(cn,co) || cn==co) { remove_message(cn,msg); continue; }
 
@@ -939,7 +938,7 @@ void homden_driver(int cn,int ret,int lastact)
 				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 				ch[cn].clan_serial=10;
 			}
-			
+
 		}
 
                 // got an item?
@@ -972,7 +971,7 @@ void homden_driver(int cn,int ret,int lastact)
 				case 2:		ppd=set_data(co,DRD_CALIGAR_PPD,sizeof(struct caligar_ppd));
 						if (ppd && ppd->homden_state>=2 && ppd->homden_state<=4) { ppd->homden_state=2; ppd->homden_last_talk=0; }
 						if (ppd && ppd->homden_state>=6 && ppd->homden_state<=11) { ppd->homden_state=6; ppd->homden_last_talk=0; }
-                                                break;				
+                                                break;
 			}
 		}
 
@@ -995,10 +994,10 @@ void caligar_training(int in,int cn)
 	struct caligar_ppd *ppd;
 
 	if (!cn || !(ch[cn].flags&CF_PLAYER)) return;
-	
+
 	ppd=set_data(cn,DRD_CALIGAR_PPD,sizeof(struct caligar_ppd));
 	if (!ppd) return;
-	
+
 	switch(it[in].drdata[1]) {
 		case 1:	if (ppd->watch_flag&1) break;
 			ppd->watch_flag|=1;
@@ -1011,7 +1010,7 @@ void caligar_training(int in,int cn)
 		case 3: if (ppd->watch_flag&2) break;
 			ppd->watch_flag|=2;
 			log_char(cn,LOG_SYSTEM,0,"You observe the zombies fighting techniques: Magic.");
-			break;		
+			break;
 	}
 }
 
@@ -1058,7 +1057,7 @@ void caligar_weight(int in,int cn)
 		if (ticker-*(unsigned int*)(it[in].drdata+4)>TICKS*60*5 &&
 		    (*(unsigned short*)(it[in].drdata+8)!=it[in].x ||
 		     *(unsigned short*)(it[in].drdata+10)!=it[in].y)) {
-			
+
 			m=it[in].x+it[in].y*MAXMAP;
 			m2=(*(unsigned short*)(it[in].drdata+8))+(*(unsigned short*)(it[in].drdata+10))*MAXMAP;
 
@@ -1066,7 +1065,7 @@ void caligar_weight(int in,int cn)
 				map[m].flags&=~MF_TMOVEBLOCK;
 				map[m].it=0;
 				set_sector(it[in].x,it[in].y);
-	
+
 				map[m2].flags|=MF_TMOVEBLOCK;
 				map[m2].it=in;
 				it[in].x=*(unsigned short*)(it[in].drdata+8);
@@ -1112,7 +1111,7 @@ int caligar_weight_door(int in,int cn)
 
         if (!drop_char(cn,x,y,0)) {
                 log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,10,"%s says: \"Please try again soon. Target is busy.\"",it[in].name);
-		drop_char(cn,oldx,oldy,0);		
+		drop_char(cn,oldx,oldy,0);
 	}
 
 	switch(ch[cn].dir) {
@@ -1161,7 +1160,7 @@ int caligar_skelly_door(int in,int cn)
 
         if (!drop_char(cn,x,y,0)) {
                 log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,10,"%s says: \"Please try again soon. Target is busy.\"",it[in].name);
-		drop_char(cn,oldx,oldy,0);		
+		drop_char(cn,oldx,oldy,0);
 	}
 
 	switch(ch[cn].dir) {
@@ -1184,7 +1183,7 @@ void caligar_gun(int in,int cn,int dir)
 		case 1:	create_edemonball(0,it[in].x+1,it[in].y,it[in].x+10,it[in].y,str,base); break;
 		case 4:	create_edemonball(0,it[in].x,it[in].y-1,it[in].x,it[in].y-10,str,base); break;
 		case 3:	create_edemonball(0,it[in].x-1,it[in].y,it[in].x-10,it[in].y,str,base); break;
-		
+
 		case 5:	create_edemonball(0,it[in].x,it[in].y+1,it[in].x,it[in].y+10,str,base);
 			create_edemonball(0,it[in].x+1,it[in].y,it[in].x+10,it[in].y,str,base);
 			create_edemonball(0,it[in].x,it[in].y-1,it[in].x,it[in].y-10,str,base);
@@ -1254,7 +1253,7 @@ void caligar_burn_char(int cn)
 		if (ef[fn].type!=EF_BURN) continue;
 		return;
 	}
-	
+
 	create_show_effect(EF_BURN,cn,ticker,ticker+TICKS*60,250,1);
 	hurt(cn,20*POWERSCALE,0,1,50,75);
 }
@@ -1309,22 +1308,22 @@ void caligar_flamethrow(int in,int cn)
 		x=it[in].x+x; y=it[in].y+y;
 		if (x>0 && x<MAXMAP && y>0 && y<MAXMAP) {
 			m=x+y*MAXMAP;
-			if ((co=map[m].ch)) caligar_burn_char(co);			
+			if ((co=map[m].ch)) caligar_burn_char(co);
 		}
-		
+
 		dx2offset(dir,&x,&y,NULL);
 		x=it[in].x+x*2; y=it[in].y+y*2;
 		if (x>0 && x<MAXMAP && y>0 && y<MAXMAP) {
 			m=x+y*MAXMAP;
-			if ((co=map[m].ch)) caligar_burn_char(co);						
+			if ((co=map[m].ch)) caligar_burn_char(co);
 		}
-		
+
                 call_item(it[in].driver,in,0,ticker+1);
 	} else {
 		it[in].sprite--;
 		it[in].drdata[0]=TICKS;
 		it[in].drdata[2]=0;
-		
+
 		remove_item_light(in);
 		it[in].mod_index[4]=0;
 		it[in].mod_value[4]=0;

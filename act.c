@@ -752,9 +752,8 @@ static int act_fireball(int cn)
 
 static int act_earthrain(int cn)
 {
-	int fn;
 
-        fn=create_earthrain(cn,ch[cn].act1%MAXMAP,ch[cn].act1/MAXMAP,ch[cn].act2);
+        create_earthrain(cn,ch[cn].act1%MAXMAP,ch[cn].act1/MAXMAP,ch[cn].act2);
 
 	//notify_area(ch[cn].x,ch[cn].y,NT_SPELL,cn,V_FIRE,fn);
 
@@ -763,9 +762,8 @@ static int act_earthrain(int cn)
 
 static int act_earthmud(int cn)
 {
-	int fn;
 
-        fn=create_earthmud(cn,ch[cn].act1%MAXMAP,ch[cn].act1/MAXMAP,ch[cn].act2);
+        create_earthmud(cn,ch[cn].act1%MAXMAP,ch[cn].act1/MAXMAP,ch[cn].act2);
 
 	//notify_area(ch[cn].x,ch[cn].y,NT_SPELL,cn,V_FIRE,fn);
 

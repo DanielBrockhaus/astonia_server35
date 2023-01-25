@@ -28,7 +28,7 @@ runtime/37/arkhata.dll
 
 CC=gcc
 DEBUG=-g
-CFLAGS=-Wall -Wshadow -Wno-pointer-sign -O3 $(DEBUG) -fno-strict-aliasing -m32
+CFLAGS=-Wall -Wshadow -Wno-unused-result -Wno-pointer-sign -O3 -Wno-format-overflow -Wno-format-truncation -Wno-strict-overflow $(DEBUG) -fno-strict-aliasing -m32
 LDFLAGS=-O $(DEBUG) -L/usr/lib/mysql -m32
 LDRFLAGS=-O $(DEBUG) -rdynamic -L/usr/lib/mysql -m32
 DDFLAGS=-O $(DEBUG) -fPIC -shared -m32

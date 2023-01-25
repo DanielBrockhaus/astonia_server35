@@ -182,7 +182,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -202,7 +202,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -216,21 +216,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -240,7 +239,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -269,7 +268,7 @@ void rammy_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -291,7 +290,7 @@ void rammy_driver(int cn,int ret,int lastact)
 
                         // get current status with player
                         ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
-			
+
 
                         if (ppd) {
 				switch(ppd->rammy_state) {
@@ -330,7 +329,7 @@ void rammy_driver(int cn,int ret,int lastact)
 							ppd->rammy_state++; didsay=1;
 							break;
 					case 10:	break;	// waiting for crown
-					
+
 					case 11:	say(cn,"May Ishtar be with thee, I am forever grateful.");
 							ppd->rammy_state++; didsay=1;
 							break;
@@ -405,7 +404,7 @@ void rammy_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
 
                                 if (it[in].ID==IID_ARKHATA_CROWN && ppd->rammy_state==10) {
@@ -433,9 +432,9 @@ void rammy_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -455,7 +454,7 @@ void jaz_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -541,7 +540,7 @@ void jaz_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
 
                                 if (it[in].ID==IID_ARKHATA_BRACELET && ppd->jaz_state==5) {
@@ -569,9 +568,9 @@ void jaz_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -588,7 +587,7 @@ void fight_student(int cc,int cn,int nr)
 			}
 		}
 	}
-	
+
 	sprintf(buf,"Gladiator_%d",nr);
 	co=create_char(buf,0);
 	if (!co) {
@@ -660,7 +659,7 @@ void fiona_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -781,7 +780,7 @@ void fiona_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				
+
 				ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
                                 if (ppd && it[in].ID==IID_ARKHATA_RING && ppd->fiona_state==3) {
                                         questlog_done(co,67);
@@ -808,10 +807,10 @@ void fiona_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
 	if (spell_self_driver(cn)) return;
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -827,23 +826,23 @@ void gladiator_driver(int cn,int ret,int lastact)
 	// loop through our messages
 	for (msg=ch[cn].msg; msg; msg=next) {
 		next=msg->next;
-	
+
 		switch(msg->type) {
 			case NT_CREATE:
 				dat->last_talk=ticker;
 				break;
-	
+
 			case NT_CHAR:
                                 break;
-	
+
 			case NT_TEXT:
 				co=msg->dat3;
 				tabunga(cn,co,(char*)msg->dat2);
 				break;
-	
+
 			case NT_DIDHIT:
 				break;
-	
+
 			case NT_NPC:
 				break;
 
@@ -857,12 +856,12 @@ void gladiator_driver(int cn,int ret,int lastact)
 				break;
 
 		}
-	
-	
+
+
 		standard_message_driver(cn,msg,1,1);
 		remove_message(cn,msg);
 	}
-	
+
 	// do something. whenever possible, call do_idle with as high a tick count
 	// as reasonable when doing nothing.
 
@@ -880,19 +879,19 @@ void gladiator_driver(int cn,int ret,int lastact)
 		remove_destroy_char(cn);
 		return;
 	}
-	
+
 	fight_driver_update(cn);
-	
+
 	if (fight_driver_attack_visible(cn,0)) return;
-	
+
 	if (fight_driver_follow_invisible(cn)) return;
-	
+
 	if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
-	
+
 	if (regenerate_driver(cn)) return;
-	
+
 	if (spell_self_driver(cn)) return;
-	
+
 	//say(cn,"i am %d",cn);
 	do_idle(cn,TICKS);
 }
@@ -911,27 +910,27 @@ void bridgeguard_driver(int cn,int ret,int lastact)
 
 	dat=set_data(cn,DRD_STDNPCDRIVER,sizeof(struct std_npc_driver_data));
 	if (!dat) return;	// oops...
-	
+
 	// loop through our messages
 	for (msg=ch[cn].msg; msg; msg=next) {
 		next=msg->next;
-	
+
 		switch(msg->type) {
 			case NT_CREATE:
 				break;
-	
+
 			case NT_CHAR:
 				co=msg->dat1;
 				dist=map_dist(ch[cn].tmpx,ch[cn].tmpy,ch[co].x,ch[co].y);
 				if (dist>=16) break;
-				
+
 				if (!(ch[co].flags&CF_PLAYER)) {
 					if (ch[cn].group!=ch[co].group) fight_driver_add_enemy(cn,co,0,1);
 					break;
 				}
 				if (ch[cn].value[0][V_BLESS]) break; // only one of them should talk
 				if (!char_see_char(cn,co)) break;
-				
+
 				if (dist<16) {
 					if (!mem_check_driver(cn,co,7) && ticker-dat->last_talk>TICKS*20) {
 						if (ch[co].level<50) say(cn,"Hold! This is no place for such inexperienced travellers as thyself. Return here when thou art stronger, %s!",ch[co].name);
@@ -941,46 +940,46 @@ void bridgeguard_driver(int cn,int ret,int lastact)
 					}
 				}
                                 break;
-	
+
 			case NT_TEXT:
 				co=msg->dat3;
 				tabunga(cn,co,(char*)msg->dat2);
 				break;
-	
+
 			case NT_DIDHIT:
 				break;
-	
+
 			case NT_NPC:
 				if ((co=msg->dat2)!=cn && ch[co].group==ch[cn].group)
 					fight_driver_add_enemy(cn,msg->dat3,1,0);
 				break;
 		}
-	
-	
+
+
 		standard_message_driver(cn,msg,0,1);
 		remove_message(cn,msg);
 	}
-	
+
 	// do something. whenever possible, call do_idle with as high a tick count
 	// as reasonable when doing nothing.
-	
+
 	fight_driver_update(cn);
-	
+
 	if (fight_driver_attack_visible(cn,0)) return;
-	
+
 	if (fight_driver_follow_invisible(cn)) return;
-	
+
 	if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
-	
+
 	if (regenerate_driver(cn)) return;
-	
+
 	if (spell_self_driver(cn)) return;
 
 	if (ticker>dat->misc) {
 		mem_erase_driver(cn,7);
 		dat->misc=ticker+TICKS*60*60;
 	}
-	
+
 	//say(cn,"i am %d",cn);
 	do_idle(cn,TICKS);
 }
@@ -1047,7 +1046,7 @@ void ramin_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1159,7 +1158,7 @@ void ramin_driver(int cn,int ret,int lastact)
 		// got an item?
 		if (msg->type==NT_GIVE) {
 			co=msg->dat1;
-			
+
 			ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
 
 			if ((in=ch[cn].citem)) {	// we still have it
@@ -1187,9 +1186,9 @@ void ramin_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -1265,7 +1264,7 @@ void arkhatamonk_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1527,7 +1526,7 @@ void arkhatamonk_driver(int cn,int ret,int lastact)
 		if (nr==2) if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_UP,ret,lastact)) return;
 		if (nr==4) if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -1552,7 +1551,7 @@ void captain_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1671,9 +1670,9 @@ void captain_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -1693,7 +1692,7 @@ void judge_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -1752,7 +1751,7 @@ void judge_driver(int cn,int ret,int lastact)
                                                         ppd->judge_state++; didsay=1;
 							break;
 					case 6:		break;
-					
+
 
 				}
 				if (didsay) {
@@ -1812,9 +1811,9 @@ void judge_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -1842,7 +1841,7 @@ struct fortressguard_driver_data
 
 	int helpid;
 
-	int creation_time;	
+	int creation_time;
 
 	int notsecure;
 	int mindist;
@@ -1909,13 +1908,13 @@ void fortressguard_driver(int cn,int ret,int lastact)
 					dat->stopdist=40;
 					dat->scavenger=0;
 					dat->dir=DX_DOWN;
-	
+
 					fortressguard_driver_parse(cn,dat);
 					ch[cn].arg=NULL;
 				}
 				dat->creation_time=ticker;
 				fight_driver_set_dist(cn,dat->startdist,dat->chardist,dat->stopdist);
-				
+
 				if (ch[cn].item[30] && (ch[cn].flags&CF_NOBODY)) {
 					ch[cn].flags&=~(CF_NOBODY);
 					ch[cn].flags|=CF_ITEMDEATH;
@@ -1935,7 +1934,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 					friend=co;
 				if (!dat->aggressive || !is_valid_enemy(cn,(co=msg->dat1),-1)) break;
 				if (has_item(co,IID_ARKHATA_LETTER5)) break;
-				
+
 				fight_driver_add_enemy(cn,co,0,1);
                                 break;
 
@@ -1943,7 +1942,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 				co=msg->dat3;
 				tabunga(cn,co,(char*)msg->dat2);
 				break;
-			
+
 			case NT_DIDHIT:
                                 if (dat->poison_power && msg->dat1 && msg->dat2>0 && can_attack(cn,msg->dat1) && RANDOM(100)<dat->poison_chance)
 					poison_someone(msg->dat1,dat->poison_power,dat->poison_type);
@@ -1954,7 +1953,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 					fight_driver_add_enemy(cn,msg->dat3,1,0);
 				break;
 		}
-		
+
 
                 standard_message_driver(cn,msg,0,dat->helper);
                 remove_message(cn,msg);
@@ -1967,7 +1966,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 
         if (fight_driver_attack_visible(cn,0)) {
 		if (ticker-dat->lastfight>TICKS*10) {
-			sound_area(ch[cn].x,ch[cn].y,1);			
+			sound_area(ch[cn].x,ch[cn].y,1);
 		}
 		dat->lastfight=ticker;
 		return;
@@ -1989,7 +1988,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 				if (ticker-dat->lastfight>TICKS*10) {
 					if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 				} else {
-					if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;					
+					if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;
 				}
 			}
 		}
@@ -2006,15 +2005,15 @@ void fortressguard_driver(int cn,int ret,int lastact)
 			do_idle(cn,TICKS);
 			return;
 		}
-	
+
 		if (!dat->dir) dat->dir=RANDOM(8)+1;
-	
+
 		dx2offset(dat->dir,&x,&y,NULL);
-		
+
 		if (abs(ch[cn].x+x-ch[cn].tmpx)<dat->scavenger && abs(ch[cn].y+y-ch[cn].tmpy)<dat->scavenger && do_walk(cn,dat->dir)) {
 			fight_driver_set_home(cn,ch[cn].x,ch[cn].y);
 			return;
-		} else dat->dir=0;		
+		} else dat->dir=0;
 	} else {
 		if (dat->dayx) {
                         if (hour>19 || hour<6) {
@@ -2028,7 +2027,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 					if (ticker-dat->lastfight>TICKS*10) {
 						if (secure_move_driver(cn,dat->nightx,dat->nighty,dat->nightdir,ret,lastact)) return;
 					} else {
-						if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;						
+						if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;
 					}
 				}
                                 fight_driver_set_home(cn,ch[cn].x,ch[cn].y);
@@ -2040,14 +2039,14 @@ void fortressguard_driver(int cn,int ret,int lastact)
 					if (ticker-dat->lastfight>TICKS*10) {
 						if (secure_move_driver(cn,dat->dayx,dat->dayy,dat->daydir,ret,lastact)) return;
 					} else {
-						if (move_driver(cn,dat->dayx,dat->dayy,0)) return;						
+						if (move_driver(cn,dat->dayx,dat->dayy,0)) return;
 					}
 				}
                                 fight_driver_set_home(cn,ch[cn].x,ch[cn].y);
 			}
 		} else {
                         if (dat->teleport && teleport_char_driver(cn,ch[cn].tmpx,ch[cn].tmpy)) return;
-			
+
 			if (dat->notsecure) {
 				if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->mindist)) return;
 				//say(cn,"move failed, %d, target=%d,%d",pathnodes(),ch[cn].tmpx,ch[cn].tmpy);
@@ -2055,11 +2054,11 @@ void fortressguard_driver(int cn,int ret,int lastact)
 				if (ticker-dat->lastfight>TICKS*10) {
 					if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,dat->dir,ret,lastact)) return;
 				} else {
-					if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;					
+					if (move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,0)) return;
 				}
 			}
                         fight_driver_set_home(cn,ch[cn].x,ch[cn].y);
-		}		
+		}
 	}
 
 	if (dat->drinkspecial) {
@@ -2079,7 +2078,7 @@ void fortressguard_driver(int cn,int ret,int lastact)
 
 	// help friend by blessing him. all checks already done in message loop
 	if (friend && do_bless(cn,friend)) return;
-	
+
         //say(cn,"i am %d",cn);
         do_idle(cn,TICKS);
 }
@@ -2100,7 +2099,7 @@ void jada_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2139,7 +2138,7 @@ void jada_driver(int cn,int ret,int lastact)
 							break;
 					case 4:		break; // waiting for blade
 					case 5:		break; // got blade, all done
-					
+
 
 				}
 				if (didsay) {
@@ -2199,9 +2198,9 @@ void jada_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2221,7 +2220,7 @@ void potmaker_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2257,7 +2256,7 @@ void potmaker_driver(int cn,int ret,int lastact)
 							break;
                                         case 3:		break; // waiting for pot
 					case 4:		break; // got pot, all done
-					
+
 
 				}
 				if (didsay) {
@@ -2320,9 +2319,9 @@ void potmaker_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2342,7 +2341,7 @@ void hunter_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2396,7 +2395,7 @@ void hunter_driver(int cn,int ret,int lastact)
 							break;
 					case 9:		break; // waiting for harpy
 					case 10:	break; // all done
-					
+
 
 				}
 				if (didsay) {
@@ -2457,9 +2456,9 @@ void hunter_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2479,7 +2478,7 @@ void thaipan_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2578,7 +2577,7 @@ void thaipan_driver(int cn,int ret,int lastact)
 
 					say(cn,"May thou find peace and recover from any discomfort thou have had.");
 					v=ch[co].exp_used-ch[co].exp;
-					
+
 					ppd->last_budda=realtime;
 					w=ch[co].exp_used/200;
 					v=min(v,w);
@@ -2607,9 +2606,9 @@ void thaipan_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2631,7 +2630,7 @@ void clerk_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2705,7 +2704,7 @@ void clerk_driver(int cn,int ret,int lastact)
 							say(cn,"Very good, thou have three hours (astonia time) to retrieve the notes. Good Luck!");
 
                                                         log_char(co,LOG_SYSTEM,0,"Your stopwatch will vanish if you leave the area or log off. The quest, however, will still be open and the three hours will continue to run out. The clerk will give you a new watch if you ask him for a 'watch'.");
-							
+
 							in=create_item("stopwatch");
 							if (in && !give_char_item(co,in)) destroy_item(in);
 							destroy_item_byID(co,IID_ARKHATA_NOTE1);
@@ -2716,7 +2715,7 @@ void clerk_driver(int cn,int ret,int lastact)
 				case 7:		ppd=set_data(co,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
 						if (ppd && ppd->clerk_state==5) {
                                                         log_char(co,LOG_SYSTEM,0,"Your stopwatch will vanish if you leave the area or log off. The quest, however, will still be open and the three hours will continue to run out. The clerk will give you a new watch if you ask him for a 'watch'.");
-							
+
 							in=create_item("stopwatch");
 							if (in && !give_char_item(co,in)) destroy_item(in);
 						}
@@ -2783,9 +2782,9 @@ void clerk_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2805,7 +2804,7 @@ void trainer_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -2906,9 +2905,9 @@ void trainer_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_RIGHT,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -2928,7 +2927,7 @@ void kidnappee_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk while invisible
@@ -2983,7 +2982,7 @@ void kidnappee_driver(int cn,int ret,int lastact)
 							set_sector(ch[cn].x,ch[co].y);
 							break;
 					case 5:		break; // all done
-	
+
 
 				}
 				if (didsay) {
@@ -3038,9 +3037,9 @@ void kidnappee_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -3060,7 +3059,7 @@ void krenach_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to other NPCs
@@ -3134,9 +3133,9 @@ void krenach_driver(int cn,int ret,int lastact)
 	if (talkdir) turn(cn,talkdir);
 
 	if (dat->last_talk+TICKS*30<ticker) {
-		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;		
+		if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 	}
-	
+
 	do_idle(cn,TICKS);
 }
 
@@ -3176,12 +3175,12 @@ void pool_driver(int in,int cn)
 		ch[cn].citem=0;
 		ch[cn].flags|=CF_ITEMS;
 		destroy_item(in2);
-		
+
 		r=RANDOM(70);
 		if (r==22 || r==33) in2=create_item("Red_Scroll");
 		else if (r==42) in2=create_item("Buddah_Statue");
 		else in2=0;
-		
+
 		if (in2) {
 		       if (!give_char_item(cn,in2)) destroy_item(in2);
 		       else log_char(cn,LOG_SYSTEM,0,"You got a %s.",it[in2].name);
@@ -3197,12 +3196,12 @@ void stopwatch_driver(int in,int cn)
 	if (cn) return;
 
 	call_item(it[in].driver,in,0,ticker+10);
-	
+
 	cn=it[in].carried;
 	if (!cn) return;
 
 	ppd=set_data(cn,DRD_ARKHATA_PPD,sizeof(struct arkhata_ppd));
-	
+
 	if (ppd) {
 		if (ppd->clerk_state==5) {
 			diff=CLERKTIME-realtime+ppd->clerk_time;
@@ -3280,12 +3279,12 @@ void madhermit_driver(int cn,int ret,int lastact)
 		next=msg->next;
 
                 if (msg->type==NT_CREATE) {
-                        fight_driver_set_dist(cn,30,0,60);			
+                        fight_driver_set_dist(cn,30,0,60);
                 }
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			if (ch[co].action==AC_USE && (in=ch[co].act1) && in>0 && in<MAXITEM && it[in].driver==IDR_FLOWER) {
@@ -3310,7 +3309,7 @@ void madhermit_driver(int cn,int ret,int lastact)
         if (fight_driver_attack_visible(cn,0)) return;
         if (fight_driver_follow_invisible(cn)) return;
 
-	
+
         if (secure_move_driver(cn,ch[cn].tmpx,ch[cn].tmpy,DX_DOWN,ret,lastact)) return;
 
 	if (regenerate_driver(cn)) return;

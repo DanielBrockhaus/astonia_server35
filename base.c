@@ -210,7 +210,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -230,7 +230,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -244,21 +244,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -269,7 +268,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -287,13 +286,13 @@ struct macro_data
 struct macro_ppd
 {
 	int nextcheck;	// realtime
-	int karma;	
+	int karma;
 };
 
 int macro_set_char(int cn,int x,int y,int nosteptrap)
 {
 	if (map[x+y*MAXMAP].flags&(MF_SOUNDBLOCK|MF_SHOUTBLOCK)) return 0;
-	return set_char(cn,x,y,nosteptrap);	
+	return set_char(cn,x,y,nosteptrap);
 }
 
 int macro_drop_char(int cn,int x,int y,int nosteptrap)
@@ -354,18 +353,18 @@ void macro_driver(int cn,int ret,int lastact)
 			co=msg->dat3;
 
 			if (co==dat->victim && ch[co].ID==dat->v_ID) {
-				
+
 				text=(char*)(msg->dat2);
-				
+
 				while (isalpha(*text)) text++;
 				while (isspace(*text)) text++;
 				while (isalpha(*text)) text++;
 				if (*text==':') text++;
 				while (isspace(*text)) text++;
 				if (*text=='"') text++;
-				
+
 				val=atoi(text);
-				
+
 				if (val==dat->val1+dat->val2) {
 					say(cn,"Very well, %s.",ch[co].name);
 					ppd=set_data(co,DRD_MACRO_PPD,sizeof(struct macro_ppd));
@@ -476,7 +475,7 @@ void macro_driver(int cn,int ret,int lastact)
                 dat->val1=RANDOM(5000)+1;
 		dat->val2=RANDOM(6)+1;
 		dat->state=3;
-		
+
 		say(cn,"Hello, %s. I'm %s. I'll ask you a question. If you do not answer correctly within 5 minutes, I'll punish you.",ch[co].name,ch[cn].name);
 		talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 	}
@@ -566,7 +565,7 @@ void potion_driver(int in,int cn)
 
 	if (empty) replace_item_char(in,in2);
 	else remove_item_char(in);
-	
+
 	free_item(in);
 }
 
@@ -589,7 +588,7 @@ int door_driver(int in,int cn)
 	if (it[in].drdata[0] && (map[m].flags&(MF_MOVEBLOCK|MF_TMOVEBLOCK))) {	// doorway is blocked
 		if (!cn) {	// timer callback - restart
 			it[in].drdata[39]++;	// timer counter
-			if (!it[in].drdata[5]) call_item(2,in,0,ticker+TICKS*5);			
+			if (!it[in].drdata[5]) call_item(2,in,0,ticker+TICKS*5);
 		}
 		return 2;
 	}
@@ -627,7 +626,7 @@ int door_driver(int in,int cn)
 			if (map[m+1].fsprite) map[m+1].fsprite--;
 			if (map[m-1].fsprite) map[m-1].fsprite--;
 			if (map[m+MAXMAP].fsprite) map[m+MAXMAP].fsprite--;
-			if (map[m-MAXMAP].fsprite) map[m-MAXMAP].fsprite--;		
+			if (map[m-MAXMAP].fsprite) map[m-MAXMAP].fsprite--;
 		}
 	} else { // it is closed, open
 		*(unsigned long long*)(it[in].drdata+30)=it[in].flags&(IF_MOVEBLOCK|IF_SIGHTBLOCK|IF_DOOR|IF_SOUNDBLOCK);
@@ -641,11 +640,11 @@ int door_driver(int in,int cn)
 			if (map[m+1].fsprite) map[m+1].fsprite++;
 			if (map[m-1].fsprite) map[m-1].fsprite++;
 			if (map[m+MAXMAP].fsprite) map[m+MAXMAP].fsprite++;
-			if (map[m-MAXMAP].fsprite) map[m-MAXMAP].fsprite++;		
+			if (map[m-MAXMAP].fsprite) map[m-MAXMAP].fsprite++;
 		}
 
 		it[in].drdata[39]++;	// timer counter
-		if (!it[in].drdata[5]) call_item(2,in,0,ticker+TICKS*10);		
+		if (!it[in].drdata[5]) call_item(2,in,0,ticker+TICKS*10);
 	}
 
         reset_los(it[in].x,it[in].y);
@@ -668,7 +667,7 @@ void double_door_driver(int in,int cn)
 
 void balltrap(int in,int cn)
 {
-	int dx,dy,power,fn,dxs,dys;
+	int dx,dy,power,dxs,dys;
 
 	if (!cn) return;	// always make sure its not an automatic call if you don't handle it
 
@@ -686,7 +685,7 @@ void balltrap(int in,int cn)
 	else if (dy<0) dys=-1;
 	else dys=0;
 
-	fn=create_ball(0,it[in].x+dxs,it[in].y+dys,it[in].x+dx,it[in].y+dy,power);	
+	create_ball(0,it[in].x+dxs,it[in].y+dys,it[in].x+dx,it[in].y+dy,power);
 }
 
 struct treasure_chest_ppd
@@ -711,7 +710,7 @@ void chest_driver(int in,int cn)
         nr=it[in].drdata[0];
 	if (nr>=sizeof(ppd->last_access)/sizeof(int)) {
 		elog("treasure_chest item driver: chest number (drdata[0]) must be below %d!",sizeof(ppd->last_access)/sizeof(int));
-		return;	
+		return;
 	}
 
 	// if the chest needs a key, check if the character has it
@@ -757,7 +756,7 @@ void chest_driver(int in,int cn)
 	if (!in2) {
 		elog("treasure_chest item driver: could not create treasure '%s'",name);
 		log_char(cn,LOG_SYSTEM,0,"The chest is empty.");
-		return;			
+		return;
 	}
 
 	if (ch[cn].flags&CF_PLAYER) dlog(cn,in2,"took from treasure chest");
@@ -811,7 +810,7 @@ void steptrap(int in,int cn)
 			}
 			if (dir<9) {
 				it[in].drdata[0]=x;
-				it[in].drdata[1]=y;				
+				it[in].drdata[1]=y;
 			} else {
 				elog("steptrap at %d,%d: couldnt find target!",it[in].x,it[in].y);
 			}
@@ -838,7 +837,7 @@ void toylight_driver(int in,int cn)
         if (!cn) return;	// we dont handle timer calls
 
 	if (it[in].drdata[0]) {
-		
+
 		light=it[in].drdata[1];
 
 		remove_item_light(in);
@@ -854,7 +853,7 @@ void toylight_driver(int in,int cn)
 		it[in].mod_value[0]=light;
 		it[in].sprite++;
 
-		add_item_light(in);		
+		add_item_light(in);
 	}
 }
 
@@ -865,7 +864,7 @@ void nightlight_driver(int in,int cn)
         if (cn) return;		// we handle ONLY timer calls
 
 	if (it[in].drdata[0] && dlight>80) {
-		
+
 		light=it[in].drdata[1];
 
 		remove_item_light(in);
@@ -873,7 +872,7 @@ void nightlight_driver(int in,int cn)
                 it[in].drdata[0]=0;
                 it[in].mod_value[0]=0;
 		it[in].sprite--;
-		
+
                 //add_light(it[in].x,it[in].y,-light,0);
 	}
 
@@ -904,7 +903,7 @@ void torch_driver(int in,int cn)
 			}
 		}
                 if (it[in].drdata[0]) {	// torch burning?
-			
+
 			if ((cn=it[in].carried)) {
                                 if (map[ch[cn].x+ch[cn].y*MAXMAP].flags&MF_UNDERWATER) {
 					log_char(cn,LOG_SYSTEM,0,"Your hear your torch hiss.");
@@ -920,7 +919,7 @@ void torch_driver(int in,int cn)
 			}
 
 			it[in].drdata[1]++;
-			if (it[in].drdata[1]>it[in].drdata[2]) {				
+			if (it[in].drdata[1]>it[in].drdata[2]) {
 				if (it[in].carried) log_char(it[in].carried,LOG_SYSTEM,0,"Your %s expired.",it[in].name);
 				if (ch[cn].flags&CF_PLAYER) dlog(cn,in,"dropped because it expired");
                                 remove_item(in);
@@ -931,13 +930,13 @@ void torch_driver(int in,int cn)
 
 			it[in].mod_index[0]=V_LIGHT;
 			it[in].mod_value[0]=min(it[in].drdata[3],it[in].drdata[3]*it[in].drdata[2]/(it[in].drdata[1]+1)/2);
-			
+
 			if (it[in].carried) {
-				update_char(it[in].carried);				
+				update_char(it[in].carried);
 			} else if (it[in].x) add_item_light(in);
 
                         call_item(IDR_TORCH,in,0,ticker+TICKS*30);
-		}		
+		}
 	} else {
 		if (it[in].x) return;
 
@@ -950,7 +949,7 @@ void torch_driver(int in,int cn)
 					if (cn) dlog(cn,in,"created %s from torch",it[in2].name);
 				} else destroy_item(in2);
 				return;
-			}			
+			}
 		}
 
 		if (it[in].drdata[0]) {	// torch burning?
@@ -965,7 +964,7 @@ void torch_driver(int in,int cn)
                                 log_char(cn,LOG_SYSTEM,0,"Obviously, thou canst not light thy torch under water.");
                                 return;
                         }
-			
+
                         it[in].drdata[0]=1;
 			it[in].mod_index[0]=V_LIGHT;
 			it[in].mod_value[0]=min(it[in].drdata[3],it[in].drdata[3]*it[in].drdata[2]/(it[in].drdata[1]+1)/2);
@@ -1069,7 +1068,7 @@ void teleport_driver(int in,int cn)
 
         if (a) {
 		if (!(ch[cn].flags&CF_PLAYER)) return;
-		
+
 		if (!change_area(cn,a,x,y)) {
 			log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,10,"%s touches a teleport object but nothing happens - target area server is down.",ch[cn].name);
 		}
@@ -1080,7 +1079,7 @@ void teleport_driver(int in,int cn)
 
 	oldx=ch[cn].x; oldy=ch[cn].y;
 	remove_char(cn);
-	
+
 	if (!drop_char_extended(cn,x,y,6)) {
 		log_area(ch[cn].x,ch[cn].y,LOG_INFO,cn,10,"%s says: \"Please try again soon. Target is busy.\"",it[in].name);
 		drop_char(cn,oldx,oldy,1);
@@ -1201,7 +1200,7 @@ void stat_scroll_driver(int in,int cn)
 
 	log_char(cn,LOG_SYSTEM,0,"Raised %s by %d.",skill[v].name,cnt);
 	if (ch[cn].flags&CF_PLAYER) dlog(cn,in,"Used stat scroll of %s",skill[v].name);
-	
+
 	remove_item_char(in);
         destroy_item(in);
 }
@@ -1247,7 +1246,7 @@ int assemble_sun12(int in1,int in2)
 int assemble_sun13(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_AREA2_SUN2:	return create_item("sun_amulet123");		
+		case IID_AREA2_SUN2:	return create_item("sun_amulet123");
 		default:		return 0;
 	}
 }
@@ -1255,7 +1254,7 @@ int assemble_sun13(int in1,int in2)
 int assemble_sun23(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_AREA2_SUN1:	return create_item("sun_amulet123");		
+		case IID_AREA2_SUN1:	return create_item("sun_amulet123");
 		default:		return 0;
 	}
 }
@@ -1301,7 +1300,7 @@ int assemble_bluekey12(int in1,int in2)
 int assemble_bluekey13(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_BLUEKEY2:	return create_item("warr_bluekey123");		
+		case IID_STAFF_BLUEKEY2:	return create_item("warr_bluekey123");
 		default:		return 0;
 	}
 }
@@ -1309,7 +1308,7 @@ int assemble_bluekey13(int in1,int in2)
 int assemble_bluekey23(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_BLUEKEY1:	return create_item("warr_bluekey123");		
+		case IID_STAFF_BLUEKEY1:	return create_item("warr_bluekey123");
 		default:		return 0;
 	}
 }
@@ -1355,7 +1354,7 @@ int assemble_greenkey12(int in1,int in2)
 int assemble_greenkey13(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_GREENKEY2:	return create_item("warr_greenkey123");		
+		case IID_STAFF_GREENKEY2:	return create_item("warr_greenkey123");
 		default:		return 0;
 	}
 }
@@ -1363,7 +1362,7 @@ int assemble_greenkey13(int in1,int in2)
 int assemble_greenkey23(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_GREENKEY1:	return create_item("warr_greenkey123");		
+		case IID_STAFF_GREENKEY1:	return create_item("warr_greenkey123");
 		default:		return 0;
 	}
 }
@@ -1409,7 +1408,7 @@ int assemble_redkey12(int in1,int in2)
 int assemble_redkey13(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_REDKEY2:		return create_item("warr_redkey123");		
+		case IID_STAFF_REDKEY2:		return create_item("warr_redkey123");
 		default:			return 0;
 	}
 }
@@ -1417,7 +1416,7 @@ int assemble_redkey13(int in1,int in2)
 int assemble_redkey23(int in1,int in2)
 {
 	switch(it[in2].ID) {
-		case IID_STAFF_REDKEY1:		return create_item("warr_redkey123");		
+		case IID_STAFF_REDKEY1:		return create_item("warr_redkey123");
 		default:			return 0;
 	}
 }
@@ -1428,7 +1427,7 @@ void assemble_driver(int in,int cn)
 
 	if (!cn) return;
 	if (!it[in].carried) return;	// can only use if item is carried
-	
+
 	if (!(in2=ch[cn].citem)) {
 		log_char(cn,LOG_SYSTEM,0,"You can only use this item with another item.");
 		return;
@@ -1494,12 +1493,12 @@ void randchest_driver(int in,int cn)
 		it[in].min_level=minlevel;
 		return;
 	}
-	
+
 	if (ch[cn].level<minlevel) {
 		log_char(cn,LOG_SYSTEM,0,"This chest has a minimum level of %d. Sorry.",minlevel);
 		return;
 	}
-	
+
 	if (ch[cn].citem) {
 		log_char(cn,LOG_SYSTEM,0,"Please empty your hand (mouse cursor) first.");
 		return;
@@ -1532,11 +1531,11 @@ void randchest_driver(int in,int cn)
 			switch(RANDOM(28)) {
 				case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8: case 9: case 10:
 				case 11: case 12: case 13: case 14: case 15: case 16: case 17: case 18: case 19: case 20: break;
-	
+
 				case 21:	in2=create_item("healing_potion1"); break;
 				case 22:	in2=create_item("mana_potion1"); break;
 				case 23:	in2=create_item("combo_potion1"); break;
-				
+
 				case 24:	in2=create_item("sword4_potion"); break;
 				case 25:	in2=create_item("twohand4_potion"); break;
 				case 26:	in2=create_item("flash4_potion"); break;
@@ -1549,7 +1548,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion2"); break;
 				case 22:	in2=create_item("mana_potion2"); break;
 				case 23:	in2=create_item("combo_potion2"); break;
-	
+
 				case 24:	in2=create_item("sword8_potion"); break;
 				case 25:	in2=create_item("twohand8_potion");break;
 				case 26:	in2=create_item("flash8_potion"); break;
@@ -1563,7 +1562,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion2"); break;
 				case 22:	in2=create_item("mana_potion2"); break;
 				case 23:	in2=create_item("combo_potion2"); break;
-	
+
 				case 24:	in2=create_item("sword12_potion"); break;
 				case 25:	in2=create_item("twohand12_potion"); break;
 				case 26:	in2=create_item("flash12_potion"); break;
@@ -1577,7 +1576,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword16_potion"); break;
 				case 25:	in2=create_item("twohand16_potion"); break;
 				case 26:	in2=create_item("flash16_potion"); break;
@@ -1591,7 +1590,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword20_potion"); break;
 				case 25:	in2=create_item("twohand20_potion"); break;
 				case 26:	in2=create_item("flash20_potion"); break;
@@ -1605,7 +1604,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword24_potion"); break;
 				case 25:	in2=create_item("twohand24_potion"); break;
 				case 26:	in2=create_item("flash24_potion"); break;
@@ -1619,7 +1618,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword28_potion"); break;
 				case 25:	in2=create_item("twohand28_potion"); break;
 				case 26:	in2=create_item("flash28_potion"); break;
@@ -1633,7 +1632,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword32_potion"); break;
 				case 25:	in2=create_item("twohand32_potion"); break;
 				case 26:	in2=create_item("flash32_potion"); break;
@@ -1647,7 +1646,7 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword36_potion"); break;
 				case 25:	in2=create_item("twohand36_potion"); break;
 				case 26:	in2=create_item("flash36_potion"); break;
@@ -1661,13 +1660,13 @@ void randchest_driver(int in,int cn)
 				case 21:	in2=create_item("healing_potion3"); break;
 				case 22:	in2=create_item("mana_potion3"); break;
 				case 23:	in2=create_item("combo_potion3"); break;
-	
+
 				case 24:	in2=create_item("sword40_potion"); break;
 				case 25:	in2=create_item("twohand40_potion"); break;
 				case 26:	in2=create_item("flash40_potion"); break;
 				case 27:	in2=create_item("immunity40_potion"); break;
 			}
-		}		
+		}
 	} else {
 		if (RANDOM(4)) {
 			log_char(cn,LOG_SYSTEM,0,"You didn't find anything.");
@@ -1700,7 +1699,7 @@ void randchest_driver(int in,int cn)
 
 struct demonshrine_ppd
 {
-	int ID[MAXDEMONSHRINE];	
+	int ID[MAXDEMONSHRINE];
 };
 
 void demonshrine_driver(int in,int cn)
@@ -1714,7 +1713,7 @@ void demonshrine_driver(int in,int cn)
 		log_char(cn,LOG_SYSTEM,0,"You're not powerful enough to read this book.");
 		return;
 	}
-	
+
 	ppd=set_data(cn,DRD_DEMONSHRINE_PPD,sizeof(struct demonshrine_ppd));
 	if (!ppd) return;	// oops...
 
@@ -1722,14 +1721,14 @@ void demonshrine_driver(int in,int cn)
 
         for (n=0; n<MAXDEMONSHRINE; n++) {
 		if (ppd->ID[n]==ID) break;
-                if (ppd->ID[n]==0 && old_n==-1) {			
+                if (ppd->ID[n]==0 && old_n==-1) {
 			old_n=n;
 		}
 	}
 
         if (n==MAXDEMONSHRINE && old_n==-1) {
 		log_char(cn,LOG_SYSTEM,0,"Bug 771");
-		return;		
+		return;
 	}
 
 	if (n==MAXDEMONSHRINE) n=old_n;
@@ -1789,9 +1788,9 @@ void xmastree(int in,int cn)
 		log_char(cn,LOG_SYSTEM,0,"There doesn't appear to be anything you can do with the tree at this time of year.");
 		return;
 	}
-	
+
 	if (!(ppd=set_data(cn,DRD_MISC_PPD,sizeof(struct misc_ppd)))) return;
-	
+
 	idx=areaID/8;
 	bit=1<<(areaID%8);
 
@@ -1857,11 +1856,11 @@ void xmastree(int in,int cn)
 void xmasmaker(int in,int cn)
 {
 	int in2;
-	
+
 	if (!cn || !(ch[cn].flags&(CF_STAFF|CF_GOD))) return;
 
 	in2=create_item("xmaspop");
-	if (!give_char_item(cn,in2)) destroy_item(in2);	
+	if (!give_char_item(cn,in2)) destroy_item(in2);
 }
 
 void food_driver(int in,int cn)
@@ -2001,7 +2000,7 @@ void explore_driver(int in,int cn)
 	struct explore_ppd *ppd;
 
 	if (!cn) return;
-	
+
         ppd=set_data(cn,DRD_EXPLORE_PPD,sizeof(struct explore_ppd));
 	if (!ppd) return;	// oops...
 
@@ -2083,7 +2082,7 @@ void spade(int in,int cn)
 					break;
 		}
 	}
-	
+
 	if (in2) {
 		log_char(cn,LOG_SYSTEM,0,"You found a %s.",it[in2].name);
 		if (ch[cn].flags&CF_PLAYER) dlog(cn,in2,"took from dug hole");
@@ -2170,7 +2169,7 @@ static struct combine combine[]={
 	{51023,51036,51014},
 
 	{51024,51035,51039},
-	
+
 	{51025,51035,51040},
 
 	{51026,51035,51014},
@@ -2195,16 +2194,16 @@ void palace_key(int in,int cn)
 				log_char(cn,LOG_SYSTEM,0,"%d %d %d",combine[n].part1,combine[n].part2,combine[n].result);
 
 				it[in].sprite=combine[n].part2;
-				
+
 				in2=create_item("palace_key_part1");
 				it[in2].sprite=combine[n].part1;
 				it[in2].carried=cn;
 				ch[cn].citem=in2;
-				ch[cn].flags|=CF_ITEMS;				
+				ch[cn].flags|=CF_ITEMS;
 				return;
 			}
 		}
-		
+
 		log_char(cn,LOG_SYSTEM,0,"The only thing you can think of to do with this key part is to add another key part to it.");
 		return;
 	}
@@ -2217,7 +2216,7 @@ void palace_key(int in,int cn)
 		if ((it[in].sprite==combine[n].part1 && it[in2].sprite==combine[n].part2) ||
 		    (it[in2].sprite==combine[n].part1 && it[in].sprite==combine[n].part2)) {
 			log_char(cn,LOG_SYSTEM,0,"%d %d %d",combine[n].part1,combine[n].part2,combine[n].result);
-			
+
 			it[in].sprite=combine[n].result;
 			if (it[in].sprite==51014) {
 				it[in].ID=IID_AREA11_PALACEKEY;
@@ -2309,7 +2308,7 @@ void special_potion(int in,int cn)
 
 				remove_item_char(in);
 				free_item(in);
-				
+
 				return;
 
 		case 8:		ch[cn].hp=max(1,ch[cn].hp-10*POWERSCALE);
@@ -2320,14 +2319,14 @@ void special_potion(int in,int cn)
 				remove_item_char(in);
 				free_item(in);
                                 return;
-		
+
 		case 9:		ch[cn].hp=max(1,ch[cn].hp-10*POWERSCALE);
 				ch[cn].regen_ticker=ticker;
                                 log_area(ch[cn].x,ch[cn].y,LOG_SYSTEM,0,16,"%s suddenly starts singing in a slurred tongue... Dogs start howling...",ch[cn].name);
 				remove_item_char(in);
 				free_item(in);
                                 return;
-		
+
 		case 10:	ch[cn].mana=max(0,ch[cn].mana-10*POWERSCALE);
 				ch[cn].regen_ticker=ticker;
 				log_area(ch[cn].x,ch[cn].y,LOG_SYSTEM,0,16,"%s's hair suddenly shoots up as if hit by electricity.",ch[cn].name);
@@ -2366,7 +2365,7 @@ void special_potion(int in,int cn)
 				free_item(in);
                                 return;
 
-				
+
 		default:	log_char(cn,LOG_SYSTEM,0,"Please report bug #1734.");
 				return;
 	}
@@ -2408,14 +2407,14 @@ void infinite_chest(int in,int cn)
 		case 8:		in2=create_item("rune8"); break;
 		case 9:		in2=create_item("rune9"); break;
 
-		default:	
+		default:
 				log_char(cn,LOG_SYSTEM,0,"Congratulations, %s, you have just discovered bug #4744B-%d-%d, please report it to the authorities!",ch[cn].name,it[in].x,it[in].y);
 				return;
 	}
 
         if (!in2) {
 		log_char(cn,LOG_SYSTEM,0,"Congratulations, %s, you have just discovered bug #4744C-%d-%d, please report it to the authorities!",ch[cn].name,it[in].x,it[in].y);
-		return;			
+		return;
 	}
 
 	if (!can_carry(cn,in2,0)) {
@@ -2448,7 +2447,7 @@ struct trader_data
 	int timeout;
 
 	int memcleartimer;
-	
+
 	int s1ID,s2ID;
 };
 
@@ -2478,7 +2477,7 @@ int is_gk_room(int cn)
 {
 	if (areaID!=3) return 0;
 	if (ch[cn].x>=178 && ch[cn].y>=196 && ch[cn].x<=210 && ch[cn].y<=228) return 1;
-	
+
 	return 0;
 }
 
@@ -2500,11 +2499,11 @@ void return_items(struct trader_data *dat,int switched)
 		dat->c1itm[n]=0;
 	}
 	dat->c1cnt=0;
-	
+
 	if (dat->c1token) {
 		if (c2 && (ppd=set_data(c2,DRD_DEPOT_PPD,sizeof(struct depot_ppd))) && ppd->loaded) {
 			ppd->payment_tokens+=dat->c1token;
-			
+
 			if (switched) {
 				xlog("trader gave %d payment tokens to %s from trade with %s for a total of %d",dat->c1token,dat->c2name,dat->c1name,ppd->payment_tokens);
 				add_note(dat->s1ID,NOTE_INFO,"%s gave %d token(s) to %s (sID=%d)",dat->c1name,dat->c1token,dat->c2name,dat->s2ID);
@@ -2514,7 +2513,7 @@ void return_items(struct trader_data *dat,int switched)
 			} else {
 				xlog("trader gave %d payment tokens to %s from trade with %s for a total of %d",dat->c1token,dat->c1name,dat->c2name,ppd->payment_tokens);
 			}
-			
+
 			ppd->changes++;
 			save_char(c2,0);
 		} else {
@@ -2523,7 +2522,7 @@ void return_items(struct trader_data *dat,int switched)
 		}
 		dat->c1token=0;
 	}
-	
+
         if (switched) c2=find_char_byID(dat->c1ID);
 	else c2=find_char_byID(dat->c2ID);
 
@@ -2551,15 +2550,15 @@ void return_items(struct trader_data *dat,int switched)
 			} else {
 				xlog("trader gave %d payment tokens to %s from trade with %s for a total of %d",dat->c2token,dat->c2name,dat->c1name,ppd->payment_tokens);
 			}
-			
+
 			ppd->changes++;
 			save_char(c2,0);
 		} else {
 			if (switched) elog("%s: lost %d payment tokens in trade",dat->c1name,dat->c2token);
-			else elog("%s: lost %d payment tokens in trade",dat->c2name,dat->c2token);			
+			else elog("%s: lost %d payment tokens in trade",dat->c2name,dat->c2token);
 		}
 		dat->c2token=0;
-	}	
+	}
 }
 
 void trader_driver(int cn,int ret,int lastact)
@@ -2579,7 +2578,7 @@ void trader_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -2603,7 +2602,7 @@ void trader_driver(int cn,int ret,int lastact)
 			if (!(ch[co].flags&CF_PLAYER)) { remove_message(cn,msg); continue; }
 
 			if (analyse_text_driver(cn,msg->dat1,(char*)msg->dat2,msg->dat3)) talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
-			
+
 			text=(char*)(msg->dat2);
 
 			// skip past the usual Ishtar says: "
@@ -2667,7 +2666,7 @@ void trader_driver(int cn,int ret,int lastact)
 					remove_message(cn,msg);
 					continue;
 				}
-				
+
 				return_items(dat,0);
 
                                 quiet_say(cn,"The trade is cancelled.");
@@ -2721,11 +2720,11 @@ void trader_driver(int cn,int ret,int lastact)
 					remove_message(cn,msg);
 					continue;
 				}
-				
+
 				log_char(co,LOG_SYSTEM,0,"°c3Trading:");
 				for (n=0; n<dat->c1cnt; n++) look_item(co,it+dat->c1itm[n]);
 				log_char(co,LOG_SYSTEM,0,"%d payment tokens",dat->c1token);
-				
+
 				log_char(co,LOG_SYSTEM,0,"°c3For:");
 				for (n=0; n<dat->c2cnt; n++) look_item(co,it+dat->c2itm[n]);
 				log_char(co,LOG_SYSTEM,0,"%d payment tokens",dat->c2token);
@@ -2766,7 +2765,7 @@ void trader_driver(int cn,int ret,int lastact)
 
 				if (ch[co].ID==dat->c1ID) {
 					dat->c1token++;
-					
+
 					c2=find_char_byID(dat->c2ID);
 					if (c2) log_char(c2,LOG_SYSTEM,0,"°c2%s gave the trader a payment token, for a total of %d tokens.",ch[co].name,dat->c1token);
 					log_char(co,LOG_SYSTEM,0,"You gave one token to the trader.");
@@ -2875,7 +2874,7 @@ void set_salt_data(int in)
 	else if (*(unsigned int*)(it[in].drdata+0)>=100) it[in].sprite=13210;
 	else if (*(unsigned int*)(it[in].drdata+0)>=10) it[in].sprite=13209;
 	else it[in].sprite=13208;
-	
+
 	sprintf(it[in].description,"%d ounces of %s.",*(unsigned int*)(it[in].drdata),it[in].name);
 }
 
@@ -2886,7 +2885,7 @@ void set_skin1_data(int in)
 	else if (*(unsigned int*)(it[in].drdata+0)>=3) it[in].sprite=59657;
 	else if (*(unsigned int*)(it[in].drdata+0)>=2) it[in].sprite=59656;
 	else it[in].sprite=59655;
-	
+
 	sprintf(it[in].description,"%d %ss.",*(unsigned int*)(it[in].drdata),it[in].name);
 }
 
@@ -2897,7 +2896,7 @@ void set_skin2_data(int in)
 	else if (*(unsigned int*)(it[in].drdata+0)>=3) it[in].sprite=59662;
 	else if (*(unsigned int*)(it[in].drdata+0)>=2) it[in].sprite=59661;
 	else it[in].sprite=59660;
-	
+
 	sprintf(it[in].description,"%d %ss.",*(unsigned int*)(it[in].drdata),it[in].name);
 }
 
@@ -3029,7 +3028,7 @@ void labexit(int in,int cn)
 
 	*(unsigned int*)(it[in].drdata+8)=240-24+*(unsigned int*)(it[in].drdata+8)%24;
 
-	if (!change_area(cn,3,183,199)) log_char(cn,LOG_SYSTEM,0,"Sorry, Aston is down. Please try again soon.");	
+	if (!change_area(cn,3,183,199)) log_char(cn,LOG_SYSTEM,0,"Sorry, Aston is down. Please try again soon.");
 }
 
 #define MAXLIGHT	150
@@ -3136,7 +3135,7 @@ void janitor_driver(int cn,int ret,int lastact)
 
 		// did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 
 			// dont talk to someone we cant see, and dont talk to ourself
@@ -3150,7 +3149,7 @@ void janitor_driver(int cn,int ret,int lastact)
 		if (msg->type==NT_GIVE) {
 			co=msg->dat1;
                         //destroy_item(ch[cn].citem);
-			//ch[cn].citem=0;			
+			//ch[cn].citem=0;
 		}
 
 		if (msg->type==NT_ITEM) {
@@ -3195,11 +3194,11 @@ void janitor_driver(int cn,int ret,int lastact)
 	if (!dat->light[0] || it[dat->light[0]].drdata[0]==ls) {
 		if (!ch[cn].citem) {
 			int n;
-	
+
 			for (n=INVENTORYSIZE; n>=30; n--) {
-				if (ch[cn].item[n]) break;			
+				if (ch[cn].item[n]) break;
 			}
-			
+
 			if (n>=30) {
 				ch[cn].citem=ch[cn].item[n]; ch[cn].item[n]=0;
 				if (janitor_drop(cn)) return;
@@ -3241,7 +3240,7 @@ void shrike_amulet_driver(int in,int cn)
 
         if (!cn) return;
 	if (!it[in].carried) return;	// can only use if item is carried
-	
+
 	if (!(in2=ch[cn].citem)) {
 		log_char(cn,LOG_SYSTEM,0,"You can only use this item with another item.");
 		return;
@@ -3250,7 +3249,7 @@ void shrike_amulet_driver(int in,int cn)
 		log_char(cn,LOG_SYSTEM,0,"It doesn't fit.");
 		return;
 	}
-	
+
 	it[in].drdata[0]|=it[in2].drdata[0];
 	it[in].sprite=51617+it[in].drdata[0];
 	switch (it[in].drdata[0]) {
@@ -3260,14 +3259,14 @@ void shrike_amulet_driver(int in,int cn)
 		case 7:		sprintf(it[in].name,"Talisman"); sprintf(it[in].description,"A silver talisman."); break;
 	}
 	ch[cn].flags|=CF_ITEMS;
-	
+
 	ch[cn].citem=0;
 	destroy_item(in2);
 }
 
 void minegatewaykey(int in,int cn)
 {
-	int bit1,bit2,in2;
+	int bit2,in2;
 
 	if (!cn) return;
 
@@ -3281,7 +3280,6 @@ void minegatewaykey(int in,int cn)
 		return;
 	}
 
-	bit1=it[in].drdata[0];
 	bit2=it[in2].drdata[0];
 
         it[in].drdata[0]|=bit2;
@@ -3321,7 +3319,7 @@ void decaying_item_driver(int in,int cn)
 
         if (!cn) {	// timer call
 		if (it[in].drdata[0]) {	// item active?
-			
+
                         *(unsigned short*)(it[in].drdata+3)=(*(unsigned short*)(it[in].drdata+3))+1;
 			if (*(unsigned short*)(it[in].drdata+3)>*(unsigned short*)(it[in].drdata+5)) {
 				if (it[in].carried) log_char(it[in].carried,LOG_SYSTEM,0,"Your %s expired.",it[in].name);
@@ -3331,7 +3329,7 @@ void decaying_item_driver(int in,int cn)
                                 return;
 			}
                         call_item(it[in].driver,in,0,ticker+TICKS*2);
-		}		
+		}
 	} else {
 		if (it[in].x) return;
 
@@ -3360,7 +3358,7 @@ void set_chip_data(int in,int off)
 	else if (*(unsigned int*)(it[in].drdata+0)==3) it[in].sprite=53009+off;
 	else if (*(unsigned int*)(it[in].drdata+0)==2) it[in].sprite=53008+off;
 	else it[in].sprite=53007+off;
-	
+
 	if (*(unsigned int*)(it[in].drdata+0)>1) sprintf(it[in].description,"%d %ss.",*(unsigned int*)(it[in].drdata),it[in].name);
 	else sprintf(it[in].description,"%d %s.",*(unsigned int*)(it[in].drdata),it[in].name);
 }
@@ -3468,7 +3466,7 @@ void betaitemmaker(int in,int cn)
 		log_char(cn,LOG_SYSTEM,0,"You do not have Fire or Lightning at all. Go away.");
 		return;
 	}
-	
+
 	ch[cn].value[1][V_FIRE]=1;
 	ch[cn].value[1][V_FLASH]=1;
 	ch[cn].exp_used=calc_exp(cn);
@@ -3477,7 +3475,7 @@ void betaitemmaker(int in,int cn)
 
 	log_char(cn,LOG_SYSTEM,0,"Done. Remember that you cannot use this shrine again with this character.");
 	dlog(cn,0,"Used skill reset shrine.");
-	
+
 }
 
 void sign(int in,int cn)

@@ -109,7 +109,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -129,7 +129,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -143,21 +143,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -167,7 +166,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 0;
 }
@@ -229,7 +228,7 @@ void manager_driver(int cn,int ret,int lastact)
 {
 	struct manager_data *dat;
         int co,in,talkdir=0,didsay=0,n;
-	struct msg *msg,*next;	
+	struct msg *msg,*next;
 	char *ptr;
 
         dat=set_data(cn,DRD_ARENAMANAGER,sizeof(struct manager_data));
@@ -247,7 +246,7 @@ void manager_driver(int cn,int ret,int lastact)
 
                 // did we see someone?
 		if (msg->type==NT_CHAR) {
-			
+
                         co=msg->dat1;
 		}
 
@@ -274,7 +273,7 @@ void manager_driver(int cn,int ret,int lastact)
 						dat->renter=co;
 						dat->invite[0]=0;
 						dat->timeout=ticker+TICKS*60*5;
-						
+
 						teleport_char_driver(co,dat->arena_x,dat->arena_y);
 						say(cn,"Say 'invite: <name>' to let someone in, or say 'leave' to leave the arena.");
                                                 break;
@@ -291,9 +290,9 @@ void manager_driver(int cn,int ret,int lastact)
 							dat->invite[0]=0;
 						} else say(cn,"You have not been invited, %s.",ch[co].name);
 						break;
-	
+
 			}
-			if ((ptr=strcasestr((char*)msg->dat2,"invite:"))) {				
+			if ((ptr=strcasestr((char*)msg->dat2,"invite:"))) {
 				if (co!=dat->renter) {
 					say(cn,"This is not your arena, %s.",ch[co].name);
 				} else {
@@ -310,7 +309,7 @@ void manager_driver(int cn,int ret,int lastact)
 			}
                         if (didsay) {
 				dat->last_talk=ticker;
-				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);				
+				talkdir=offset2dx(ch[cn].x,ch[cn].y,ch[co].x,ch[co].y);
 			}
 		}
 
@@ -319,13 +318,13 @@ void manager_driver(int cn,int ret,int lastact)
 			co=msg->dat1;
 
                         if ((in=ch[cn].citem)) {	// we still have it
-				if (!dat->amgivingback) {					
+				if (!dat->amgivingback) {
 					say(cn,"Thou hast better use for this than I do. Well, if there is use for it at all.");
 					dat->amgivingback=1;
 				} else dat->amgivingback++;
-				
+
 				if (dat->amgivingback<20 && give_driver(cn,co)) return;
-				
+
 				// let it vanish, then
 				destroy_item(ch[cn].citem);
 				ch[cn].citem=0;
@@ -343,7 +342,7 @@ void manager_driver(int cn,int ret,int lastact)
 	if (ch[cn].citem) {
 		charlog(cn,"oops: destroying item %s",it[ch[cn].citem].name);
 		destroy_item(ch[cn].citem);
-		ch[cn].citem=0;		
+		ch[cn].citem=0;
 	}
 
 	if (talkdir) turn(cn,talkdir);

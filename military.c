@@ -141,7 +141,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 {
 	char word[256];
 	char wordlist[20][256];
-	int n,w,q,name=0;
+	int n,w,q;
 
 	// ignore game messages
 	if (type==LOG_SYSTEM || type==LOG_INFO) return 0;
@@ -161,7 +161,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 	if (*text==':') text++;
 	while (isspace(*text)) text++;
 	if (*text=='"') text++;
-	
+
 	n=w=0;
 	while (*text) {
 		switch (*text) {
@@ -175,21 +175,20 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 						word[n]=0;
 						lowerstrcpy(wordlist[w],word);
 						if (strcasecmp(wordlist[w],ch[cn].name)) { if (w<20) w++; }
-						else name=1;
-					}					
+					}
 					n=0; text++;
 					break;
 			default: 	word[n++]=*text++;
 					if (n>250) return 0;
 					break;
-		}		
+		}
 	}
 
 	if (w) {
 		for (q=0; q<sizeof(qa)/sizeof(struct qa); q++) {
 			for (n=0; n<w && qa[q].word[n]; n++) {
 				//quiet_say(cn,"word = '%s'",wordlist[n]);
-				if (strcmp(wordlist[n],qa[q].word[n])) break;			
+				if (strcmp(wordlist[n],qa[q].word[n])) break;
 			}
 			if (n==w && !qa[q].word[n]) {
 				if (qa[q].answer) quiet_say(cn,qa[q].answer,ch[co].name,ch[cn].name);
@@ -201,7 +200,7 @@ int analyse_text_driver(int cn,int type,char *text,int co)
 			}
 		}
 	}
-	
+
 
         return 42;
 }
@@ -239,40 +238,40 @@ void generate_demon_mission(int lvl,struct military_ppd *ppd)
 	ppd->mis[0].pts=7;						// worth one military point
 	ppd->mis[0].exp=ppd->mis[0].opt1*ppd->mis[0].opt2;		// number of demons * demonlevel / 2
 
-	ppd->mis[1].type=1;			
-	ppd->mis[1].opt1=75+RANDOM(126);	
+	ppd->mis[1].type=1;
+	ppd->mis[1].opt1=75+RANDOM(126);
 	ppd->mis[1].opt2=min(maxpentlevel,lvl-step*2);
-	ppd->mis[1].pts=8;			
+	ppd->mis[1].pts=8;
 	ppd->mis[1].exp=ppd->mis[1].opt1*ppd->mis[1].opt2;
 
-	ppd->mis[2].type=1;			
-	ppd->mis[2].opt1=75+RANDOM(126);	
+	ppd->mis[2].type=1;
+	ppd->mis[2].opt1=75+RANDOM(126);
 	ppd->mis[2].opt2=min(maxpentlevel,lvl-step*1);
-	ppd->mis[2].pts=9;			
+	ppd->mis[2].pts=9;
 	ppd->mis[2].exp=ppd->mis[2].opt1*ppd->mis[2].opt2;
 
-	ppd->mis[3].type=1;			
-	ppd->mis[3].opt1=75+RANDOM(126);	
+	ppd->mis[3].type=1;
+	ppd->mis[3].opt1=75+RANDOM(126);
 	ppd->mis[3].opt2=min(maxpentlevel,lvl+step*0);
-	ppd->mis[3].pts=10;			
+	ppd->mis[3].pts=10;
 	ppd->mis[3].exp=ppd->mis[3].opt1*ppd->mis[3].opt2;
 
-	ppd->mis[4].type=1;				
-	ppd->mis[4].opt1=75+RANDOM(126);		
-	ppd->mis[4].opt2=min(maxpentlevel,lvl+step*1);	
-	ppd->mis[4].pts=11;			
+	ppd->mis[4].type=1;
+	ppd->mis[4].opt1=75+RANDOM(126);
+	ppd->mis[4].opt2=min(maxpentlevel,lvl+step*1);
+	ppd->mis[4].pts=11;
 	ppd->mis[4].exp=ppd->mis[4].opt1*ppd->mis[4].opt2;
 
-	ppd->mis[5].type=1;				
-	ppd->mis[5].opt1=75+RANDOM(126);		
-	ppd->mis[5].opt2=min(maxpentlevel,lvl+step*2);	
-	ppd->mis[5].pts=12;			
+	ppd->mis[5].type=1;
+	ppd->mis[5].opt1=75+RANDOM(126);
+	ppd->mis[5].opt2=min(maxpentlevel,lvl+step*2);
+	ppd->mis[5].pts=12;
 	ppd->mis[5].exp=ppd->mis[5].opt1*ppd->mis[5].opt2;
 
-	ppd->mis[6].type=1;				
-	ppd->mis[6].opt1=75+RANDOM(126);		
-	ppd->mis[6].opt2=min(maxpentlevel,lvl+step*3);	
-	ppd->mis[6].pts=13;			
+	ppd->mis[6].type=1;
+	ppd->mis[6].opt1=75+RANDOM(126);
+	ppd->mis[6].opt2=min(maxpentlevel,lvl+step*3);
+	ppd->mis[6].pts=13;
 	ppd->mis[6].exp=ppd->mis[6].opt1*ppd->mis[6].opt2;
 }
 
@@ -303,7 +302,7 @@ void generate_mine_mission(int lvl,struct military_ppd *ppd)
 			ppd->mis[1].pts=2;						// worth 2 military points
 			ppd->mis[1].exp=ppd->mis[1].opt1;
 			break;
-		
+
 		case 2:
 			if (lvl<12) break;
 			ppd->mis[2].type=3;						// find silver
@@ -312,8 +311,8 @@ void generate_mine_mission(int lvl,struct military_ppd *ppd)
 			ppd->mis[2].pts=4;						// worth 4 military points
 			ppd->mis[2].exp=ppd->mis[2].opt1;
 			break;
-		
-		case 3:	
+
+		case 3:
 			lvl++;
 			if (lvl<12) break;
 			ppd->mis[3].type=3;						// find silver
@@ -322,8 +321,8 @@ void generate_mine_mission(int lvl,struct military_ppd *ppd)
 			ppd->mis[3].pts=10;						// worth 10 military points
 			ppd->mis[3].exp=ppd->mis[3].opt1;				// normal experience worth
 			break;
-		
-		case 4:	
+
+		case 4:
 			lvl+=2;
 			if (lvl<12) break;
 			ppd->mis[4].type=3;						// find silver
@@ -386,11 +385,11 @@ void display_mission(int cn,int co,int nr,struct military_ppd *ppd)
         switch(ppd->mis[nr].type) {
 		case 1:		say(cn,"Your mission is to slay %d level %d demons in the Pentagram Quest.",
 				    ppd->mis[nr].opt1,
-				    ppd->mis[nr].opt2);				
-				break;	
+				    ppd->mis[nr].opt2);
+				break;
 		case 2:		say(cn,"Your mission is to slay %d level %d ratlings in the Sewers.",
 				    ppd->mis[nr].opt1,
-				    ppd->mis[nr].opt2);				
+				    ppd->mis[nr].opt2);
 				break;
 		case 3:		say(cn,"Your mission is to find %d units of silver in the Mine.",
 				    ppd->mis[nr].opt1);
@@ -403,7 +402,7 @@ void military_master_driver(int cn,int ret,int lastact)
         struct military_master_data *dat;
 	struct military_ppd *ppd;
 	int co,res,n,rank,pts;
-        struct msg *msg,*next;	
+        struct msg *msg,*next;
 
         dat=set_data(cn,DRD_MILITARYMASTER,sizeof(struct military_master_data));
 	if (!dat) return;	// oops...
@@ -424,7 +423,7 @@ void military_master_driver(int cn,int ret,int lastact)
                         if (char_dist(cn,co)>10 || !(ch[co].flags&CF_PLAYER) || !char_see_char(cn,co)) {
 				remove_message(cn,msg);
 				continue;
-			}			
+			}
 			if (!(ppd=set_data(co,DRD_MILITARY_PPD,sizeof(struct military_ppd)))) {
 				remove_message(cn,msg);
 				continue;
@@ -442,7 +441,7 @@ void military_master_driver(int cn,int ret,int lastact)
 				} else {
 					say(cn,"Greetings, %s.",ch[co].name);
 					ppd->master_state=1;
-				}			
+				}
 			} else if (ppd->master_state==1 && get_army_rank_int(co)) {
 					say(cn,"Hello again, %s. I might have a °c4mission°c0 for you.",ch[co].name);
 					ppd->master_state=2;
@@ -512,7 +511,7 @@ void military_master_driver(int cn,int ret,int lastact)
 						if (ppd->mission_yday!=yday+1) generate_mission(co,ppd);
 						offer_missions(cn,co,ppd);
 						break;
-				case 11:	
+				case 11:
 				case 12:
 				case 13:
 				case 14:
@@ -567,7 +566,7 @@ void military_master_driver(int cn,int ret,int lastact)
 			ch[cn].citem=0;
 			say(cn,"That's junk.");
 		}
-		
+
 		standard_message_driver(cn,msg,1,1);
                 remove_message(cn,msg);
 	}
@@ -604,7 +603,7 @@ int ch_died_driver(int nr,int cn,int co)
 {
 	switch(nr) {
 		case CDR_MILITARY_MASTER:	immortal_dead(cn,co); return 1;
-		
+
 		default:		return 0;
 	}
 }
